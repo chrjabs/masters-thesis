@@ -62,6 +62,8 @@
 %\definecolor{color5}{RGB}{170,51,119}
 %\definecolor{color6}{RGB}{187,187,187}
 
+\input{../macros.tex}
+
 \begin{groupplot}[
   group style={
     group size=2 by 1,
@@ -111,10 +113,10 @@
 \draw [loosely dotted] (30,60) -- (2700,5400);
 
 \addplot [only marks,color0,mark=x] table [x=pminimal,y=paretosat-msh-70lits,col sep=comma] {setcover-element-prob-msh-scatter-single.csv};
-\addlegendentry{SetCovering-EP}
+\addlegendentry{\scep{}}
 
 \addplot [only marks,color1,mark=o] table [x=pminimal,y=paretosat-msh-70lits,col sep=comma] {setcover-set-card-msh-scatter-single.csv};
-\addlegendentry{SetCovering-SC}
+\addlegendentry{\scsc{}}
 
 \addplot [only marks,color2,mark=+] table [x=pminimal,y=paretosat-msh-70lits,col sep=comma] {mlic-msh-scatter-single.csv};
 \addlegendentry{Decision Rules}

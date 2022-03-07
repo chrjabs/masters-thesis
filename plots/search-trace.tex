@@ -64,9 +64,7 @@
 %\definecolor{color5}{RGB}{170,51,119}
 %\definecolor{color6}{RGB}{187,187,187}
 
-\newcommand{\Min}{\texttt{Minimize-Inc}}
-\newcommand{\Simpr}{\texttt{Sol-Improving-Search}}
-\newcommand{\satunsat}{\texttt{SAT-UNSAT}}
+\input{../macros.tex}
 
 \begin{axis}[
   width=5.5cm,
@@ -118,7 +116,7 @@
 \addlegendentry{\Simpr{}}
 
 \addlegendimage{color2,dashdotdotted,semithick}
-\addlegendentry{\texttt{isSAT}}
+\addlegendentry{\satsolver{}}
 
 \node [label=$\tau^c_1$] at (3,3) {};
 \node [label=$\tau^c_2$] at (2,3) {};

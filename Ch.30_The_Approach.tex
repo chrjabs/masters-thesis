@@ -26,80 +26,62 @@ We detail the MaxSAT-based approach to bi-objective optimization developed in th
 
 \section{Overview of the Algorithm\label{sec:algorithm}}
 
-\Cref{alg:base-algorithm}, which we refer to as \algname{}, details the  framework for computing the pareto-optimal solutions of a CNF formula $\formula$ wrt 
-two objectives $\Obj_\inc$ and $\Obj_\dec$ that we focus on. The framework is an instantiation of the general lexicographic optimization method~\autocite{survey}
-instantiated with a SAT solver.
-More specifically, all subroutines of the procedure are implemented using a single instantiation of a SAT solver that is invoked incrementally and preserved (i.e., not reset)
-during the whole search. 
+\Cref{alg:base-algorithm}, which we refer to as \algname{}, details the  framework for computing the pareto-optimal solutions of a CNF formula $\formula$ w.r.t.\ two objectives $\Obj_\inc$ and $\Obj_\dec$ that we focus on.
+The framework is an instantiation of the general lexicographic optimization method~\autocite{survey} instantiated with a SAT solver.
+More specifically, all subroutines of the procedure are implemented using a single instantiation of a SAT solver that is invoked incrementally and preserved (i.e., not reset) during the whole search. 
 \algname{} maintains the bounds $b_\inc$ and $b_\dec$ on the two objectives $\Obj_\inc$ and $\Obj_\dec$, respectively.
-In each iteration, the value of $b_\inc$ is set to the smallest value for which there is 
-a still-undiscovered pareto-optimal solution $\tau$ for which $\Obj_\inc(\tau) = b_\inc$ by the $\Min$ procedure.
+In each iteration, the value of $b_\inc$ is set to the smallest value for which there is a still-undiscovered pareto-optimal solution $\tau$ for which $\Obj_\inc(\tau) = b_\inc$ by the $\Min$ procedure.
 The value of $b_\dec$ is then set to $\Obj_\dec(\tau)$ by the $\Simpr$ procedure.
-In case one wishes to enumerate all pareto-optimal solutions (in contrast to a single representative solution for each pareto point),
-the $\E$ procedure then enumerates all pareto-optimal solutions $\tau^o$ for which $\Obj_\inc(\tau^o) = b_\inc$ and $\Obj_\dec(\tau^o) = b_\dec$.
+In case one wishes to enumerate all pareto-optimal solutions (in contrast to a single representative solution for each pareto point), the $\E$ procedure then enumerates all pareto-optimal solutions $\tau^o$ for which $\Obj_\inc(\tau^o) = b_\inc$ and $\Obj_\dec(\tau^o) = b_\dec$.
 
-Importantly, 
-since the value of $\Obj_\inc$ is always minimized first, the value $b_\inc$ returned each iteration is monotonically increasing. 
+Importantly, since the value of $\Obj_\inc$ is always minimized first, the value $b_\inc$ returned each iteration is monotonically increasing. 
 We therefore call $\Obj_\inc$ the \emph{increasing objective}.
 By \cref{prop:biobjective}, this means that the sequence of values $b_\dec$ is monotonically decreasing, leading us to calling $\Obj_\dec$ \emph{decreasing}.
 By these observations, \algname{} performs search in an ordered fashion along the pareto front.
 
 In detail, given a formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$, the search of \algname{} in \cref{alg:base-algorithm} starts by initializing a SAT solver with all clauses in $\formula$ on Line~\ref{l:init-solv}.
-Satisfiability (i.e., the existence of any pareto-optimal solutions) is checked by invoking the SAT solver on its internal formula without assumptions via the
-$\satsolver(\emptyset)$ function (Line~\ref{l:sols}). If $\res$ is UNSAT, the formula has no pareto-optimal solutions and the algorithm terminates. Otherwise, $\tau$ is an assignment that satisfies the formula. Before the main enumeration procedure starts, the bounds $b_\inc$ and $b_\dec$ on $\Obj_\inc$ and $\Obj_\dec$ are set to $0$ and $\infty$, respectively.
+Satisfiability (i.e., the existence of any pareto-optimal solutions) is checked by invoking the SAT solver on its internal formula without assumptions via the $\satsolver(\emptyset)$ function (Line~\ref{l:sols}).
+If $\res$ is UNSAT, the formula has no pareto-optimal solutions and the algorithm terminates.
+Otherwise, $\tau$ is an assignment that satisfies the formula.
+Before the main enumeration procedure starts, the bounds $b_\inc$ and $b_\dec$ on $\Obj_\inc$ and $\Obj_\dec$ are set to $0$ and $\infty$, respectively.
 
 The main search loop (Lines~\ref{l:loopstart}--\ref{l:loopend}) iterates as long as there are pareto-optimal solutions of $\formula$ that have not been enumerated yet. 
-This is the case if there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$,  checked by invoking the SAT solver under the assumption 
-$\ov{\Obj_\dec}{b_\dec}$ on Line~\ref{l:endL}.
-In the beginning of each main loop iteration, the procedure $\Min$ is employed to minimize the increasing objective, i.e.,
-compute the smallest value $b_\inc$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$ and 
-$\Obj_\inc(\tau) = b_\inc$  (Line~\ref{l:minim1}). 
-We assume that $\Min$ maintains a way to enforce that $\Obj_\inc(\tau) < k$, e.g., through a totalizer $\tot(\Obj_\inc)$, and that
-\algname{} and all of its subroutines have access to a set of assumptions to enforce this bound for any $k$.
+This is the case if there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$, checked by invoking the SAT solver under the assumption $\ov{\Obj_\dec}{b_\dec}$ on Line~\ref{l:endL}.
+In the beginning of each main loop iteration, the procedure $\Min$ is employed to minimize the increasing objective, i.e., compute the smallest value $b_\inc$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (Line~\ref{l:minim1}). 
+We assume that $\Min$ maintains a way to enforce that $\Obj_\inc(\tau) < k$, e.g., through a totalizer $\tot(\Obj_\inc)$, and that \algname{} and all of its subroutines have access to a set of assumptions to enforce this bound for any $k$.
 
-Next, the algorithm employs \emph{solution-improving search}~\autocite{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06}
-to minimize the decreasing objective, i.e., to compute the smallest 
-$b_\dec$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (Line~\ref{l:minim2}).
+Next, the algorithm employs \emph{solution-improving search}~\autocite{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} to minimize the decreasing objective, i.e., to compute the smallest $b_\dec$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (Line~\ref{l:minim2}).
 The totalizer $\tot(\Obj_\dec, \Obj_\dec(\tau))$ is built at the first time this subroutine is invoked.
 Building the totalizer at this point allows for only building it up to bound $\Obj_\dec(\tau)$, since all pareto-optimal solutions are known to have at most that value for $\Obj_\dec$.
-Solution-improving search works by---starting from $k=\Obj_\dec(\tau)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{k}, \ove{\Obj_\inc}{b_\inc}\}$
-%\footnote{For some instantiations of $\Min$, the assumptions for enforcing that $\Obj_\inc(\tau)=b_\inc$ might be more complex than $\ove{\Obj_\inc}{b_\inc}$. See \cref{sec:variants} for details.} 
-for decreasing values of $k$ until the solver reports UNSAT, and
-returns $b_\dec$ and a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$.
-At this point we know that there is no solution of $\formula$ that dominates $\tau$, so
-%for which either $\Obj_D(\tau^S) \le b_D = \Obj_D(\tau)$ and $\Obj_U(\tau^S) \le c_U = \Obj_U(\tau)$ with one of these inequalities being strict.
-$\tau$ is  returned as pareto-optimal on Line~\ref{ln:stage3}.
-If one wants to enumerate all
-solutions $\tau^o$ that correspond to the pareto point $(b_\inc,b_\dec)$,
-the $\E$ procedure  repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec} , \ove{\Obj_\inc}{b_\inc}\}$ and blocks each found solution
-until no more solutions are found.
+Solution-improving search works by---starting from $k=\Obj_\dec(\tau)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{k}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $k$ until the solver reports UNSAT, and returns $b_\dec$ and a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$.
+At this point we know that there is no solution of $\formula$ that dominates $\tau$, so $\tau$ is returned as pareto-optimal on Line~\ref{ln:stage3}.
+If one wants to enumerate all solutions $\tau^o$ that correspond to the pareto point $(b_\inc,b_\dec)$, the $\E$ procedure repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec} , \ove{\Obj_\inc}{b_\inc}\}$ and blocks each found solution until no more solutions are found.
 
 \begin{example}\label{ex:main-iteration}
-Invoke \algname{} on the formula $\formula$  and objectives $\Obj_\inc$, $\Obj_\dec$ detailed in \cref{fig:search-trace}. 
-The search starts by invoking a SAT solver on $\formula$. The call returns a feasible solution, say  $\tau^c_1 = \{i_1, i_2, i_3, d_1, d_2, d_3\}$ 
-for which  $\Obj_\inc(\tau^c_1) = \Obj_\dec(\tau^c_1) = 3$. 
-The first iteration of the main search loop starts with a call to $\Min$. This returns $b_\inc = 1$ and (e.g.)\ 
-the solution $\tau^c_3 = \{ i_2, d_1, d_2, d_3, \lnot i_1, \lnot i_3,\}$ 
-for which $\Obj_\inc(\tau^c_3) = 1$ and $\Obj_\dec(\tau^c_3) = 3$. $\algname$ then proceeds to the $\Simpr$ subroutine that initializes a  totalizer $\tot(\Obj_\dec, 3)$.
-The first call to the SAT solver is made with the assumptions $\mathcal{A} = \{ \ove{\Obj_\inc}{1}, \ov{\Obj_\dec}{3} \}$. The result is satisfiable.
-Say that the solver returns the solution
- $\tau^o_1 = \{d_1, d_3, i_2, \lnot i_1, \lnot i_3, \lnot d_2\}$. Then, the solver is invoked with the assumptions 
-$\mathcal{A} =  \{ \ove{\Obj_\inc}{1}, \ov{\Obj_\dec}{2} \}$.
-The result is unsatisfiable, so the procedure returns the pareto-optimal $\tau^o_1$ and $b_\inc = \Obj_\inc(\tau^o_1) = 1$.
-%The iteration ends with the procedure $\E$ enumerating the other pareto-optimal solutions $\tau^o$ for which $\Obj_U(\tau^o) = 1$ and
-%$\Obj_D(\tau^o) = 2$ by iteratively invoking the SAT solver with the assumptions $\{\ove{\Obj_D}{2}, \ove{\Obj_U}{1}\}$ and blocking the solutions that are found. 
-%During this step the pareto-optimal solutions $\{d_1, d_2, u_2, \lnot d_3, \lnot u_1, \lnot u_3\}$ and $\{d_3, d_2, u_2, \lnot d_1, \lnot u_1, \lnot u_3\}$ are enumerated. 
-At the end of the iteration, the SAT solver is queried with the assumption $\{ \ov{\Obj_\dec}{2} \}$.
-As the result is SAT and the solver returns, e.g., the solution $\tau^c_4 = \{ d_2, i_1, i_2, i_3, \lnot d_1, \lnot d_2 \}$,
-the algorithm starts a new iteration.
+  Invoke \algname{} on the formula $\formula$ and objectives $\Obj_\inc$, $\Obj_\dec$ detailed in \cref{fig:search-trace}. 
+  The search starts by invoking a SAT solver on $\formula$.
+  The call returns a feasible solution, say $\tau^c_1 = \{i_1, i_2, i_3, d_1, d_2, d_3\}$ for which  $\Obj_\inc(\tau^c_1) = \Obj_\dec(\tau^c_1) = 3$. 
+  The first iteration of the main search loop starts with a call to $\Min$.
+  This returns $b_\inc = 1$ and (e.g.)\ the solution $\tau^c_3 = \{ i_2, d_1, d_2, d_3, \lnot i_1, \lnot i_3,\}$ for which $\Obj_\inc(\tau^c_3) = 1$ and $\Obj_\dec(\tau^c_3) = 3$. $\algname$ then proceeds to the $\Simpr$ subroutine that initializes a  totalizer $\tot(\Obj_\dec, 3)$.
+  The first call to the SAT solver is made with the assumptions $\mathcal{A} = \{ \ove{\Obj_\inc}{1}, \ov{\Obj_\dec}{3} \}$.
+  The result is satisfiable;
+  say that the solver returns the solution $\tau^o_1 = \{d_1, d_3, i_2, \lnot i_1, \lnot i_3, \lnot d_2\}$.
+  Then, the solver is invoked with the assumptions $\mathcal{A} =  \{ \ove{\Obj_\inc}{1}, \ov{\Obj_\dec}{2} \}$.
+  The result is unsatisfiable, so the procedure returns the pareto-optimal $\tau^o_1$ and $b_\inc = \Obj_\inc(\tau^o_1) = 1$.
+  %The iteration ends with the procedure $\E$ enumerating the other pareto-optimal solutions $\tau^o$ for which $\Obj_U(\tau^o) = 1$ and
+  %$\Obj_D(\tau^o) = 2$ by iteratively invoking the SAT solver with the assumptions $\{\ove{\Obj_D}{2}, \ove{\Obj_U}{1}\}$ and blocking the solutions that are found. 
+  %During this step the pareto-optimal solutions $\{d_1, d_2, u_2, \lnot d_3, \lnot u_1, \lnot u_3\}$ and $\{d_3, d_2, u_2, \lnot d_1, \lnot u_1, \lnot u_3\}$ are enumerated. 
+  At the end of the iteration, the SAT solver is queried with the assumption $\{ \ov{\Obj_\dec}{2} \}$.
+  As the result is SAT and the solver returns, e.g., the solution $\tau^c_4 = \{ d_2, i_1, i_2, i_3, \lnot d_1, \lnot d_2 \}$,
+  the algorithm starts a new iteration.
 
-The next iteration of \algname{} proceeds similarly to the first. The procedure \Min{} returns $b_\inc = 2$ and, e.g.,
-the solution $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2\}$.
-\Simpr{} cannot improve on the second objective, so the solution $\tau^o_2$ is proven to be pareto-optimal.
-%The procedure $\E$ then enumerates 
-%the other pareto-optimal solutions $\tau^o$ that obtain $\Obj_U(\tau^o) = 2$, $\Obj_D(\tau^o) = 1$. These are $\{d_2, u_1, u_2, \lnot d_1, \lnot d_3, \lnot u_3\}$ and $\{d_2, u_2, u_3, \lnot d_1, \lnot d_3, \lnot u_1\}$. 
-At the end of the iteration, on Line~\ref{l:endL} the SAT solver is invoked with the assumption $\{\ov{\Obj_\dec}{1}\}$. The solver returns unsatisfiable,
-terminating the algorithm. 
+  The next iteration of \algname{} proceeds similarly to the first.
+  The procedure \Min{} returns $b_\inc = 2$ and, e.g., the solution $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2\}$.
+  \Simpr{} cannot improve on the second objective, so the solution $\tau^o_2$ is proven to be pareto-optimal.
+  %The procedure $\E$ then enumerates 
+  %the other pareto-optimal solutions $\tau^o$ that obtain $\Obj_U(\tau^o) = 2$, $\Obj_D(\tau^o) = 1$. These are $\{d_2, u_1, u_2, \lnot d_1, \lnot d_3, \lnot u_3\}$ and $\{d_2, u_2, u_3, \lnot d_1, \lnot d_3, \lnot u_1\}$. 
+  At the end of the iteration, on Line~\ref{l:endL} the SAT solver is invoked with the assumption $\{\ov{\Obj_\dec}{1}\}$.
+  The solver returns unsatisfiable, terminating the algorithm. 
 \end{example}
 
 \section{Approaches to Minimizing the Increasing Objective\label{sec:variants}}
@@ -109,38 +91,38 @@ We consider five different instantiations of the $\Min$ procedure for minimizing
 \subsection{\satunsat{}\label{sec:sat-unsat}}
 
 \satunsat{} is a variant of solution-improving search that is also used for minimizing $\Obj_\dec$. 
-The procedure gets as input the current bound $b_\dec$ on $\Obj_\dec$ and 
-the value $\Obj_\inc(\tau)$ obtained by the solution $\tau$ computed during the last SAT solver call. 
+The procedure gets as input the current bound $b_\dec$ on $\Obj_\dec$ and the value $\Obj_\inc(\tau)$ obtained by the solution $\tau$ computed during the last SAT solver call. 
 Since the last call is made on Line~\ref{l:endL} with the assumption $\ov{\Obj_\dec}{b_\dec}$, the solution $\tau$ will have $\Obj_\dec(\tau) < b_\dec$. 
 
-As such, the value  $\Obj_\inc(\tau)$ is an upper bound for the smallest value of $\Obj_\inc$ obtained by any solution $\tau'$ having $\Obj_\dec(\tau') < b_\dec$.
+As such, the value $\Obj_\inc(\tau)$ is an upper bound for the smallest value of $\Obj_\inc$ obtained by any solution $\tau'$ having $\Obj_\dec(\tau') < b_\dec$.
 The procedure \satunsat{} maintains the totalizer $\tot(\Obj_\inc)$ and begins by checking, if the current upper bound on that totalizer is at least $\Obj_\inc(\tau)$, extending it if not. 
 Then the SAT solver is iteratively invoked with the assumptions $\{\ov{\Obj_\dec}{b_\dec}, \ov{\Obj_\inc}{k}\}$ for decreasing values of $k$ starting from $\Obj_\inc(\tau)$.
 The procedure terminates when the result is UNSAT, after which the value of $k$ and the solution obtained during the final satisfiable call are returned as $b_\inc$ and $\tau$.  
 
 \begin{example}\label{ex:satunsat}
-Consider the invocation of $\algname$ detailed in \cref{ex:main-iteration}. 
-We detail the invocation of $\Min$  instantiated as $\satunsat$. 
-The full progression of the search of $\algname$ with $\Min$ instantiated as $\satunsat$ is illustrated in \cref{fig:search-trace}.
-In the first iteration, $\satunsat$ is invoked with $b_\dec =\infty$ and $\Obj_\inc(\tau) = 3$.
-At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by adding $\tot(\Obj_\inc, 3)$ to the solver.
-The first call to the SAT solver is made with the assumptions $\{\ov{\Obj_\inc}{3}\}$, since $b_\dec  = \infty$ and therefore no assumption constraining $\Obj_\dec$ is needed.
-The result is satisfiable, the solver returns, e.g.,  the solution $\tau^c_2 = \{d_1, d_2, d_3, i_1, i_2, \lnot i_3\}$. 
-In the next iteration, the set of assumptions is $\{\ov{\Obj_\inc}{2}\}$. The result is again satisfiable, returning, e.g., the solution
-$\tau^c_3 = \{ d_1,  d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$. The SAT solver is then invoked with the assumptions  $\{\ov{\Obj_\inc}{1}\}$. Now the result is UNSAT so 
-the procedure terminates and returns $\tau^c_3$ and $b_\inc = 1$. 
-% At the end of the iteration of $\algname$, the call on Line~\ref{l:endL} to the SAT solver is invoked with the assumption $\{\ov{\Obj_D}{2}\}$ and returns for example the 
-% solution $\tau = \{ d_2, u_1, u_2, \lnot d_1, \lnot d_3, \lnot u_3\}$.
-In the second (and last) iteration of $\algname$, $\satunsat$ is invoked with $b_\dec = 2$ and $\Obj_\inc(\tau) = 3$.
-The first call to the SAT solver is made with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{3}\}$.
-The result is SAT and the solver returns, e.g., the solution $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2 \}$.
-\satunsat{} invokes the SAT solver again with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{2} \}$.
-The result is UNSAT, so the procedure returns $b_\inc = 2$ and $\tau^o_2$.
+  Consider the invocation of $\algname$ detailed in \cref{ex:main-iteration}. 
+  We detail the invocation of $\Min$ instantiated as $\satunsat$. 
+  The full progression of the search of $\algname$ with $\Min$ instantiated as $\satunsat$ is illustrated in \cref{fig:search-trace}.
+  In the first iteration, $\satunsat$ is invoked with $b_\dec =\infty$ and $\Obj_\inc(\tau) = 3$.
+  At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by adding $\tot(\Obj_\inc, 3)$ to the solver.
+  The first call to the SAT solver is made with the assumptions $\{\ov{\Obj_\inc}{3}\}$, since $b_\dec  = \infty$ and therefore no assumption constraining $\Obj_\dec$ is needed.
+  The result is satisfiable, the solver returns, e.g., the solution $\tau^c_2 = \{d_1, d_2, d_3, i_1, i_2, \lnot i_3\}$. 
+  In the next iteration, the set of assumptions is $\{\ov{\Obj_\inc}{2}\}$.
+  The result is again satisfiable, returning, e.g., the solution $\tau^c_3 = \{ d_1,  d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$.
+  The SAT solver is then invoked with the assumptions  $\{\ov{\Obj_\inc}{1}\}$.
+  Now the result is UNSAT so the procedure terminates and returns $\tau^c_3$ and $b_\inc = 1$. 
+  % At the end of the iteration of $\algname$, the call on Line~\ref{l:endL} to the SAT solver is invoked with the assumption $\{\ov{\Obj_D}{2}\}$ and returns for example the 
+  % solution $\tau = \{ d_2, u_1, u_2, \lnot d_1, \lnot d_3, \lnot u_3\}$.
+  In the second (and last) iteration of $\algname$, $\satunsat$ is invoked with $b_\dec = 2$ and $\Obj_\inc(\tau) = 3$.
+  The first call to the SAT solver is made with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{3}\}$.
+  The result is SAT and the solver returns, e.g., the solution $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2 \}$.
+  \satunsat{} invokes the SAT solver again with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{2} \}$.
+  The result is UNSAT, so the procedure returns $b_\inc = 2$ and $\tau^o_2$.
 \end{example}
 
 \subsection{\unsatsat{}\label{sec:unsat-sat}}
 
-\unsatsat{}takes a similar approach to \satunsat{} search but searches for the smallest value by lower-bounding instead of upper-bounding.
+\unsatsat{} takes a similar approach to \satunsat{} search but searches for the smallest value by lower-bounding instead of upper-bounding.
 It also maintains a totalizer $\tot(\Obj_\inc)$.
 For finding the next solution, the bound $k$ is set to the last known value of $b_\inc$ and the solver is then iteratively queried for a new solution under the assumptions $\{ \ove{\Obj_\inc}{k+1}, \ov{\Obj_\dec}{b_\dec} \}$.
 If the solver returns unsatisfiable, the bound $k$ is increased by $1$ and the solver is queried again.
@@ -149,73 +131,64 @@ Since the bound of this lower bounding search procedure will only monotonically 
 This way, the SAT solver is always loaded with a minimum number of clauses.
 
 \begin{example}
-Consider the invocation of $\algname$ detailed in \cref{ex:main-iteration}. 
-Here we detail the invocation of $\Min$ instantiated as $\unsatsat$.
-In the first iteration, $\unsatsat$ is invoked with $b_\dec =\infty$ and $\Obj_\inc(\tau) = 3$.
-At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by initializing $\tot(\Obj_\inc, 1)$ and invokes the SAT solver with the assumptions $\{\ove{\Obj_\inc}{0}\}$.
-The result is UNSAT, so the totalizer is extended to $\tot(\Obj_\inc, 2)$ and the SAT solver invoked with the assumptions $\{ \ove{\Obj_\inc}{1}\}$. The result is SAT and the procedure returns 
-$\tau^c_3 = \{ d_1,  d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$ and $b_\inc = 1$. 
-In the second iteration of $\algname$, $\unsatsat$ is invoked with $b_\dec = 2$ and $\Obj_\inc(\tau) = 3$.
-The solver is invoked with the assumptions $\ove{\Obj_\inc}{2}, \ov{\Obj_\dec}{2}\}$, starting from the previous bound $b_\inc$.
-The result is SAT, and the solver returns (e.g.)\ $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2\}$
-and $b_\inc = 2$.
+  Consider the invocation of $\algname$ detailed in \cref{ex:main-iteration}. 
+  Here we detail the invocation of $\Min$ instantiated as $\unsatsat$.
+  In the first iteration, $\unsatsat$ is invoked with $b_\dec =\infty$ and $\Obj_\inc(\tau) = 3$.
+  At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by initializing $\tot(\Obj_\inc, 1)$ and invokes the SAT solver with the assumptions $\{\ove{\Obj_\inc}{0}\}$.
+  The result is UNSAT, so the totalizer is extended to $\tot(\Obj_\inc, 2)$ and the SAT solver invoked with the assumptions $\{ \ove{\Obj_\inc}{1}\}$.
+  The result is SAT and the procedure returns $\tau^c_3 = \{ d_1,  d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$ and $b_\inc = 1$. 
+  In the second iteration of $\algname$, $\unsatsat$ is invoked with $b_\dec = 2$ and $\Obj_\inc(\tau) = 3$.
+  The solver is invoked with the assumptions $\ove{\Obj_\inc}{2}, \ov{\Obj_\dec}{2}\}$, starting from the previous bound $b_\inc$.
+  The result is SAT, and the solver returns (e.g.)\ $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2\}$ and $b_\inc = 2$.
 \end{example}
 
 \subsection{\msu{}\label{sec:msu3}}
 
-\msu{} implements a core-guided approach~\autocite{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09}, 
-maintaining a set $\Act \subset \Obj_\inc$ of \emph{active} objective literals and a totalizer $\tot(\Act)$ built over them. 
-Initially, $\Act = \emptyset$, i.e., all literals of $\Obj_\inc$ are inactive. Informally speaking, an inactive inactive literal $l \in \Obj_\inc \setminus \Act$ is assumed to the value $0$ in every invocation of the SAT 
-solver until it is returned as part of a core. %, i.e.\ a subset of assumptions required to explain unsatisfiability, 
-More precisely, on input $b_\dec$ and $\Obj_\inc(\tau)$, the algorithm starts from the value $b_\inc$ 
-computed in the previous iteration and invokes the SAT solver with the assumptions $\mathcal{A} = \{\ove{\Act}{b_\inc}, \ov{\Obj_\dec}{b_\dec}  \} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act\}$. If the result is 
-unsatisfiable, the SAT solver returns a core $\mathcal{A}_s \subset \{\lnot l \mid l \in \mathcal{A}\}$. Next, the bound $b_\inc$ is increased by one, the inactive 
-literals in $\mathcal{A}_s$ are added to $\Act$ and the totalizer $\tot(\Act)$ is extended. The procedure continues until the 
-SAT solver returns satisfiable, and a solution $\tau$ which sets $\Obj_\inc(\tau) \leq b_\inc$ and $\Obj_\dec(\tau) < b_\dec$. At that point the value $b_\inc$ is the minimum value of $\Obj_\inc(\tau)$ subject to $\Obj_\dec(\tau) < b_\dec$. This is because
-the value of $b_\inc$ is increased monotonically, and the solver returned unsatisfiable in the second-to-last iteration. 
+\msu{} implements a core-guided approach~\autocite{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09}, maintaining a set $\Act \subset \Obj_\inc$ of \emph{active} objective literals and a totalizer $\tot(\Act)$ built over them. 
+Initially, $\Act = \emptyset$, i.e., all literals of $\Obj_\inc$ are inactive.
+Informally speaking, an inactive literal $l \in \Obj_\inc \setminus \Act$ is assumed to the value $0$ in every invocation of the SAT solver until it is returned as part of a core.
+More precisely, on input $b_\dec$ and $\Obj_\inc(\tau)$, the algorithm starts from the value $b_\inc$ computed in the previous iteration and invokes the SAT solver with the assumptions $\mathcal{A} = \{\ove{\Act}{b_\inc}, \ov{\Obj_\dec}{b_\dec}  \} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act\}$.
+If the result is unsatisfiable, the SAT solver returns a core $\mathcal{A}_s \subset \{\lnot l \mid l \in \mathcal{A}\}$.
+Next, the bound $b_\inc$ is increased by one, the inactive literals in $\mathcal{A}_s$ are added to $\Act$ and the totalizer $\tot(\Act)$ is extended.
+The procedure continues until the SAT solver returns satisfiable, and a solution $\tau$ which sets $\Obj_\inc(\tau) \leq b_\inc$ and $\Obj_\dec(\tau) < b_\dec$.
+At that point the value $b_\inc$ is the minimum value of $\Obj_\inc(\tau)$ subject to $\Obj_\dec(\tau) < b_\dec$.
+This is because the value of $b_\inc$ is increased monotonically, and the solver returned unsatisfiable in the second-to-last iteration. 
 
-For enforcing $\ove{\Obj_\inc}{k}$ when employing $\msu$,
-consider an invocation of $\msu(b_\dec , \Obj_\inc(\tau))$ made during $\algname$ and assume it returns the tuple $(b_\inc, \tau)$. 
+For enforcing $\ove{\Obj_\inc}{k}$ when employing $\msu$, consider an invocation of $\msu(b_\dec , \Obj_\inc(\tau))$ made during $\algname$ and assume it returns the tuple $(b_\inc, \tau)$. 
 In the next call to $\Simpr$, the number of literals in $\Obj_\inc$ set to $1$ needs to be restricted to at most $b_{\inc}$. 
-Since the totalizer maintained by $\msu$ only has $\Act \subset \Obj_{\inc}$ 
-as inputs, we do not have access to an output literal of form  $\ove{\Obj_\inc}{b_{\inc}}$. Instead, we use  the assumptions 
-$\{\ove{\Act}{b_{\inc}}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$, i.e., restrict the number of literals in $\Act$ set to $1$ to $b_{\inc}$ and assume the 
-value of each inactive literal $l \in \Obj_{\inc} \setminus \Act$ to $0$. 
+Since the totalizer maintained by $\msu$ only has $\Act \subset \Obj_{\inc}$ as inputs, we do not have access to an output literal of form  $\ove{\Obj_\inc}{b_{\inc}}$.
+Instead, we use  the assumptions $\{\ove{\Act}{b_{\inc}}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$, i.e., restrict the number of literals in $\Act$ set to $1$ to $b_{\inc}$ and assume the value of each inactive literal $l \in \Obj_{\inc} \setminus \Act$ to $0$. 
 The following observation proves that doing so can be done without removing any pareto-optimal solutions from the search. 
 \begin{observation}\label{obs:sound}
-Let $\tau$ be a pareto-optimal solution of $\formula$ for which $\Obj_{\inc}(\tau) = b_{\inc}$.
-Then $\tau(l) = 0$ for all $l \in \Obj_{\inc} \setminus \Act$. 
+  Let $\tau$ be a pareto-optimal solution of $\formula$ for which $\Obj_{\inc}(\tau) = b_{\inc}$.
+  Then $\tau(l) = 0$ for all $l \in \Obj_{\inc} \setminus \Act$. 
 \end{observation}
 \begin{proof}(Sketch)
-Since, $b_{\inc}$ was returned by $\msu$, we know that there exists a pareto-optimal $\tau^o$ for which $\Obj_{\inc}(\tau^o) = b_{\inc}$ and $\Obj_{\dec}(\tau^o) < b_{\dec}$.
-By the properties of cores, we also know that \emph{any} solution $\tau^s$ of $\formula$ for which $\Obj_{\dec}(\tau^s) < b_\dec$ 
-assigns at least $b_{\inc}$ literals in $\Act$ to $1$. Thus, any $\tau^n$ that assigns $\tau^n(l) = 1$ for a inactive literal $l \in  \Obj_{\inc} \setminus \Act$ will have 
-$\Obj_{\inc}(\tau^n) > b_{\inc}$.
+  Since, $b_{\inc}$ was returned by $\msu$, we know that there exists a pareto-optimal $\tau^o$ for which $\Obj_{\inc}(\tau^o) = b_{\inc}$ and $\Obj_{\dec}(\tau^o) < b_{\dec}$.
+  By the properties of cores, we also know that \emph{any} solution $\tau^s$ of $\formula$ for which $\Obj_{\dec}(\tau^s) < b_\dec$ assigns at least $b_{\inc}$ literals in $\Act$ to $1$.
+  Thus, any $\tau^n$ that assigns $\tau^n(l) = 1$ for a inactive literal $l \in  \Obj_{\inc} \setminus \Act$ will have $\Obj_{\inc}(\tau^n) > b_{\inc}$.
 \end{proof}
 
 %Note that whenever a bound on $\Obj_\inc$ is enforced in the other subroutines of \algname{} by an assumption of type $\ove{\Obj_\inc}{k}$, for \msu{}, this assumption needs to be replaced by $\{\ove{\Act}{k}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$.
 
 \begin{example}\label{ex:msu}
-Consider the invocation of $\algname$ detailed in \cref{ex:main-iteration}. 
-Here we detail the invocations of $\Min$ instantiated as $\msu$. 
-In the first iteration of $\algname$, $\msu$ is invoked with $b_\dec =\infty$ and $\Obj_\inc(\tau) = 3$.
-Initially, the set $\Act = \emptyset$ of active literals is empty, so the first call to the SAT solver is made with the assumptions 
-$\mathcal{A} =  \{ \lnot i_1, \lnot i_2, \lnot i_3\}$. The result is unsatisfiable and the solver returns, e.g., $\mathcal{A}_s = \{i_1, i_2\}$. 
-The literals in $\mathcal{A}_s$ are marked as active and the totalizer $\tot(\Act)$ is initialized.
-The SAT solver is then invoked with the assumptions $\mathcal{A} = \{ \lnot i_3, \ove{\Act}{1}\}$. 
-The result is satisfiable so the solver returns (e.g.)\ the solution $\tau^c_3 = \{ d_1,  d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$ and $b_\inc = 1$.
-In the next iteration of $\algname$, $\msu$ is invoked with $b_\dec = 2$ and $\Obj_\inc(\tau) = 2$.
-The set $\Act = \{i_1, i_2\}$ is kept from the previous iterations, so the first call to the SAT solver is made with the assumptions  $\mathcal{A} = \{ \lnot i_3, \ove{\Act}{1},  \ov{\Obj_\dec}{2} \}$.
-The result is unsatisfiable. If $i_3$  is a part of the assumptions $\mathcal{A}_s$ returned by the solver, it is marked as active and the totalizer $\tot(\Act)$ extended accordingly. 
-Next, the SAT solver is invoked with the assumptions $\mathcal{A} = \{\ove{\Act}{2},  \ov{\Obj_\dec}{2} \}$. The call returns SAT, obtaining the solution $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2\}$
-and $b_\inc = 2$.
+  Consider the invocation of $\algname$ detailed in \cref{ex:main-iteration}. 
+  Here we detail the invocations of $\Min$ instantiated as $\msu$. 
+  In the first iteration of $\algname$, $\msu$ is invoked with $b_\dec =\infty$ and $\Obj_\inc(\tau) = 3$.
+  Initially, the set $\Act = \emptyset$ of active literals is empty, so the first call to the SAT solver is made with the assumptions $\mathcal{A} =  \{ \lnot i_1, \lnot i_2, \lnot i_3\}$.
+  The result is unsatisfiable and the solver returns, e.g., $\mathcal{A}_s = \{i_1, i_2\}$. 
+  The literals in $\mathcal{A}_s$ are marked as active and the totalizer $\tot(\Act)$ is initialized.
+  The SAT solver is then invoked with the assumptions $\mathcal{A} = \{ \lnot i_3, \ove{\Act}{1}\}$. 
+  The result is satisfiable so the solver returns (e.g.)\ the solution $\tau^c_3 = \{ d_1,  d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$ and $b_\inc = 1$.
+  In the next iteration of $\algname$, $\msu$ is invoked with $b_\dec = 2$ and $\Obj_\inc(\tau) = 2$.
+  The set $\Act = \{i_1, i_2\}$ is kept from the previous iterations, so the first call to the SAT solver is made with the assumptions  $\mathcal{A} = \{ \lnot i_3, \ove{\Act}{1},  \ov{\Obj_\dec}{2} \}$.
+  The result is unsatisfiable. If $i_3$  is a part of the assumptions $\mathcal{A}_s$ returned by the solver, it is marked as active and the totalizer $\tot(\Act)$ extended accordingly. 
+  Next, the SAT solver is invoked with the assumptions $\mathcal{A} = \{\ove{\Act}{2},  \ov{\Obj_\dec}{2} \}$. The call returns SAT, obtaining the solution $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2\}$ and $b_\inc = 2$.
 \end{example}
 
 \subsection{\oll{}\label{sec:oll}}
 
-\oll{}, as another
-core-guided procedure (originally proposed in the context of ASP~\autocite{DBLP:conf/iclp/AndresKMS12} and also successfully applied in MaxSAT~\autocite{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}),
-handles the cardinality constraint over the literals in $\Obj_\inc$ differently to \msu{}.
+\oll{}, as another core-guided procedure (originally proposed in the context of ASP~\autocite{DBLP:conf/iclp/AndresKMS12} and also successfully applied in MaxSAT~\autocite{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}), handles the cardinality constraint over the literals in $\Obj_\inc$ differently to \msu{}.
 Instead of a single totalizer over all literals in $\Act$, a separate totalizer is built for every core returned after the unsatisfiable SAT solver calls.
 In each iteration, the assumptions given to the SAT solver consist of (i)~the inactive literals of $\Obj_\inc$, (ii)~the outputs of previously built totalizers corresponding to the lowest number of input literals that should be assigned to $1$ in any possible satisfying assignment and (iii)~the bound $\ov{\Obj_\dec}{b_\dec}$.
 The procedure terminates when the SAT solver returns a solution $\tau$.
@@ -225,59 +198,58 @@ Similarly to $\msu$, the assumptions for enforcing a bound on $\Obj_\inc$ in the
 \subsection{\msh{}\label{sec:hybrid}}
 
 \msh{}---as a final variant proposed in this work---is a hybrid between $\msu$ and $\satunsat$, with the following intuition:
-if \msu{}  reaches the stage where all literals of the objective are active, its search will become equivalent to \unsatsat{}. %, meaning it is a lower bounding search where the bound on the totalizer $\tot(\Obj_\inc)$ is increased by one every iteration until the SAT query is satisfiable.
+if \msu{}  reaches the stage where all literals of the objective are active, its search will become equivalent to \unsatsat{}.
+%, meaning it is a lower bounding search where the bound on the totalizer $\tot(\Obj_\inc)$ is increased by one every iteration until the SAT query is satisfiable.
 However, \satunsat{} search may be a significantly better approach compared to \unsatsat{}.
 If this is the case, \msu{} might have an advantage over \satunsat{} as long as not all literals are active, but as soon as all literals are active, it looses its advantage.
 Furthermore, if a problem instance has literals in $\Obj_\inc$ that are not constrained by $\formula$, these literals will never appear in any core making \msu{} behave like \unsatsat{} even before the totalizer is fully built.
 
-With this intuition, we propose
-\msh{} as a hybrid variant that starts with \msu{} search and switches over to \satunsat{} as soon as a certain percentage of the literals in $\Obj_\inc$ have been added to the totalizer $\tot(\Act)$.
+With this intuition, we propose \msh{} as a hybrid variant that starts with \msu{} search and switches over to \satunsat{} as soon as a certain percentage of the literals in $\Obj_\inc$ have been added to the totalizer $\tot(\Act)$.
 Before switching over to \satunsat{}, the remaining literals are added to the totalizer to build $\tot(\Obj_\inc)$, which is needed for \satunsat{}.
 With this, the advantages of both \msu{} and \satunsat{} can in the best case be combined.
 
 \begin{example}
-Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}.
-We detail the invocations of \Min{} instantiated as \msh{}.
-Since \msh{} starts out as \msu{}, the first invocation starts by following the description in \cref{ex:msu}.
-Assume \msh{} is configured to switch as soon as 50\% of the literals in $\Obj_\inc$ are active.
-This is reached when the core $\mathcal{A}_s=\{i_1,i_2\}$ is returned and $i_1$, $i_2$ become active.
-At this moment, \msh{} stops the \msu{} search procedure, finishes building $\tot(\Obj_\inc)$ by adding $i_3$ to $\tot(\Act)$, and starts \satunsat{} search as in the first iteration detailed in \cref{ex:satunsat}.
-Since the second iteration is after the switch to \satunsat{}, it will be identical to the second iteration in \cref{ex:satunsat}.
+  Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}.
+  We detail the invocations of \Min{} instantiated as \msh{}.
+  Since \msh{} starts out as \msu{}, the first invocation starts by following the description in \cref{ex:msu}.
+  Assume \msh{} is configured to switch as soon as 50\% of the literals in $\Obj_\inc$ are active.
+  This is reached when the core $\mathcal{A}_s=\{i_1,i_2\}$ is returned and $i_1$, $i_2$ become active.
+  At this moment, \msh{} stops the \msu{} search procedure, finishes building $\tot(\Obj_\inc)$ by adding $i_3$ to $\tot(\Act)$, and starts \satunsat{} search as in the first iteration detailed in \cref{ex:satunsat}.
+  Since the second iteration is after the switch to \satunsat{}, it will be identical to the second iteration in \cref{ex:satunsat}.
 \end{example}
 
 \section{Refinements\label{sec:refinements}}
 
 \subsection{Lazily Building $\tot(\Obj_\dec)$}
 
-Assume \algname{} is invoked on a formula $\formula$ and a pair of overlapping objectives $\Obj_\inc$ and $\Obj_\dec$ for which 
-$\Obj_\inc \cap \Obj_\dec \neq \emptyset$ with $\Min$ instantiated as $\msu$ or $\oll$. Let $\Act$ be the set of active literals of $\Obj_\inc$ as maintained by 
-$\Min$. Lazy building of $\tot(\Obj_\dec)$ refers to only having $(\Obj_\dec \setminus \Obj_\inc) \cup  (\Act \cap \Obj_\dec)$ as input to the totalizer (incrementally extending the totalizer as the set $\Act$ grows),  
-and assuming the value of each literal $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$ to $0$ in each SAT  call made during invocations of $\Simpr$.
-The soundness of doing so follows by an argument very similar to the one we made in \cref{obs:sound}. 
+Assume \algname{} is invoked on a formula $\formula$ and a pair of overlapping objectives $\Obj_\inc$ and $\Obj_\dec$ for which $\Obj_\inc \cap \Obj_\dec \neq \emptyset$ with $\Min$ instantiated as $\msu$ or $\oll$. Let $\Act$ be the set of active literals of $\Obj_\inc$ as maintained by $\Min$.
+Lazy building of $\tot(\Obj_\dec)$ refers to only having $(\Obj_\dec \setminus \Obj_\inc) \cup  (\Act \cap \Obj_\dec)$ as input to the totalizer (incrementally extending the totalizer as the set $\Act$ grows), and assuming the value of each literal $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$ to $0$ in each SAT call made during invocations of $\Simpr$.
+The soundness of doing so follows by an argument very similar to the one we made in \cref{obs:sound}.
+\TODO{elaborate}
 %Essentially, the properties of cores imply that the pareto optimal solutions $\tau$ of $\formula$ for which $\Obj_{\inc}(\tau) = b_\inc$ assign $\tau(l) = 0$ for all  $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$ to $1$. 
 
-Lazy building of $\tot(\Obj_\dec)$ requires a minor adaption to the termination criterion of \cref{alg:base-algorithm}. More specifically, as the totalizer maintained by $\Simpr$ might not have all literals of $\Obj_\dec$ as inputs, the algorithm does not have a (straight-forward) way of checking if there exists a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$. However, the 
-lack of further pareto-optimal  solutions is instead detected in the next call to $\Min$ by the SAT solver returning an empty core, or more precisely, a subset of assumptions that doesn't contain any inactive literals nor outputs of $\tot(\Obj_\inc)$.
+Lazy building of $\tot(\Obj_\dec)$ requires a minor adaption to the termination criterion of \cref{alg:base-algorithm}.
+More specifically, as the totalizer maintained by $\Simpr$ might not have all literals of $\Obj_\dec$ as inputs, the algorithm does not have a (straight-forward) way of checking if there exists a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$.
+However, the lack of further pareto-optimal solutions is instead detected in the next call to $\Min$ by the SAT solver returning an empty core, or more precisely, a subset of assumptions that doesn't contain any inactive literals nor outputs of $\tot(\Obj_\inc)$.
 
 \subsection{Blocking of Dominated Solutions}
 
 Every time in the search procedure that a candidate solution $\tau_c$ with objective values $b_\inc = \Obj_\inc(\tau_c)$ and $b_\dec = \Obj_\dec(\tau_c)$ is found, the definition of a pareto-optimal point leads to the conclusion that all solutions $\tau_d$ with $\Obj_\inc(\tau_d) > b_\inc$ and $\Obj_\dec(\tau_d) > b_\dec$ cannot be pareto-optimal.
 These points can all be blocked with the clause $\{ \ove{\Obj_\inc}{b_\inc}, \ove{\Obj_\dec}{b_\dec} \}$.
+\TODO{elaborate}
 
 \subsection{Domain-Specific Solution Blocking}
 
 If multiple representatives of the same pareto point are of interest, the procedure $\E$ needs to block all obtained solutions. 
-While this can be done in a straight-forward manner on the CNF-level, we will in later sections give examples of how domain-specific knowledge can be used in order to derive stronger clauses 
-that block not only a specific solution obtained, but also other, symmetric solutions.
+While this can be done in a straight-forward manner on the CNF-level, we will in later sections give examples of how domain-specific knowledge can be used in order to derive stronger clauses that block not only a specific solution obtained, but also other, symmetric solutions.
 
 \subsection{Refinements to Core-Guided Variants}
 
 Our implementation of the variants $\algname$ with $\msu$ or $\oll$ make use of refinements commonly used in core-guided MaxSAT solving.
-More specifically, we employ core minimization~\autocite{DBLP:journals/jsat/IgnatievMM19} (either exact or heuristic)
-and core-exhaustion~\autocite{DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/AnsoteguiBGL13}.
+More specifically, we employ core minimization~\autocite{DBLP:journals/jsat/IgnatievMM19} (either exact or heuristic) and core-exhaustion~\autocite{DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/AnsoteguiBGL13}.
 %(We also considered and implemented a disjoint core phase~\cite{DBLP:conf/cp/DaviesB11} but did not observe noticeable impact on runtime performance in practice.)
-Given a subset $\mathcal{A}_s$ of assumptions returned by the SAT solver, heuristic core minimization refers to reinvoking the SAT solver with $\mathcal{A}_s$ as the assumptions hoping that the solver 
-returns a smaller set of assumptions. Exact core minimization refers to iteratively finding a minimal unsatisfiable subset by attempting to remove each assumption separately.
+Given a subset $\mathcal{A}_s$ of assumptions returned by the SAT solver, heuristic core minimization refers to reinvoking the SAT solver with $\mathcal{A}_s$ as the assumptions hoping that the solver returns a smaller set of assumptions.
+Exact core minimization refers to iteratively finding a minimal unsatisfiable subset by attempting to remove each assumption separately.
 Core exhaustion is an OLL specific technique that seeks to improve the lower bound of each totalizer being added.
 %A disjoint core phase 
 %refers to iteratively invoking the SAT solver in order to extract several disjoint sets of objective literals to add to the totalizer (when using $\msu$) or build new totalizers over (when using $\oll$).
