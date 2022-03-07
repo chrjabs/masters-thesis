@@ -37,14 +37,14 @@
 
 %% Reference style: select one 
 %% for APA = Harvard style = authoryear -> (Einstein, 1905) use:
-\usepackage[style=authoryear,bibstyle=authoryear,backend=biber,natbib=true,maxnames=99,maxcitenames=2,uniquelist=minyear,giveninits=true,uniquename=mininit]{biblatex}
+\usepackage[style=authoryear,bibstyle=authoryear,backend=biber,natbib=true,maxnames=99,maxcitenames=2,uniquelist=minyear,giveninits=true,uniquename=mininit,safeinputenc]{biblatex}
 %% for numeric = Vancouver style -> [1] use:
 %\usepackage[style=numeric,bibstyle=numeric,backend=biber,natbib=true,maxbibnames=99,giveninits=true,uniquename=init]{biblatex}
 %% for alpahbetic -> [Ein05] use:
 %\usepackage[style=alphabetic,bibstyle=alphabetic,backend=biber,natbib=true,maxbibnames=99,giveninits=true,uniquename=init]{biblatex}
 %
 
-\addbibresource{bibliography.bib}
+\addbibresource{thesis.bib}
 % in case you want the final delimiter between authors & -> (Einstein & Zweistein, 1905) 
 % \renewcommand{\finalnamedelim}{ \& }
 % List the authors in the Bibilipgraphy as Lastname F, Familyname G,
@@ -57,7 +57,8 @@
 %% In some systems, the figure packages may not be happy together.
 %% Choose the ones you need.
 
-%\usepackage[utf8]{inputenc} % For UTF8 support, in some systems. Use UTF8 when saving your file.
+%\usepackage[utf8]{inputenc}  % For UTF8 support, in some systems. Use UTF8 when saving your file.
+
 
 \usepackage{lmodern}         % Font package, again in some systems.
 \usepackage{textcomp}        % Package for special symbols
@@ -69,6 +70,31 @@
 \usepackage{tikz}            % For making vector graphics (hard to learn but powerful)
 %\usepackage{wrapfig}        % For nice text-wrapping figures (use at own discretion)
 \usepackage{amsmath, amssymb} % For better math
+\usepackage{algorithm}       % For pseudocode
+\usepackage[noend]{algorithmic} % For pseudocode
+\usepackage{booktabs}        % For nicer tables
+\usepackage{cleveref}        % For easier referencing
+
+\usepackage{amsthm}          % Theorems
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{observation}[theorem]{Observation}
+\theoremstyle{definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{note}[theorem]{Note}
+\newtheorem*{note*}{Note}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem*{remark*}{Remark}
+
+
+% TODO Macro
+\newcommand{\TODO}[1]{\textcolor{red}{#1}}
 
 \singlespacing               %line spacing options; normally use single
 
@@ -87,16 +113,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set up personal information for the title page and the abstract form.
 %% Replace parameters with your information.
-\title{Title}
+\title{MaxSAT-Based Bi-Objective Boolean Optimization}
 
 \author{Christoph Jabs}
 \date{\today}
 
 % Set supervisors, use the titles according to the thesis language
 % in English Prof. or Dr., or in Finnish toht. or tri or FT, TkT, Ph.D. or in Swedish... 
-\supervisors{Prof.~M.~J\"arvisalo, Dr.~J.~Berg}
+\supervisors{Prof.~M.~J\"arvisalo, Dr.~J.~Berg, Dr.~A.~Niskanen}
 
-\keywords{algorithms}
+\keywords{Multi-objective optimization, bi-objective optimization, maximum satisfiability, incremental SAT}
 \additionalinformation{\translate{\track}}
 
 %% For seminar reports:
@@ -109,8 +135,8 @@
 %% about three levels in the path; each path requires a new line.
 
 \classification{\protect{\ \\
-\  General and reference $\rightarrow$ Document types  $\rightarrow$ Surveys and overviews\  \\
-\  Applied computing  $\rightarrow$ Document management and text processing  $\rightarrow$ Document management $\rightarrow$ Text editing
+\  Mathematics of computing $\rightarrow$ Discrete mathematics $\rightarrow$ Combinatorics $\rightarrow$ Combinatorial optimization \\
+\  Theory of computation  $\rightarrow$ Logic $\rightarrow$ Constraint and logic programming
 }}
 
 %% If you want to quote someone special. You can comment this line out and there will be nothing on the document.
@@ -140,6 +166,8 @@
 }
 
 %%-----------------------------------------------------------------------------------
+
+\input{macros.tex}
 
 \begin{document}
 
@@ -177,9 +205,9 @@
 %% which simply inputs the content of the given file like it was copy&pasted there manually.
 
 \include{Ch.10_Introduction}
-\include{Ch.20_Methods}
-\include{Ch.30_Results}
-\include{Ch.40_Discussion}
+\include{Ch.20_Preliminaries}
+\include{Ch.30_The_Approach}
+\include{Ch.40_Experiments}
 \include{Ch.50_Conclusions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,15 +222,6 @@
 
 %% A sample Appendix
 \include{Ch.90_Appendix_1}
-%% another appendix
-\include{instructions/instructions_english}
-%% yet another appendix
-\include{instructions/instructions_finnish}
-
-% BSc instructions
-%\include{instructions/bsc_finnish_contents}
-%\include{instructions/bsc_english_contents}
-
 
 \end{appendices}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
