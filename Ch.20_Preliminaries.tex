@@ -1,33 +1,78 @@
 \chapter{Preliminaries\label{chap:preliminaries}}
 
-\TODO{Signposting}
+In this chapter, an overview of subjects that this work builds on is given.
+The first section discusses propositional satisfiability, as this is the declarative paradigm the presented algorithm builds on.
+Following that, bi-objective optimization is described, starting from a general perspective and ending up with notation used for bi-objective optimization in the context of propositional logic.
+The chapter is concluded with a section overviewing different approaches to solving bi-objective optimization problems.
+The focus hereby is on approaches based on propositional satisfiability, but others are briefly discussed as well.
 
-\section{Satisfiability Solving\label{sec:sat}}
+\section{Propositional Satisfiability\label{sec:sat}}
 
 For a Boolean variable $x$ there are two literals, the positive $x$ and the negative $\lnot x$. 
 A clause $C$ is a set of (disjunction over) literals and a CNF formula $\formula$ is a set of (conjunction over) clauses.
-A truth assignment $\tau$  maps boolean variables to $1$ (true) or $0$ (false).
-The semantics of truth assignments are extended to a clause $C$ and a formula $\formula$ in the standard way: $\tau(C) = \max\{ \tau(l) \mid l \in C\}$ and $\tau(\formula) = \min\{\tau(C) \mid C \in \formula\}$.
-When convenient, we view assignments $\tau$ over a set $X$ of variables as sets of literals $\tau = \{ x \mid x \in X,  \tau(x) = 1\} \cup \{ \lnot x \mid x \in X, \tau(x) = 0\}$.
-An assignment $\tau$ for which $\tau(\formula) = 1$ is a solution to $\formula$.
-A formula $\formula$ is satisfiable if it has solutions, otherwise it is unsatisfiable. 
-In this work, w.l.o.g.\ we assume that all formulas are satisfiable.
+A truth assignment $\sol$ maps boolean variables to $1$ (true) or $0$ (false).
+The semantics of truth assignments are extended to a clause $C$ and a formula $\formula$ in the standard way: $\sol(C) = \max\{ \sol(l) \mid l \in C\}$ and $\sol(\formula) = \min\{\sol(C) \mid C \in \formula\}$.
+When convenient, we view assignments $\sol$ over a set $X$ of variables as sets of literals $\sol = \{ x \mid x \in X,  \sol(x) = 1\} \cup \{ \lnot x \mid x \in X, \sol(x) = 0\}$.
+An assignment $\sol$ for which $\sol(\formula) = 1$ is a solution to $\formula$.
 The set of variables and literals appearing in $\formula$ are $\var(\formula)$ and $\lit(\formula)$, respectively.  
-For a set $L$ of literals and a bound $k \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \geq k\right)$ denotes a CNF formula that encodes the linear inequality $\sum_{l \in L} l \geq k$. %, where $\circ \in \{ ,< ,> ,\geq, \leq, =\}$. %Numerous methods of forming such CNF formulas are known~\cite{DBLP:conf/cp/BailleuxB03}.
+The propositional satisfiability (SAT) problem asks whether for a given formula $\formula$, a solution exists.
+A formula $\formula$ is satisfiable if it has solutions, otherwise it is unsatisfiable.
+\begin{example}
+  Take the propositional formula $\formula_1 = a \land \lnot b$ over variables $\var(\formula_1) = \{a,b\}$.
+  It is satisfiable since the assignment $\sol=(a,\lnot b)$ has $\sol(\formula_1)=1$.
+  The formula $\formula_2 = a \land \lnot a$ on the other hand is not satisfiable since no assignment $\sol$ with $\sol(\formula_2)=1$ exists.
+\end{example}
+
+A SAT solver is an algorithm that solves the SAT problem for a given formula $\formula$.
+If the formula is satisfiable, it returns ``satisfiable'' (SAT) and a solution $\sol$ with $\sol(\formula)=1$;
+if it is unsatisfiable, it return ``unsatisfiable'' (UNSAT).
+
+The SAT problem was proved $\mathcal{NP}$-complete in~\textcite{DBLP:conf/stoc/Cook71}.
+This result is very central to its modern day use as a declarative programming approach to solving other $\mathcal{NP}$-complete problems by encoding them as a propositional formula first, solving them with a SAT solver and then decoding the solution to the original problem context.
+The advantage of using SAT as a declarative programming language for solving other problems comes from the fact that---even though SAT is $\mathcal{NP}$-complete, and it is unclear if a polynomial time algorithm for solving it exists---conflict-driven clause learning solvers~\autocite{handbook2-cdcl} for SAT are efficient in practice and can solve problems with hundred-thousands of variables and clauses \TODO{check claim}.
+\begin{example}
+  Consider the problem of whether to wear tie and shirt to a given event with the following constraints:
+  (i)~one should not wear a tie without a shirt, (ii)~not wearing a tie nor a shirt is impolite, and (iii)~wearing a shirt and a tie is considered overdressed.
+  To solve this problem with the help of SAT, it can be encoded to propositional logic by introducing variables $v_\text{shirt}$ and $v_\text{tie}$ that represent if a shirt or a tie is worn.
+  The constraint can then be encoded as the following clauses:
+  $\clause_\text{(i)} = \lnot v_\text{tie} \lor v_\text{shirt}$, $\clause_\text{(ii)} = v_\text{tie} \lor v_\text{shirt}$ and $\clause_\text{(iii)} = \lnot v_\text{tie} \lor \lnot v_\text{shirt}$.
+  The formula $\clause_\text{(i)} \land \clause_\text{(ii)} \land \clause_\text{(iii)}$ can then be solved with a SAT solver, which will return the satisfying assignment $\{ v_\text{shirt}, \lnot v_\text{tie} \}$.
+  This solution is decoded as it being appropriate to wear a shirt but no tie.
+  \TODO{can I use this example?}
+\end{example}
+
+In this work, w.l.o.g.\ we assume that all formulas are satisfiable \TODO{relevant?}.
 
 \subsection{Incremental SAT Solving under Assumptions\label{sec:inc-sat}}
 
-\TODO{Rewrite way more generally}
-
-When the underlying CNF formula $\formula$ is clear from context, the call $\satsolver(\mathcal{A})$ invokes a SAT solver on the formula under the assumptions specified by the set $\mathcal{A}$ of literals.
-The call either returns ``satisfiable'' (SAT) and a solution $\tau \supset \mathcal{A}$, or ``unsatisfiable'' (UNSAT) and a subset $\mathcal{A}_s \subset \{\lnot l \mid l\in\mathcal{A}\}$ such that $\formula \land \bigwedge_{l \in \mathcal{A}_s} (\lnot l)$ is unsatisfiable, i.e., an unsatisfiable core of $\formula$.
+It is common that algorithms that solve problems with the help of SAT solvers produce a series of SAT problems that only differ slightly.
+To be able to solve these subproblems more efficiently, most modern SAT solvers provide an incremental interface that allows for retaining information learned in previous solver calls \TODO{check if new CDCL chapter can be referenced}.
+In order for the learned information from previous solver queries to still hold for subsequent calls, it is only possible to add clauses to the solvers internal formula, not remove them.
+In addition, incremental SAT solvers support solving under assumptions.
+The assumptions $\assump$ are a set of literals that are treated as unit clauses, i.e.\ a solver call with internal formula $\formula$ and assumptions $\assump$ either returns SAT and a solution $\sol \supset \assump$, or UNSAT and a subset $\core \subset \{\lnot l \mid l\in\assump\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
+The subset $\core$ is called an unsatisfiable \emph{core} and, intuitively, is an explanation for the unsatisfiability of the query.
 
 \subsection{Maximum Satisfiability\label{sec:max-sat}}
 
+Maximum satisfiability (MaxSAT) is the optimization variant of the decision SAT problem.
+In it, the goal is to find a solution that satisfies as many of the given clauses as possible.
+Most commonly and in this work, MaxSAT refers to the extension of weighted partial MaxSAT, in which a set of \emph{hard} clauses $\formula$ and another set of \emph{soft} clauses $\softs$ are given.
+Each clause $\clause \in \softs$ is assigned a weight $w_\clause$ and a solution $\sol$ that satisfies $\formula$ while minimizing $\sum_{\clause\in\softs \mid \tau(\clause)=0} w_\clause$ is optimal for the problem.
+
+In the same way that SAT can be used as a declarative language to solve other decision problems, MaxSAT can be used to solve other optimization problems.
+
 \subsection{Encoding Cardinality Constraints\label{sec:card-const}}
 
-Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocite{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$: If $\tau$ is an assignment that satisfies $\tot(L)$, then $\tau(\ov{L}{b}) = 1$ if $\sum_{l \in L} \tau(l) < b$.
-The incremental totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula: we have that $\tot(L, k) \subset \tot(L, k')$ and $\tot(L, k) \subset  \tot(L \cup L', k)$ hold for any bound $k' > k$ and set $L'$ of literals for which $L \cap L' =  \emptyset$. 
+A common type of constraint to appear when encoding problems into SAT is that of a cardinality constraint.
+Cardinality constraints, informally speaking, enforce a bound on how many literals in a set can be assigned to true.
+Formally, for a set $L$ of literals and a bound $k \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \circ k\right)$ denotes a CNF formula that encodes the linear inequality $\sum_{l \in L} l \circ k$, where $\circ \in \{ ,< ,> ,\geq, \leq, =\}$.
+Numerous methods of forming such CNF formulas are known~\autocite{DBLP:conf/cp/BailleuxB03}.
+In this work we make use of the totalizer encoding.
+
+Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocite{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$:
+if $\tau$ is an assignment that satisfies $\tot(L)$, then $\tau(\ov{L}{b}) = 1$ if $\sum_{l \in L} \tau(l) < b$ \TODO{point out that iff (or $\leftarrow$) are possible as well, but we only need upper bounds)}.
+The incremental totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula:
+we have that $\tot(L, k) \subset \tot(L, k')$ and $\tot(L, k) \subset  \tot(L \cup L', k)$ hold for any bound $k' > k$ and set $L'$ of literals for which $L \cap L' =  \emptyset$. 
 We use $\ove{L}{k}$ as a shorthand for the literal $\ov{L}{k+1}$.
 We note that the assignments of the auxiliary variables of the totalizer encoding are functionally defined by the assignment of the input and output variables.
 As such we will leave them out from the solutions we describe in favour of brevity and clarity of examples. 
