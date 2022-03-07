@@ -89,3 +89,117 @@ so that one of the objectives will monotonically decrease, it is enough to block
 solution over all $l_e$ that are assigned to true.
 
 \section{Results\label{sec:results}}
+
+\begin{figure}
+    \centering
+    \includegraphics{mlic-cactus-single.pdf}
+    \caption{Runtime comparison of  $P$-minimal and variants of \algname{} for LIDR; plot on the right
+      is zoomed in on the more interesting part of the left plot.
+      %        On the right, a magnified version from 195 solved instances on is shown.
+    }\label{fig:mlic-cactus}
+\end{figure}
+
+We start with a comparison of the runtime performance of different variants of \algname{}, $P$-minimal and (for LIDR) Seesaw.
+For LIDR, \Cref{fig:mlic-cactus} shows the number of instances solved ($x$-axis) for different per-instance time limits ($y$-axis) for the task of
+computing a single representative solution for each pareto point.
+The best-performing approach is the \algname{} variant \msh{}, solving 223 instances, while $P$-minimal solves 219 instances.
+%With that, it outperforms $P$-minimal by four solved instances.
+All  variants of \algname{} outperform $P$-minimal to some extent.
+Seesaw is very clearly outperformed by all other approaches, solving only 123 instances within the resource constraints.
+\Cref{fig:setcover-cactus} shows a similar comparison for the two variants of bi-objective set covering.
+Here again \msh{} is the best-performing variant of \algname{}, considerably outperforming $P$-minimal:
+$P$-minimal  solves 71 (resp.~38) fixed element probability (resp., fixed set cardinality) instances,
+whereas \msh{} solves  82 (resp.~40) instances.
+Similar plots for the task of enumerating all solutions on the pareto front are provided in Appendix~\ref{sup:plots}.
+
+\begin{figure}
+    \centering
+    \includegraphics{setcover-cactus-single.pdf}
+    \caption{Runtime comparison of $P$-minimal and variants of \algname{} for  bi-objective set covering problem.
+      %The plot on the left is over instances generated with fixed probability that an element is in a set while the plot on the right is for instances with fixed set cardinality.
+    }\label{fig:setcover-cactus}
+\end{figure}
+
+%Next, we compare \algname{} with $P$-minimal on  bi-objective set covering; see
+%\Cref{fig:setcover-cactus} for a runtime comparison for
+% fixed element probability instances (left) and fixed set cardinality instances (right).
+% $P$-minimal  solves 71 (resp., 38) fixed element probability (resp., fixed set cardinality) instances,  while the best-performing \algname{} variant (\msh{}) solves
+% 82 (resp., 40).
+
+\begin{table}
+  \centering
+  \caption{Solved instances by approach and benchmark family.
+%      The numbers are provided for computing a \emph{single} representative solution per pareto point or \emph{all} of them.
+      %        The best approach per instance is highlighted in bold.
+  }\label{tab:nsolved}
+  \begin{tabular}{@{}lr@{\hskip 3pt}rr@{\hskip 3pt}rr@{\hskip 3pt}rr@{\hskip 3pt}rr@{\hskip 3pt}rr@{\hskip 3pt}r@{}}
+    \toprule
+    \multirow{2}{*}{Instance Type} & \multicolumn{2}{c}{\satunsat} & \multicolumn{2}{c}{\unsatsat} & \multicolumn{2}{c}{\msu} & \multicolumn{2}{c}{\oll} & \multicolumn{2}{c}{\msh} & \multicolumn{2}{c}{$P$-minimal} \\
+    \cmidrule(r){2-3} \cmidrule(r){4-5} \cmidrule(r){6-7} \cmidrule(r){8-9} \cmidrule(r){10-11} \cmidrule(r){12-13}
+    & single & all & single & all & single & all & single & all & single & all & {\hskip 6pt}single & all \\
+    \midrule
+    Decision Rules & 222 & \textbf{215} & 222 & \textbf{215} & 222 & \textbf{215} & 222 & 212 & \textbf{223} & \textbf{215} & 219 & 213 \\
+    SetCovering-EP & 76 & 73 & 71 & 71 & 70 & 70 & 58 & 58 & \textbf{82} & \textbf{80} & 71 & 68 \\
+    SetCovering-SC & 35 & 29 & 30 & 26 & 36 & 36 & 34 & 34 & \textbf{40} & \textbf{40} & 38 & 26 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics{all-datasets-combined-msh-and-enumeration.pdf}
+    \caption{Left: Runtime comparison between $P$-minimal and \algname{} in the \msh{} variant. % over different instance types.
+      Right: Runtime comparison between enumerating a single representative vs all solutions per pareto point with \msh{}.
+%      point or all pareto-optimal solutions with the \msh{} variant.
+      %        Instances with less than 30 seconds runtime are not shown.
+    }\label{fig:msh-scatter}
+\end{figure}
+
+The numbers of solved instances are summarized in \cref{tab:nsolved},
+both for  enumerating a single representative solution per pareto point and for enumerating \emph{all} pareto-optimal solutions.
+\msh{} is the best-performing \algname{} variant overall, outperforming $P$-minimal in all cases. The performance difference
+is greater when enumerating all pareto-optimal solutions.
+For more details,
+\cref{fig:msh-scatter} (left) shows a per-instance runtime comparison between \msh{} and $P$-minimal.
+%In this plot, the dotted diagonal lines mark equal runtimes as well as double runtime in either direction.
+We note that
+$P$-minimal did not uniquely solve any instance. In general, \msh{} was outperformed by $P$-minimal on only 37 instances while \msh{} solves 308 instances in less time.
+\Cref{fig:msh-scatter} (right) shows a runtime comparison between enumerating a single representative solution per pareto point and enumerating all pareto-optimal solutions with \msh{}.
+ Overall, the approach scales well also for the latter task, although there understandably is an overhead 
+  when the number of solutions required to be enumerated grows significantly; this is the case for
+  LIDR
+  where some instances
+  have 
+  more than $10,000$ solutions per pareto point.
+This is in contrast to the set covering instances, which tend to have only a single (or few) solutions per pareto point.
+%More details on enumerating all representative solutions with all approaches can be found in \cref{sup:plots}.
+%  Since the set covering instances are weighted, and therefore it is significantly less likely that two solutions lead to the same objective values, these instances typically only have a single solution corresponding to every pareto point.
+%Therefore, no significant difference in runtimes is visible for enumerating a single compared to all representative solutions.
+
+\begin{figure}
+    \centering
+    \includegraphics{all-datasets-chosen-refinements.pdf}
+    \caption{Instance runtime comparisons for the two refinements lazily building the totalizer for the decreasing objective (left) and exact core minimization (right).
+      %        Marker shapes and colours represent different instance types and instances with less than 30 seconds runtime are cropped out.}
+      } \label{fig:refinements}
+\end{figure}
+
+Finally,
+we evaluated the impact of the proposed refinements on the runtime efficiency of the best-performing approach, \msh{}.
+%We consider two refinements in detail: lazily building $\tot(\Obj_\dec)$ and exact core minimization.
+\Cref{fig:refinements} shows
+the impact of lazily building $\tot(\Obj_\dec)$ (left) and exact vs heuristic core minimization (right).
+Lazily building $\tot(\Obj_\dec)$ has no evident impact on LIDR,
+as expected
+(the literals from $\Obj_\dec$ do not appear in $\Obj_\inc$ and $\tot(\Obj_\dec)$ can therefore not be lazily built).
+%For the set covering instances generated with fixed element probabilities, we see a slight negative effect for medium runtimes, but we have two instances that could only be solved when lazily building $\tot(\Obj_\dec)$.
+For fixed set cardinality set covering, however, we see a strong positive effect.
+%This is most likely due to the fact that the instances generated with fixed set cardinalities on average have more elements that don't appear in any of the sets and can therefore be left out of $\tot(\Obj_\dec)$.
+Heuristic core minimization appears to have a positive effect  on LIDR as well as on harder set covering instances,
+although the difference to exact minimization is smaller
+than that of lazily building $\tot(\Obj_\dec)$.
+%For set covering, exact core minimization has a slightly positive effect for instances that are solved in less time, for instances with long runtimes however, the effect is slightly negative.
+%
+%Other than those refinements, we also evaluated adding a
+%The third refinement, i.e., disjoint phase to \msu{} which we found to have no lead to an improvement in performance.
+%Data on this claim can be found in \cref{sup:plots}.
