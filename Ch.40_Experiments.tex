@@ -33,7 +33,7 @@ Since decision rules in CNF contain many symmetric solutions obtained by changin
 As the basis of benchmark instances, we used 24 standard UCI~\autocite{UciMlr} and Kaggle ({\small\url{https://www.kaggle.com}}) benchmark datasets, including ones used in~\textcite{DBLP:conf/cp/MaliotovM18}; see \cref{sup:datasets} for details.
 We randomly and independently sampled subsets of $\nsamp\in\{50,100,1000,5000,10000\}$ data samples from the datasets, four of each size (when applicable), resulting in a total of 372 datasets. %, and discretized the data as in~\cite{DBLP:conf/cp/MaliotovM18}:
 %categorical features are one-hot encoded, continuous features discretized by comparing to a collection of thresholds.
-All experiments on these datasets where run with the encoding from~\textcite{DBLP:conf/cp/MaliotovM18} configured to learn CNF decision rules consisting of two clauses.
+All experiments on these datasets were run with the encoding from~\textcite{DBLP:conf/cp/MaliotovM18} configured to learn CNF decision rules consisting of two clauses.
 
 When enumerating multiple solutions corresponding to the same pareto point, the blocking clauses for \algname{} (as well as the $P$-minimal approach compared to in the experiments) can be strengthened to find solutions mapping to distinct rules:
 blocking over the variables $s_l^j$ is sufficient and blocks multiple symmetric solutions that only differ in the assignment to auxiliary variables.
@@ -53,7 +53,7 @@ We generated two types of  bi-objective set covering problem instances:
 We generated both types of instances using combinations of the following parameters:
 number of elements $\nelems\in\{100,150,200\}$, number of sets $\nsets\in\{20,40,60,80\}$, element probability $\elemprob\in\{0.1,0.2\}$ and set cardinality $\setcard\in\{5,10\}$.
 For each combination, we generated five instances, leading to 120 instances of each type.
-The integer cost values $\cost$ for the two objectives where chosen uniformly at random from the range $\cost\in[1,100]$.
+The integer cost values $\cost$ for the two objectives were chosen uniformly at random from the range $\cost\in[1,100]$.
 
 The blocking clauses used in \algname{} for enumerating all pareto-optimal solutions can be strengthened also for set covering:
 due to the fact that \algname{} is guaranteed to enumerate the pareto-optimal solutions so that one of the objectives will monotonically decrease, it is enough to block in \algname{} the solution over all $l_e$ that are assigned to true.

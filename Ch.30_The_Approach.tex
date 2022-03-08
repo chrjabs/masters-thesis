@@ -3,7 +3,7 @@
 We detail the MaxSAT-based approach to bi-objective optimization developed in this work together with its variants.
 
 \begin{algorithm}[t]
-  \caption{\algname: MaxSAT-based  bi-objective optimization} %\TODO{Alternatively ``enumeration of'', but then it sounds like full enumeration again.}}
+  \caption{\algname{}: MaxSAT-based  bi-objective optimization} %\TODO{Alternatively ``enumeration of'', but then it sounds like full enumeration again.}}
   \label{alg:base-algorithm}
   \textbf{Input}: A formula $\formula$, two objectives $\Obj_\inc$ and $\Obj_\dec$.\\
   \textbf{Output}: Either one or all pareto-optimal solution corresponding to each pareto point of $\formula$.
@@ -126,7 +126,7 @@ The procedure terminates when the result is UNSAT, after which the value of $k$ 
 It also maintains a totalizer $\tot(\Obj_\inc)$.
 For finding the next solution, the bound $k$ is set to the last known value of $b_\inc$ and the solver is then iteratively queried for a new solution under the assumptions $\{ \ove{\Obj_\inc}{k+1}, \ov{\Obj_\dec}{b_\dec} \}$.
 If the solver returns unsatisfiable, the bound $k$ is increased by $1$ and the solver is queried again.
-The search ends once the solver returns satisfiable and in this case, the solution and the bound are returned.
+The search ends once the solver returns satisfiable and in this case, the solution, and the bound are returned.
 Since the bound of this lower bounding search procedure will only monotonically increase, it is enough if the totalizer $\tot(\Obj_\inc)$ is at every step built up to the bound $k+1$ and extended to the next bound in the next iteration.
 This way, the SAT solver is always loaded with a minimum number of clauses.
 
@@ -166,7 +166,7 @@ The following observation proves that doing so can be done without removing any 
 \begin{proof}(Sketch)
   Since, $b_{\inc}$ was returned by $\msu$, we know that there exists a pareto-optimal $\tau^o$ for which $\Obj_{\inc}(\tau^o) = b_{\inc}$ and $\Obj_{\dec}(\tau^o) < b_{\dec}$.
   By the properties of cores, we also know that \emph{any} solution $\tau^s$ of $\formula$ for which $\Obj_{\dec}(\tau^s) < b_\dec$ assigns at least $b_{\inc}$ literals in $\Act$ to $1$.
-  Thus, any $\tau^n$ that assigns $\tau^n(l) = 1$ for a inactive literal $l \in  \Obj_{\inc} \setminus \Act$ will have $\Obj_{\inc}(\tau^n) > b_{\inc}$.
+  Thus, any $\tau^n$ that assigns $\tau^n(l) = 1$ for an inactive literal $l \in  \Obj_{\inc} \setminus \Act$ will have $\Obj_{\inc}(\tau^n) > b_{\inc}$.
 \end{proof}
 
 %Note that whenever a bound on $\Obj_\inc$ is enforced in the other subroutines of \algname{} by an assumption of type $\ove{\Obj_\inc}{k}$, for \msu{}, this assumption needs to be replaced by $\{\ove{\Act}{k}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$.
@@ -250,6 +250,6 @@ More specifically, we employ core minimization~\autocite{DBLP:journals/jsat/Igna
 %(We also considered and implemented a disjoint core phase~\cite{DBLP:conf/cp/DaviesB11} but did not observe noticeable impact on runtime performance in practice.)
 Given a subset $\mathcal{A}_s$ of assumptions returned by the SAT solver, heuristic core minimization refers to reinvoking the SAT solver with $\mathcal{A}_s$ as the assumptions hoping that the solver returns a smaller set of assumptions.
 Exact core minimization refers to iteratively finding a minimal unsatisfiable subset by attempting to remove each assumption separately.
-Core exhaustion is an OLL specific technique that seeks to improve the lower bound of each totalizer being added.
+Core exhaustion is an OLL-specific technique that seeks to improve the lower bound of each totalizer being added.
 %A disjoint core phase 
 %refers to iteratively invoking the SAT solver in order to extract several disjoint sets of objective literals to add to the totalizer (when using $\msu$) or build new totalizers over (when using $\oll$).

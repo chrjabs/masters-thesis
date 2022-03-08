@@ -25,7 +25,7 @@ A formula $\formula$ is satisfiable if it has solutions, otherwise it is unsatis
 
 A SAT solver is an algorithm that solves the SAT problem for a given formula $\formula$.
 If the formula is satisfiable, it returns ``satisfiable'' (SAT) and a solution $\sol$ with $\sol(\formula)=1$;
-if it is unsatisfiable, it return ``unsatisfiable'' (UNSAT).
+if it is unsatisfiable, it returns ``unsatisfiable'' (UNSAT).
 
 The SAT problem was proved $\mathcal{NP}$-complete in~\textcite{DBLP:conf/stoc/Cook71}.
 This result is very central to its modern day use as a declarative programming approach to solving other $\mathcal{NP}$-complete problems by encoding them as a propositional formula first, solving them with a SAT solver and then decoding the solution to the original problem context.
@@ -46,10 +46,10 @@ In this work, w.l.o.g.\ we assume that all formulas are satisfiable \TODO{releva
 \subsection{Incremental SAT Solving under Assumptions\label{sec:inc-sat}}
 
 It is common that algorithms that solve problems with the help of SAT solvers produce a series of SAT problems that only differ slightly.
-To be able to solve these subproblems more efficiently, most modern SAT solvers provide an incremental interface that allows for retaining information learned in previous solver calls~\autocite{DBLP:journals/entcs/EenS03,handbook2-cdcl} \TODO{check if new CDCL chapter can be referenced}.
+To be able to solve these sub-problems more efficiently, most modern SAT solvers provide an incremental interface that allows for retaining information learned in previous solver calls~\autocite{DBLP:journals/entcs/EenS03,handbook2-cdcl} \TODO{check if new CDCL chapter can be referenced}.
 In order for the learned information from previous solver queries to still hold for subsequent calls, it is only possible to add clauses to the solvers internal formula, not remove them.
 In addition, incremental SAT solvers support solving under assumptions.
-The assumptions $\assump$ are a set of literals that are treated as unit clauses, i.e.\ a solver call with internal formula $\formula$ and assumptions $\assump$ either returns SAT and a solution $\sol \supset \assump$, or UNSAT and a subset $\core \subset \{\lnot l \mid l\in\assump\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
+The assumptions $\assump$ are a set of literals that are treated as unit clauses, i.e., a solver call with internal formula $\formula$ and assumptions $\assump$ either returns SAT and a solution $\sol \supset \assump$, or UNSAT and a subset $\core \subset \{\lnot l \mid l\in\assump\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
 The subset $\core$ is called an unsatisfiable \emph{core} and, intuitively, is an explanation for the unsatisfiability of the query.
 
 \subsection{Maximum Satisfiability\label{sec:max-sat}}
@@ -70,7 +70,7 @@ Numerous methods of forming such CNF formulas are known~\autocite{DBLP:conf/cp/B
 In this work we make use of the totalizer encoding.
 
 Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocite{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$:
-if $\tau$ is an assignment that satisfies $\tot(L)$, then $\tau(\ov{L}{b}) = 1$ if $\sum_{l \in L} \tau(l) < b$ \TODO{point out that iff (or $\leftarrow$) are possible as well, but we only need upper bounds)}.
+if $\tau$ is an assignment that satisfies $\tot(L)$, then $\tau(\ov{L}{b}) = 1$ if $\sum_{l \in L} \tau(l) < b$ \TODO{point out that iff (or $\leftarrow$) are possible as well, but we only need upper bounds}.
 The incremental totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula:
 we have that $\tot(L, k) \subset \tot(L, k')$ and $\tot(L, k) \subset  \tot(L \cup L', k)$ hold for any bound $k' > k$ and set $L'$ of literals for which $L \cap L' =  \emptyset$. 
 We use $\ove{L}{k}$ as a shorthand for the literal $\ov{L}{k+1}$.
@@ -157,7 +157,7 @@ The last section gives a brief overview of methods to approximate the pareto fro
 \subsection{SAT-Based Approaches\label{sec:sat-based}}
 
 We highlight three SAT-based approaches to bi-objective optimization:
-enumeration of $P$-minimal solutions, Seesaw and enumeration of pareto-minimal correction sets.
+enumeration of $P$-minimal solutions, Seesaw, and enumeration of pareto-minimal correction sets.
 
 \subsubsection{$P$-minimal Solution Enumeration\label{sec:p-minimal}}
 
@@ -219,7 +219,7 @@ The paretoMCS approach to multi-objective optimization is approximative in that 
   The solution $\sol$ is not pareto-optimal, but only filtered out when a solution that dominates it is enumerated.
   However, there are no guarantees on when such a dominating solution is found. 
 \end{example}
-Since paretoMSC enumeration is approximative in this sense, we are not comparing the performance of our algorithm to this approach, since our algorithm has the algorithmic advantage that all found solutions are immediately known to be pareto-optimal.
+Since paretoMCS enumeration is approximative in this sense, we are not comparing the performance of our algorithm to this approach, since our algorithm has the algorithmic advantage that all found solutions are immediately known to be pareto-optimal.
 
 \subsubsection{Implicit Hitting Set: Seesaw\label{sec:seesaw}}
 
@@ -240,12 +240,13 @@ More precisely, if the hitting set is found to increase from size $|\hs|$ to siz
 
 We instantiated Seesaw for LIDR by using misclassifications as the objective over which cores are extracted and a hitting set $\hs$ is found with the help of CPLEX over these cores.
 In the second step, the number of literals in the smallest rule misclassifying the examples in $\hs$ or a subset of it is found.
-This function is implemented as a solution-improving search  in CaDiCaL.
+This function is implemented as a solution-improving search in CaDiCaL.
 This instantiation was chosen because finding the smallest rule misclassifying $\hs$ is an anti-monotone function and the refined version of core extraction presented in~\textcite{DBLP:conf/cp/JanotaMSM21} can therefore be used, making Seesaw feasible in the first place.
 
 \begin{example}
   Consider the formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}. 
-  Initially there are no cores, so $\cores = \emptyset$. As such the first hitting set $\hs = \emptyset$ will also be empty.
+  Initially there are no cores, so $\cores = \emptyset$.
+  As such, the first hitting set $\hs = \emptyset$ will also be empty.
   Since there are no solutions $\tau$ that set $\tau(u) = 0$ for each $u \in \Obj_\inc$, the iteration ends by extracting $\Obj_\inc$ as a core. 
   The intuition here is that at this point, we know that any solution $\tau$ of $\formula$ sets at least one variable in $\Obj_\inc$ to $1$.
 
