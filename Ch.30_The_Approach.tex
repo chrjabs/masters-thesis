@@ -20,7 +20,7 @@ We detail the MaxSAT-based approach to bi-objective optimization developed in th
     \STATE $(b_\dec, \tau) \gets  \Simpr(b_\inc , \Obj_\dec(\tau))$  \quad\COMMENT{Builds $\tot(\Obj_\dec)$}\label{l:minim2}
     \STATE \textbf{yield} $\tau$  \quad\COMMENT{Optionally:  \textbf{yield} $\E(b_\dec, b_\inc)$} \label{ln:stage3} 
     \STATE $(\res, \tau) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}\})$\label{l:endL}
-    \ENDWHILE  \label{l:loopend}
+    \ENDWHILE
   \end{algorithmic}
 \end{algorithm}
 
@@ -39,22 +39,22 @@ We therefore call $\Obj_\inc$ the \emph{increasing objective}.
 By \cref{prop:biobjective}, this means that the sequence of values $b_\dec$ is monotonically decreasing, leading us to calling $\Obj_\dec$ \emph{decreasing}.
 By these observations, \algname{} performs search in an ordered fashion along the pareto front.
 
-In detail, given a formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$, the search of \algname{} in \cref{alg:base-algorithm} starts by initializing a SAT solver with all clauses in $\formula$ on Line~\ref{l:init-solv}.
-Satisfiability (i.e., the existence of any pareto-optimal solutions) is checked by invoking the SAT solver on its internal formula without assumptions via the $\satsolver(\emptyset)$ function (Line~\ref{l:sols}).
+In detail, given a formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$, the search of \algname{} in \cref{alg:base-algorithm} starts by initializing a SAT solver with all clauses in $\formula$ on \cref{l:init-solv}.
+Satisfiability (i.e., the existence of any pareto-optimal solutions) is checked by invoking the SAT solver on its internal formula without assumptions via the $\satsolver(\emptyset)$ function (\cref{l:sols}).
 If $\res$ is UNSAT, the formula has no pareto-optimal solutions and the algorithm terminates.
 Otherwise, $\tau$ is an assignment that satisfies the formula.
 Before the main enumeration procedure starts, the bounds $b_\inc$ and $b_\dec$ on $\Obj_\inc$ and $\Obj_\dec$ are set to $0$ and $\infty$, respectively.
 
-The main search loop (Lines~\ref{l:loopstart}--\ref{l:loopend}) iterates as long as there are pareto-optimal solutions of $\formula$ that have not been enumerated yet. 
-This is the case if there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$, checked by invoking the SAT solver under the assumption $\ov{\Obj_\dec}{b_\dec}$ on Line~\ref{l:endL}.
-In the beginning of each main loop iteration, the procedure $\Min$ is employed to minimize the increasing objective, i.e., compute the smallest value $b_\inc$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (Line~\ref{l:minim1}). 
+The main search loop (\crefrange{l:loopstart}{l:endL}) iterates as long as there are pareto-optimal solutions of $\formula$ that have not been enumerated yet. 
+This is the case if there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$, checked by invoking the SAT solver under the assumption $\ov{\Obj_\dec}{b_\dec}$ on \cref{l:endL}.
+In the beginning of each main loop iteration, the procedure $\Min$ is employed to minimize the increasing objective, i.e., compute the smallest value $b_\inc$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (\cref{l:minim1}). 
 We assume that $\Min$ maintains a way to enforce that $\Obj_\inc(\tau) < k$, e.g., through a totalizer $\tot(\Obj_\inc)$, and that \algname{} and all of its subroutines have access to a set of assumptions to enforce this bound for any $k$.
 
-Next, the algorithm employs \emph{solution-improving search}~\autocite{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} to minimize the decreasing objective, i.e., to compute the smallest $b_\dec$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (Line~\ref{l:minim2}).
+Next, the algorithm employs \emph{solution-improving search}~\autocite{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} to minimize the decreasing objective, i.e., to compute the smallest $b_\dec$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (\cref{l:minim2}).
 The totalizer $\tot(\Obj_\dec, \Obj_\dec(\tau))$ is built at the first time this subroutine is invoked.
 Building the totalizer at this point allows for only building it up to bound $\Obj_\dec(\tau)$, since all pareto-optimal solutions are known to have at most that value for $\Obj_\dec$.
 Solution-improving search works by---starting from $k=\Obj_\dec(\tau)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{k}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $k$ until the solver reports UNSAT, and returns $b_\dec$ and a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$.
-At this point we know that there is no solution of $\formula$ that dominates $\tau$, so $\tau$ is returned as pareto-optimal on Line~\ref{ln:stage3}.
+At this point we know that there is no solution of $\formula$ that dominates $\tau$, so $\tau$ is returned as pareto-optimal on \cref{ln:stage3}.
 If one wants to enumerate all solutions $\tau^o$ that correspond to the pareto point $(b_\inc,b_\dec)$, the $\E$ procedure repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec} , \ove{\Obj_\inc}{b_\inc}\}$ and blocks each found solution until no more solutions are found.
 
 \begin{example}\label{ex:main-iteration}
@@ -80,7 +80,7 @@ If one wants to enumerate all solutions $\tau^o$ that correspond to the pareto p
   \Simpr{} cannot improve on the second objective, so the solution $\tau^o_2$ is proven to be pareto-optimal.
   %The procedure $\E$ then enumerates 
   %the other pareto-optimal solutions $\tau^o$ that obtain $\Obj_U(\tau^o) = 2$, $\Obj_D(\tau^o) = 1$. These are $\{d_2, u_1, u_2, \lnot d_1, \lnot d_3, \lnot u_3\}$ and $\{d_2, u_2, u_3, \lnot d_1, \lnot d_3, \lnot u_1\}$. 
-  At the end of the iteration, on Line~\ref{l:endL} the SAT solver is invoked with the assumption $\{\ov{\Obj_\dec}{1}\}$.
+  At the end of the iteration, on \cref{l:endL} the SAT solver is invoked with the assumption $\{\ov{\Obj_\dec}{1}\}$.
   The solver returns unsatisfiable, terminating the algorithm. 
 \end{example}
 
@@ -92,7 +92,7 @@ We consider five different instantiations of the $\Min$ procedure for minimizing
 
 \satunsat{} is a variant of solution-improving search that is also used for minimizing $\Obj_\dec$. 
 The procedure gets as input the current bound $b_\dec$ on $\Obj_\dec$ and the value $\Obj_\inc(\tau)$ obtained by the solution $\tau$ computed during the last SAT solver call. 
-Since the last call is made on Line~\ref{l:endL} with the assumption $\ov{\Obj_\dec}{b_\dec}$, the solution $\tau$ will have $\Obj_\dec(\tau) < b_\dec$. 
+Since the last call is made on \cref{l:endL} with the assumption $\ov{\Obj_\dec}{b_\dec}$, the solution $\tau$ will have $\Obj_\dec(\tau) < b_\dec$. 
 
 As such, the value $\Obj_\inc(\tau)$ is an upper bound for the smallest value of $\Obj_\inc$ obtained by any solution $\tau'$ having $\Obj_\dec(\tau') < b_\dec$.
 The procedure \satunsat{} maintains the totalizer $\tot(\Obj_\inc)$ and begins by checking, if the current upper bound on that totalizer is at least $\Obj_\inc(\tau)$, extending it if not. 

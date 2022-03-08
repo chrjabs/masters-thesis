@@ -77,24 +77,36 @@ We use $\ove{L}{k}$ as a shorthand for the literal $\ov{L}{k+1}$.
 We note that the assignments of the auxiliary variables of the totalizer encoding are functionally defined by the assignment of the input and output variables.
 As such we will leave them out from the solutions we describe in favour of brevity and clarity of examples. 
 
-\section{Bi-Objective Optimization\label{sec:biopt}}
+\section{Bi-Objective Optimization and Pareto Optimality\label{sec:biopt}}
 
-\TODO{General bi-opt setting}
+Multi-objective optimization is the problem of optimizing $\nobj$ objective functions with the decision variable $x$, while $x$ has to be within the decision space $\feasible$.
+W.l.o.g., we assume that all optimizations seek to minimize the objective function.
+Formally a multi-objective optimization problem (MOOP) is the following:
+\begin{equation}\label{eq:moop}
+  \min (\generalobj_1(x),\generalobj_2(x),\dots,\generalobj_\nobj(x))\ \text{s.t.}\ x\in \feasible.
+\end{equation}
+For multi-objective optimization problems, since the objectives might be in conflict with each other, no single optimal solution exists.
+However, the notions of domination and pareto optimality can be used.
+\begin{definition}[Domination]
+  Given a MOOP as defined in \cref{eq:moop} and two solutions $x,x' \in \feasible$, $x$ dominates $x'$ (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj)$) is (i)~$\forall i\in\{1,\dots,\nobj\},\ \generalobj_i(x) \leq \generalobj_i(x')$, and (ii)~$\exists i\in\{1,\dots,\nobj\},\ \generalobj_i(x) < \generalobj_i(x')$.
+  We represent $x$ dominating $x'$ as $x \prec x'$.
+\end{definition}
+\begin{definition}[Pareto optimality]
+  Given a MOOP as defined in \cref{eq:moop}, a solution $x \in \feasible$ is pareto-optimal (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj)$) iff $\nexists x' \in \feasible,\ x' \prec x$, i.e., it is not dominated by any other solution.
+\end{definition}
+When the objectives are clear from context, we will simply say that a solution $x$ is pareto-optimal.
+Note that there can be multiple pareto-optimal solutions to a MOOP.
+The set of all pareto-optimal solutions is called the pareto front (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj)$); the tuple $(\generalobj_1(x),\dots,\generalobj_\nobj(x))$ for a pareto-optimal $x$ is a pareto point (which multiple solutions can correspond to).
 
+The subset of all multi-objective optimization problems which this work provides a solving algorithm for, is \emph{bi}-objective optimization, where the number of objective functions $\nobj=2$.
+Furthermore, we restrict the objective functions to be linear.
+Bi-objective optimization problems can be solved by many approaches (see \cref{sec:approaches} for more details), but in this work we focus on SAT-based approaches.
+We therefore formalize the problem in a context of propositional satisfiability.
 An objective $\Obj$ is a multiset of literals, which allows for representing objective functions with non-unit coefficients.
-The value $\Obj(\tau)$ of a truth assignment $\tau$ under $\Obj$ is $\Obj(\tau) = \sum_{l \in \Obj} \tau(l)$, i.e., the number of the literals in $\Obj$ that $\tau$ assigns to $1$. 
-Weighted objectives can be represented by adding a literal multiple times.
-% Note that formulating the optimization task in terms of minimizing the number of literals set to true by a truth assignment is equivalent to maximum satisfiability (MaxSAT). \TODO{somethign missing, at least a CNF?}
-
- %It also makes our algorithm applicable for solving bi-objective constrained optimization problems~\cite{DBLP:conf/aaai/HartertS14,DBLP:conf/cp/SohBTB17,DBLP:conf/sat/Terra-NevesLM17} by encoding  them into CNF.
-
-Given a CNF formula $\formula$, two objectives $\Obj_1, \Obj_2 \subset \lit(\formula)$ and solutions $\tau_1, \tau_2$ to $\formula$, we say that $\tau_1$ dominates $\tau_2$ if (i)~$\Obj_i(\tau_1) \leq \Obj_i(\tau_2)$ for $i=1,2$, and (ii)~either $\Obj_1(\tau) < \Obj_1(\tau_2)$  or $\Obj_2(\tau) < \Obj_2(\tau_2)$.
-A solution $\tau$ is pareto-optimal if no other solution dominates it.
-The pareto front of $\formula$ w.r.t.\ $\Obj_1, \Obj_2$ consists of all solutions of $\formula$ that are pareto-optimal w.r.t.\ $\Obj_1$ and $\Obj_2$. 
-When the objectives are clear from context, we will simply say that a solution $\tau$ is a pareto-optimal solution of $\formula$. 
-The pair $(\Obj_1(\tau),\Obj_2(\tau))$ of a pareto-optimal $\tau$ is a pareto point (of $\formula$ w.r.t.\ $\Obj_1$ and $\Obj_2$).
-Note that there may be multiple solutions that correspond to the same pareto point.
-We consider the task of computing a representative solution for each pareto point as well as the task of enumerating all solutions in the pareto front.
+The value $\Obj(\sol)$ of a truth assignment $\sol$ under $\Obj$ is $\Obj(\sol) = \sum_{l \in \Obj} \sol(l)$, i.e., the number of the literals in $\Obj$ that $\sol$ assigns to $1$. 
+Weighted objectives are represented by adding a literal multiple times.
+Formalizing the objectives this way and encoding the decision space $\feasible$ as a propositional formula $\formula$ is similar to MaxSAT, where $\formula$ resembles the hard clauses while the two objectives resemble two sets of (unit) soft clauses.
+With our algorithm, we consider the task of computing a representative solution for each pareto point as well as the task of enumerating all solutions in the pareto front.
 
 \begin{figure}
   \begin{minipage}{0.36\textwidth}
@@ -120,7 +132,8 @@ We consider the task of computing a representative solution for each pareto poin
   An example formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ are shown on the left side of \cref{fig:search-trace}. 
   The solution space is illustrated on the right.
   The two solid dots correspond to the two pareto points of $\formula$ w.r.t.\ $\Obj_\inc$ and $\Obj_\dec$. 
-  Examples of pareto-optimal solutions corresponding to these points are $\tau^o_1 = \{d_1, d_3, i_2, \lnot d_2, \lnot i_1, \lnot i_3\}$ and $\tau^o_2 = \{i_1, i_3, d_2, \lnot i_2, \lnot d_1, \lnot d_3\}$.
+  Examples of pareto-optimal solutions corresponding to these points are $\sol^o_1 = \{d_1, d_3, i_2, \lnot d_2, \lnot i_1, \lnot i_3\}$ and $\sol^o_2 = \{i_1, i_3, d_2, \lnot i_2, \lnot d_1, \lnot d_3\}$.
+  The solution $\sol^c_3 = \{d_1, d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$ is dominated by $\sol^o_1$ ($\sol^o_1 \prec \sol^c_e$) because $\Obj_\inc(\sol^o_1) \leq \Obj_\inc(\sol^c_3)$ and $\Obj_\dec(\sol^o_1) < \Obj_\dec(\sol^c_3)$.
 \end{example}
 
 An important property of pareto-optimal solutions to bi-objective problems is summarized by the next proposition.
