@@ -1,0 +1,20 @@
+{"rule":"PUNCTUATION_PARAGRAPH_END","sentence":"^\\QRevised Selected Papers\\E$"}
+{"rule":"EN_UPPER_CASE_NGRAM","sentence":"^\\QBoolean Model.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QComput.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QEur.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QOper.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QRes.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QSIAM J. Optim.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QOptim.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QOR Spectr.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QMath.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QArtif.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QIntell.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QSatisf.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QNotes Theor.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QSci.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QPrinciples and Practice of Constraint Programming — CP 2003, 9th International Conference, CP 2003, Kinsale, Ireland, September 29 – October 3, 2003, Proceedings\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QSyst.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QMan Cybern.\\E$"}
+{"rule":"PUNCTUATION_PARAGRAPH_END","sentence":"^\\QPart C\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QPrinciples and Practice of Constraint Programming — 26th International Conference, CP 2020, Louvain-la-Neuve, Belgium, September 7–11, 2020, Proceedings\\E$"}

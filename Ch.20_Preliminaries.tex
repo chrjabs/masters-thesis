@@ -17,6 +17,7 @@ An assignment $\sol$ for which $\sol(\formula) = 1$ is a solution to $\formula$.
 The set of variables and literals appearing in $\formula$ are $\var(\formula)$ and $\lit(\formula)$, respectively.  
 The propositional satisfiability (SAT) problem asks whether for a given formula $\formula$, a solution exists.
 A formula $\formula$ is satisfiable if it has solutions, otherwise it is unsatisfiable.
+
 \begin{example}
   Take the propositional formula $\formula_1 = a \land \lnot b$ over variables $\var(\formula_1) = \{a,b\}$.
   It is satisfiable since the assignment $\sol=(a,\lnot b)$ has $\sol(\formula_1)=1$.
@@ -30,6 +31,7 @@ if it is unsatisfiable, it returns ``unsatisfiable'' (UNSAT).
 The SAT problem was proved $\mathcal{NP}$-complete in~\textcite{DBLP:conf/stoc/Cook71}.
 This result is very central to its modern day use as a declarative programming approach to solving other $\mathcal{NP}$-complete problems by encoding them as a propositional formula first, solving them with a SAT solver and then decoding the solution to the original problem context.
 The advantage of using SAT as a declarative programming language for solving other problems comes from the fact that---even though SAT is $\mathcal{NP}$-complete, and it is unclear if a polynomial time algorithm for solving it exists---conflict-driven clause learning solvers~\autocite{handbook2-cdcl} for SAT are efficient in practice and can solve problems with hundred-thousands of variables and clauses \TODO{check claim}.
+
 \begin{example}
   Consider the problem of whether to wear tie and shirt to a given event with the following constraints:
   (i)~one should not wear a tie without a shirt, (ii)~not wearing a tie nor a shirt is impolite, and (iii)~wearing a shirt and a tie is considered overdressed.
@@ -139,6 +141,7 @@ An important property of pareto-optimal solutions to bi-objective problems is su
 \begin{proposition}[Adapted from~\autocite{DBLP:conf/aaai/HartertS14}] \label{prop:biobjective}
   Sorting the pareto-optimal solutions of $\formula$ w.r.t.\ increasing values of $\generalobj_1$ is equivalent to sorting them w.r.t.\ decreasing values of $\generalobj_2$ and vice-versa.
 \end{proposition}
+
 \begin{example}
   Consider the formula $\formula$, the objectives $\Obj_\inc$ and $\Obj_\dec$ and the two pareto-optimal solutions $\sol^o_1$ and $\sol^o_2$ from \cref{fig:search-trace} and \cref{ex:main}.
   By the definition of pareto-optimality, lowering the value of one objective of a pareto-optimal solution has to increase the value of the other;
@@ -193,6 +196,7 @@ the next SAT solver query is done including the assumption $\lnot r$, if a domin
 If no dominating solution is found, all solutions corresponding to the just discovered pareto point can be enumerated when removing the assumption $\lnot r$ by blocking every found solution and querying the solver again until it returns UNSAT.
 If the next solution found dominates the previous one, we harden the clause added at the previous iteration by adding $\lnot r$ as a unit clause.
 Once all solutions for that pareto point are enumerated, the clause is hardened.
+
 \begin{example}
   Consider the same invocation of $P$-minimal as in \cref{ex:pmin}.
   In order to enumerate all solutions in the pareto front, the clause added in the first iteration is $(\ov{\Obj_\inc}{3} \lor \ov{\Obj_\dec}{3} \lor r_1)$ and the solver is queried again with the assumptions $\{ \ove{\Obj_\inc}{3}, \ove{\Obj_\dec}{3}, \lnot r_1 \}$.
@@ -212,14 +216,15 @@ Let $\mathcal{S}$ be the collection of all such sets.
 The computation of $\mathcal{S}$ corresponds to MCS enumeration to which numerous algorithms have been proposed~\autocite{DBLP:conf/lpar/BendikC20,DBLP:conf/hvc/MorgadoLM12,DBLP:conf/sat/PrevitiMJM17}.
 The pareto-optimal solutions are obtained by extracting the solutions satisfying $\formula \land \bigwedge_{l \in  (\Obj_{\inc} \cup \Obj_\dec) \setminus S} (\lnot l)$ for all $S \in \mathcal{S}$ and removing the dominated ones~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}.
 The paretoMCS approach to multi-objective optimization is approximative in that it can only guarantee that a solution is pareto-optimal once the full set $\mathcal{S}$ has been computed.
+Since paretoMCS enumeration is approximative in this sense, we are not comparing the performance of our algorithm to this approach, since our algorithm has the algorithmic advantage that all found solutions are immediately known to be pareto-optimal.
 % In contrast, every minimal solution found during the $P$-minimal approach of~\textcite{DBLP:conf/cp/SohBTB17} and every solution returned by the $\E$ subroutine of \cref{alg:base-algorithm} is immediately known to be pareto-optimal.
+
 \begin{example}\label{ex:MCS}
   Consider the formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}.
   The paretoMCS enumeration procedure will return the solution $\sol = \{d_1, d_3, i_1, i_3, \lnot d_2, \lnot i_2\}$ since no solution $\sol_s$ of $\formula$ has $\{x \in \Obj_\inc \cup \Obj_\dec \mid  \sol_s(x) = 1\} \subsetneq \{d_1, d_3, i_1, i_3\}$.
   The solution $\sol$ is not pareto-optimal, but only filtered out when a solution that dominates it is enumerated.
   However, there are no guarantees on when such a dominating solution is found. 
 \end{example}
-Since paretoMCS enumeration is approximative in this sense, we are not comparing the performance of our algorithm to this approach, since our algorithm has the algorithmic advantage that all found solutions are immediately known to be pareto-optimal.
 
 \subsubsection{Implicit Hitting Set: Seesaw\label{sec:seesaw}}
 

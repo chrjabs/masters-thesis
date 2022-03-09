@@ -8,10 +8,15 @@
     "\\msh{}": "dummy",
     "\\Simpr{}": "dummy",
     "\\Min{}": "dummy",
+    "\\crefrange{}{}": "pluralDummy",
     "\\scep{}": "dummy",
     "\\scsc{}": "dummy"
   },
   "ltex.latex.environments": {
     "algorithmic": "ignore"
+  },
+  "ltex.bibtex.fields": {
+    "bibsource": false,
+    "opteditor": false
   }
 }
