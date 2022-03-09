@@ -1,0 +1,56 @@
+\appendix{Datasets Used for Decision Rule Learning\label{appendix:datasets}}
+
+\Cref{tab:datasets} summarizes the datasets used in the empirical evaluations, including their origin and statistics, as well as the sizes of CNF formulas obtained from them with the encoding from~\textcite{DBLP:conf/cp/MaliotovM18}.
+The original files were downloaded from the UCI Machine Learning Repository~\autocite{UciMlr} and from Kaggle ({\small\url{https://www.kaggle.com}}).
+Links to the original datasets as well as the files we used will be made available online upon publication.
+We randomly and independently sampled subsets of $\nsamp\in\{50,100,1000,5000,10000\}$ data samples from the datasets, four of each size (when applicable), resulting in a         
+total of 372 datasets, and discretized the data as in~\autocite{DBLP:conf/cp/MaliotovM18}:
+categorical features are one-hot encoded, continuous features discretized by comparing to a collection of thresholds. 
+
+In addition to the name and the source of the datasets, the table shows the number of data samples as well as the number of features before and after discretization.
+The last two columns give some statistics about the formulas generated with the encoding from~\textcite{DBLP:conf/cp/MaliotovM18} for two clauses based on the full datasets.
+We report both the number of clauses and the number of variables in these formulas.
+In case the 16-GB memory limit was already reached, and the run terminated before the formula was created, these two columns are marked with ``memout''.
+Note that the memouts are for the full datasets; also for those datasets sampled subsets were used in the experiments.
+
+For the decision rule instances, the instance that took the longest time to solve that did not time out for the \msh{} variant was a subset of 100 examples of the Connect 4 dataset.
+The formula of this dataset has 3362 variables and 42621 clauses.
+The largest instance in terms of the number of examples that our algorithm was able to find a representative for every pareto point for was a subset of the Travel Insurance dataset with 10000 samples.
+When looking at the number of features, the largest solvable dataset was a subset of the Twitter dataset with 50 examples and 1511 discretized features.
+
+\begin{sidewaystable}
+    \centering
+    \caption{The datasets used in the decision rule experiments and some summary statistics about them and the encoded formulas created from them.}\label{tab:datasets}
+    {\small
+    \begin{tabular}{@{}llrrrrr@{}}
+        \toprule
+        Dataset & Source & \# examples & \# features & \# disc. feat. & \# clauses ($10^6$) & \# vars ($10^3$) \\
+        \midrule
+        Adult & UCI & 32561 & 14 & 144 & 226 & 589 \\
+        Bank Marketing & UCI & 45211 & 16 & 88 & 227 & 840 \\
+        Banknote Authentication & UCI & 1372 & 4 & 16 & 0.67 & 18.7\\
+        Connect 4 & UCI & 67557 & 42 & 126 & \multicolumn{2}{c}{memout} \\
+        Default of Credit Card Clients & UCI & 30000 & 23 & 110 & 178 & 539 \\
+        Dota 2 Games Results & UCI & 92650 & 115 & 345 & \multicolumn{2}{c}{memout}\\
+        FIFA 2018 Man of the Match & Kaggle & 128 & 26 & 106 & 0.034 & 3.3 \\
+        Heart Disease & Kaggle & 303 & 13 & 31 & 0.044 & 3.9 \\
+        Indian Liver Patient Dataset & UCI & 583 & 10 & 14 & 0.096 & 7.3 \\
+        Ionosphere & UCI & 351 & 33 & 144 & 0.11 & 6.8 \\
+        Iris & UCI & 150 & 4 & 11 & 0.0087 & 1.7 \\
+        MAGIC Gamma Telescope & UCI & 19020 & 10 & 79 & 105 & 330 \\
+        Medical Hospital Readmissions & Kaggle & 25000 & 64 & 125 & 222 & 445 \\
+        Mushroom & UCI & 8124 & 22 & 115 & 24.5 & 132 \\
+        Parkinsons & UCI & 195 & 22 & 51 & 0.028 & 2.9 \\
+        Pima Indians Diabetes & Kaggle & 768 & 8 & 30 & 0.19 & 10 \\
+        Skin Segmentation & UCI & 245057 & 3 & 119 & \multicolumn{2}{c}{memout} \\
+        Tic-Tac-Toe Endgame & UCI & 958 & 9 & 27 & 422 & 13 \\
+        Buzz in Social Media (Toms Hardware) & UCI & 28179 & 96 & 910 & 220 & 525 \\
+        Buzz in Social Media (Twitter) & UCI & 49999 & 77 & 1511 & \multicolumn{2}{c}{memout} \\
+        Blood Transfusion Service Center & UCI & 748 & 4 & 6 & 0.13 & 9.5 \\
+        Travel Insurance & Kaggle & 63326 & 10 & 211 & 50 & 1205 \\
+        Wisconsin Diagnostic Breast Cancer & UCI & 569 & 30 & 88 & 0.14 & 8.5 \\
+        Rain in Australia & Kaggle & 107696 & 16 & 141 & \multicolumn{2}{c}{memout} \\
+        \bottomrule
+    \end{tabular}
+    }
+\end{sidewaystable}

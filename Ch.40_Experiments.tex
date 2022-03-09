@@ -30,7 +30,7 @@ This corresponds to finding pareto-optimal solutions w.r.t.\ the size of the dec
 (In preliminary experiments we observed that using the classification error as the increasing objective leads to worse performance. \TODO{consider including})
 Since decision rules in CNF contain many symmetric solutions obtained by changing the order of clauses, we add additional clauses to the encoding to break these symmetries by enforcing a lexicographic ordering on the bit-strings representing the clauses; see \cref{sup:symbr} (in the supplement) for details \TODO{include}.
 
-As the basis of benchmark instances, we used 24 standard UCI~\autocite{UciMlr} and Kaggle ({\small\url{https://www.kaggle.com}}) benchmark datasets, including ones used in~\textcite{DBLP:conf/cp/MaliotovM18}; see \cref{sup:datasets} for details.
+As the basis of benchmark instances, we used 24 standard UCI~\autocite{UciMlr} and Kaggle ({\small\url{https://www.kaggle.com}}) benchmark datasets, including ones used in~\textcite{DBLP:conf/cp/MaliotovM18}; see \cref{appendix:datasets} for details.
 We randomly and independently sampled subsets of $\nsamp\in\{50,100,1000,5000,10000\}$ data samples from the datasets, four of each size (when applicable), resulting in a total of 372 datasets. %, and discretized the data as in~\cite{DBLP:conf/cp/MaliotovM18}:
 %categorical features are one-hot encoded, continuous features discretized by comparing to a collection of thresholds.
 All experiments on these datasets were run with the encoding from~\textcite{DBLP:conf/cp/MaliotovM18} configured to learn CNF decision rules consisting of two clauses.

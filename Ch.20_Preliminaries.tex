@@ -298,4 +298,14 @@ In fact, many modern MaxSAT solvers exploit  multilevel properties of input inst
 
 \subsection{Other Declarative Optimization Paradigms\label{sec:other-approaches}}
 
+\TODO{expand (slightly)}
+
+Beyond SAT-based approaches, multi-objective optimization has been studied in other declarative optimization paradigms.
+For example, in  constraint programming, a filtering algorithm for the bi-objective pareto constraint was proposed~\autocite{DBLP:conf/aaai/HartertS14}.
+The resulting search algorithm is similar to paretoMCSes in that it maintains a set $\mathcal{S}$ of solutions that do not dominate each other.
+When a new solution is found, any solution it dominates is removed from $\mathcal{S}$.
+
+Multi-objective optimization has also been studied in the context of mixed integer programming (see, e.g.,~\textcite{Rasmussen1986,DBLP:journals/ol/LuMS20,DBLP:journals/siamjo/SantisENR20,DBLP:journals/eor/AlvesC07}).
+Our focus in this work was to develop MaxSAT-based bi-objective optimization problems, especially suited for problems naturally represented in propositional logic, such that the ones we employed in our empirical evaluation.
+
 \subsection{Approximative Approaches\label{sec:approximative}}

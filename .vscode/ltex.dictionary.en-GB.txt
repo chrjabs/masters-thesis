@@ -45,3 +45,8 @@ AdaBoost
 Multicriteria
 Multigenome
 MaxSat
+memout
+memouts
+vars
+Dota
+Parkinsons
