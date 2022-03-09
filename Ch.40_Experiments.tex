@@ -40,6 +40,12 @@ blocking over the variables $s_l^j$ is sufficient and blocks multiple symmetric 
 %Since we want to find solutions corresponding to distinct rules, blocking a solution $\tau$ with $\{ \lnot s_l^j \mid l=1,\dots,\nclauses,\,j=1,\dots,\nfeat,\,\tau(s_l^j)=1 \} \c\up \{ s_l^j \mid l=1,\dots,\nclauses,\,j=1,\dots,\nfeat,\,\tau(s_l^j)=0 \}$ is sufficient and blocks multiple symmetric solutions that only differ in the assignment to auxiliary variables.
 Further, making use of the algorithm-specific fact that \algname{} is guaranteed to enumerate pareto-optimal solutions in order of increasing size, for \algname{} it is sufficient to block a solution over all $s_l^j$ that are assigned to false.
 
+\TODO{Seesaw instantiation (mention CPLEX)}
+We instantiated Seesaw for LIDR by using misclassifications as the objective over which cores are extracted and a hitting set $\hs$ is found with the help of CPLEX over these cores.
+In the second step, the number of literals in the smallest rule misclassifying the examples in $\hs$ or a subset of it is found.
+This function is implemented as a solution-improving search in CaDiCaL.
+This instantiation was chosen because finding the smallest rule misclassifying $\hs$ is an anti-monotone function and the refined version of core extraction presented in~\textcite{DBLP:conf/cp/JanotaMSM21} can therefore be used, making Seesaw feasible in the first place.
+
 \subsection{Bi-Objective Set Covering}
 
 In the set covering problem over sets $\sets$, a subset $\cover$ of the elements $\{1,\dots,\nelems\}$ needs to be chosen such that (i)~$\cover$ covers all sets in $\sets$, i.e., $\cover\cap S\neq\emptyset,\,\forall S\in\sets$, and (ii)~$\cover$ is minimal regarding some objective.

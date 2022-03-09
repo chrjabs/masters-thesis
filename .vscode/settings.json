@@ -10,7 +10,8 @@
     "\\Min{}": "dummy",
     "\\crefrange{}{}": "pluralDummy",
     "\\scep{}": "dummy",
-    "\\scsc{}": "dummy"
+    "\\scsc{}": "dummy",
+    "\\TODO{}": "ignore"
   },
   "ltex.latex.environments": {
     "algorithmic": "ignore"

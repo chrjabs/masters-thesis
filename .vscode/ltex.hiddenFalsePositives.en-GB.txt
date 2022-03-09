@@ -18,3 +18,5 @@
 {"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QMan Cybern.\\E$"}
 {"rule":"PUNCTUATION_PARAGRAPH_END","sentence":"^\\QPart C\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QPrinciples and Practice of Constraint Programming — 26th International Conference, CP 2020, Louvain-la-Neuve, Belgium, September 7–11, 2020, Proceedings\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QTheory and Applications of Satisfiability Testing — SAT 2020 — 23rd International Conference, Alghero, Italy, July 3-10, 2020, Proceedings\\E$"}
+{"rule":"THE_SUPERLATIVE","sentence":"^\\QAll cores in \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q need to be resolved by selecting a smallest hitting set \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q that contains at least one element from each core.\\E$"}
