@@ -1,0 +1,17 @@
+{
+  "ltex.latex.commands": {
+    "\\algname{}": "dummy",
+    "\\satunsat{}": "dummy",
+    "\\unsatsat{}": "dummy",
+    "\\msu{}": "dummy",
+    "\\oll{}": "vowelDummy",
+    "\\msh{}": "dummy",
+    "\\Simpr{}": "dummy",
+    "\\Min{}": "dummy",
+    "\\scep{}": "dummy",
+    "\\scsc{}": "dummy"
+  },
+  "ltex.latex.environments": {
+    "algorithmic": "ignore"
+  }
+}
