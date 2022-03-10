@@ -1,11 +1,13 @@
 \chapter{Preliminaries\label{chap:preliminaries}}
 
+% Signposting
 In this chapter, an overview of subjects that this work builds on is given.
 The first section discusses propositional satisfiability, as this is the declarative paradigm the presented algorithm builds on.
 In the second and last section, bi-objective optimization is described, starting from a general perspective and ending up with notation used for bi-objective optimization in the context of propositional logic.
 
 \section{Propositional Satisfiability\label{sec:sat}}
 
+% Propositional logic and SAT
 For a Boolean variable $x$ there are two literals, the positive $x$ and the negative $\lnot x$. 
 A clause $C$ is a set of (disjunction over) literals and a CNF formula $\formula$ is a set of (conjunction over) clauses.
 A truth assignment $\sol$ maps boolean variables to $1$ (true) or $0$ (false).
@@ -16,20 +18,24 @@ The set of variables and literals appearing in $\formula$ are $\var(\formula)$ a
 The propositional satisfiability (SAT) problem asks whether for a given formula $\formula$, a solution exists.
 A formula $\formula$ is satisfiable if it has solutions, otherwise it is unsatisfiable.
 
+% Example: SAT
 \begin{example}
   Take the propositional formula $\formula_1 = a \land \lnot b$ over variables $\var(\formula_1) = \{a,b\}$.
   It is satisfiable since the assignment $\sol=(a,\lnot b)$ has $\sol(\formula_1)=1$.
   The formula $\formula_2 = a \land \lnot a$ on the other hand is not satisfiable since no assignment $\sol$ with $\sol(\formula_2)=1$ exists.
 \end{example}
 
+% SAT solvers
 A SAT solver is an algorithm that solves the SAT problem for a given formula $\formula$.
 If the formula is satisfiable, it returns ``satisfiable'' (SAT) and a solution $\sol$ with $\sol(\formula)=1$;
 if it is unsatisfiable, it returns ``unsatisfiable'' (UNSAT).
 
+% SAT as a declarative modelling language
 The SAT problem was proved $\mathcal{NP}$-complete in~\textcite{DBLP:conf/stoc/Cook71}.
 This result is very central to its modern day use as a declarative programming approach to solving other $\mathcal{NP}$-complete problems by encoding them as a propositional formula first, solving them with a SAT solver and then decoding the solution to the original problem context.
 The advantage of using SAT as a declarative programming language for solving other problems comes from the fact that---even though SAT is $\mathcal{NP}$-complete, and it is unclear if a polynomial time algorithm for solving it exists---conflict-driven clause learning solvers~\autocite{handbook2-cdcl} for SAT are efficient in practice and can solve problems with hundred-thousands of variables and clauses\TODO{ check claim}.
 
+% Example: SAT modelling
 \begin{example}
   Consider the problem of whether to wear tie and shirt to a given event with the following constraints:
   (i)~one should not wear a tie without a shirt, (ii)~not wearing a tie nor a shirt is impolite, and (iii)~wearing a shirt and a tie is considered overdressed.
@@ -45,6 +51,7 @@ In this work, w.l.o.g.\ we assume that all formulas are satisfiable\TODO{ releva
 
 \subsection{Incremental SAT Solving under Assumptions\label{sec:inc-sat}}
 
+% Incremental SAT solving
 It is common that algorithms that solve problems with the help of SAT solvers produce a series of SAT problems that only differ slightly.
 To be able to solve these sub-problems more efficiently, most modern SAT solvers provide an incremental interface that allows for retaining information learned in previous solver calls~\autocite{DBLP:journals/entcs/EenS03,handbook2-cdcl}\TODO{ check if new CDCL chapter can be referenced}.
 In order for the learned information from previous solver queries to still hold for subsequent calls, it is only possible to add clauses to the solvers internal formula, not remove them.
@@ -54,21 +61,25 @@ The subset $\core$ is called an unsatisfiable \emph{core} and, intuitively, is a
 
 \subsection{Maximum Satisfiability\label{sec:max-sat}}
 
+% MaxSAT
 Maximum satisfiability (MaxSAT) is the optimization variant of the decision SAT problem.
 In it, the goal is to find a solution that satisfies as many of the given clauses as possible.
 Most commonly and in this work, MaxSAT refers to the extension of weighted partial MaxSAT, in which a set of \emph{hard} clauses $\formula$ and another set of \emph{soft} clauses $\softs$ are given.
 Each clause $\clause \in \softs$ is assigned a weight $w_\clause$ and a solution $\sol$ that satisfies $\formula$ while minimizing $\sum_{\clause\in\softs \mid \tau(\clause)=0} w_\clause$ is optimal for the problem.
 
+% MaxSAT as a modelling language
 In the same way that SAT can be used as a declarative language to solve other decision problems, MaxSAT can be used to solve other optimization problems.
 
 \subsection{Encoding Cardinality Constraints\label{sec:card-const}}
 
+% Cardinality constraints
 A common type of constraint to appear when encoding problems into SAT is that of a cardinality constraint.
 Cardinality constraints, informally speaking, enforce a bound on how many literals in a set can be assigned to true.
 Formally, for a set $L$ of literals and a bound $k \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \circ k\right)$ denotes a CNF formula that encodes the linear inequality $\sum_{l \in L} l \circ k$, where $\circ \in \{ ,< ,> ,\geq, \leq, =\}$.
 Numerous methods of forming such CNF formulas are known~\autocite{DBLP:conf/cp/BailleuxB03}.
-In this work we make use of the totalizer encoding.
 
+% Totalizer encoding
+In this work we make use of the totalizer encoding.
 Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocite{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$:
 if $\tau$ is an assignment that satisfies $\tot(L)$, then $\tau(\ov{L}{b}) = 1$ if $\sum_{l \in L} \tau(l) < b$\TODO{ point out that iff (or $\leftarrow$) are possible as well, but we only need upper bounds}.
 The incremental totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula:
@@ -79,6 +90,7 @@ As such we will leave them out from the solutions we describe in favour of brevi
 
 \section{Bi-Objective Optimization and Pareto Optimality\label{sec:biopt}}
 
+% Multiobjective optimization
 Multi-objective optimization is the problem of optimizing $\nobj$ objective functions with the decision variable $x$, while $x$ is from a feasible set $\feasible$~\autocite{Ehrgott2005-1}.
 W.l.o.g., we assume that all optimizations seek to minimize the objective function.
 Formally a multi-objective optimization problem (MOOP) is the following:
@@ -86,6 +98,7 @@ Formally a multi-objective optimization problem (MOOP) is the following:
   \min (\generalobj_1(x),\dots,\generalobj_\nobj(x))\ \text{s.t.}\ x\in \feasible.
 \end{equation}
 
+% Pareto optimality
 For multi-objective optimization problems, since the objectives might be in conflict with each other, no single optimal solution exists.
 However, the notions of domination and pareto optimality can be used to define what a minimal point for multiple objective functions is.
 \begin{definition}[Domination~\autocite{Ehrgott2005-2}]
@@ -100,6 +113,7 @@ Note that there can be multiple pareto-optimal solutions to a MOOP.
 The set of all pareto-optimal solutions is called the pareto front (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj$);
 the tuple $(\generalobj_1(x),\dots,\generalobj_\nobj(x))$ for a pareto-optimal $x$---i.e., the image of $x$ in objective space---is a pareto point (which multiple solutions can correspond to).
 
+% Bi-objective optimization in a SAT context
 The subset of all multi-objective optimization problems which this work provides a solving algorithm for, is \emph{bi}-objective optimization, where the number of objective functions $\nobj=2$.
 Furthermore, we restrict the objective functions to be linear.
 Bi-objective optimization problems can be solved by many approaches (see \cref{chap:approaches} for more details), but in this work we focus on SAT-based approaches.
@@ -110,6 +124,7 @@ Weighted objectives are represented by adding a literal multiple times.
 Formalizing the objectives this way and encoding the feasible set $\feasible$ as a propositional formula $\formula$ is similar to MaxSAT, where $\formula$ resembles the hard clauses while the two objectives resemble two sets of (unit) soft clauses.
 With our algorithm, we consider the task of computing a representative solution for each pareto point as well as the task of enumerating all solutions in the pareto front.
 
+% Example: A bi-objective problem
 \begin{figure}
   \begin{minipage}{0.36\textwidth}
   \footnotesize
@@ -137,11 +152,13 @@ With our algorithm, we consider the task of computing a representative solution 
   The solution $\sol^c_3 = \{d_1, d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$ is dominated by $\sol^o_1$ ($\sol^o_1 \prec \sol^c_e$) because $\Obj_\inc(\sol^o_1) \leq \Obj_\inc(\sol^c_3)$ and $\Obj_\dec(\sol^o_1) < \Obj_\dec(\sol^c_3)$.
 \end{example}
 
+% Proposition: Ordered pareto front
 An important property of pareto-optimal solutions to bi-objective problems is summarized by the next proposition.
 \begin{proposition}[Adapted from~\autocite{DBLP:conf/aaai/HartertS14}] \label{prop:biobjective}
   Sorting the pareto-optimal solutions of $\formula$ w.r.t.\ increasing values of $\generalobj_1$ is equivalent to sorting them w.r.t.\ decreasing values of $\generalobj_2$ and vice-versa.
 \end{proposition}
 
+% Example: Orderd pareto front
 \begin{example}
   Consider the formula $\formula$, the objectives $\Obj_\inc$ and $\Obj_\dec$ and the two pareto-optimal solutions $\sol^o_1$ and $\sol^o_2$ from \cref{fig:search-trace} and \cref{ex:main}.
   By the definition of pareto-optimality, lowering the value of one objective of a pareto-optimal solution has to increase the value of the other;
