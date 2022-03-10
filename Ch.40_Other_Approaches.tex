@@ -153,7 +153,13 @@ For example, in  constraint programming, a filtering algorithm for the bi-object
 The resulting search algorithm is similar to paretoMCSes in that it maintains a set $\mathcal{S}$ of solutions that do not dominate each other.
 When a new solution is found, any solution it dominates is removed from $\mathcal{S}$.
 
-Multi-objective optimization has also been studied in the context of mixed integer programming (see, e.g.,~\textcite{Rasmussen1986,DBLP:journals/ol/LuMS20,DBLP:journals/siamjo/SantisENR20,DBLP:journals/eor/AlvesC07}).
-Our focus in this work was to develop MaxSAT-based bi-objective optimization problems, especially suited for problems naturally represented in propositional logic, such that the ones we employed in our empirical evaluation.
+Multi-objective optimization has also been studied in the context of mixed integer programming and zero-one-programming~\autocite{Ehrgott2005-6,Rasmussen1986,DBLP:journals/eor/AlvesC07}.
+There are different algorithmic approaches in this field:
+based on the Simplex algorithm~\autocite{Ehrgott2005-7,DBLP:journals/mp/EvansS73}, branch-and-bound approaches~\autocite{Adelgren2021,DBLP:journals/siamjo/SantisENR20} and based on reducing it to a different mixed integer programming problem~\autocite{DBLP:journals/jota/Sun17,DBLP:journals/ol/LuMS20,Soland1979}.
+
+Our focus in this work is to develop a MaxSAT-based approach for solving bi-objective optimization problems, especially suited for problems naturally represented in propositional logic.
+As such, we only compare to approaches solving the same problem (presented in \cref{sec:sat-based}) in our empirical evaluation.
 
 \section{Approximative Approaches\label{sec:approximative}}
+
+\autocite{Saini2021}
