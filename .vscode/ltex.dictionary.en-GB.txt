@@ -51,3 +51,9 @@ vars
 Dota
 Parkinsons
 Nondominance
+Järvisalo
+Niskanen
+Biobjective
+CSPs
+ECAI
+bicriterion
