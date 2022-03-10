@@ -180,6 +180,22 @@ based on the Simplex algorithm~\autocite{Ehrgott2005-7,DBLP:journals/mp/EvansS73
 Our focus in this work is to develop a MaxSAT-based approach for solving bi-objective optimization problems, especially suited for problems naturally represented in propositional logic.
 As such, we only compare to approaches solving the same problem (presented in \cref{sec:sat-based}) in our empirical evaluation.
 
-\section{Approximative Approaches\label{sec:approximative}}
+\section{Probabilistic and Meta-Heuristic Approaches\label{sec:approximative}}
 
-\autocite{Saini2021}
+% Approximative vs. exact methods
+Other than the exact algorithms presented so far, there are also probabilistic and mate-heuristic search algorithms for multi-objective optimization problems~\autocite{Saini2021}.
+These algorithms are \emph{not} guaranteed to return the exact pareto front, but they will return good solutions that might be sufficiently close approximations.
+Probabilistic and meta-heuristic algorithms are mainly used for problems that are too large to solve them with exact methods under given research constraints.
+Comparing exact with approximative approaches does not necessarily give much insight, however for the sake of completeness we are giving a short overview of these approximative methods as well.
+
+% Simulated annealing
+The first category of approximative algorithms is the family of simulated annealing algorithms~\autocite{Saini2021}.
+These probabilistic and meta-heuristic algorithms model the annealing process that is used to increase the quality of crystalline structure in metals.
+It was first proposed in~\textcite{DBLP:journals/science/KirkpatrickGV83} and extended to multiple objectives in~\textcite{DBLP:journals/tec/BandyopadhyaySMD08}.
+An example of an algorithm building on multi-objective simulated annealing can be found in~\textcite{DBLP:journals/isci/SenguptaS18}.
+
+% Evolutionary algorithms
+A second big group of algorithms are evolutionary algorithms~\autocite{Saini2021,Dasgupta2013}.
+These meta-heuristic algorithms hold a set of candidate solutions referred to as \emph{population}, which is then developed over multiple iterations to approximate the pareto front;
+this process simulates evolution in nature, hence the name.
+Algorithms for this category were presented for example in~\textcite{DBLP:journals/jgo/StornP97,DBLP:journals/tec/DebAPM02}.

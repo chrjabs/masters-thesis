@@ -57,3 +57,5 @@ Biobjective
 CSPs
 ECAI
 bicriterion
+NSGA-II
+AMOSA
