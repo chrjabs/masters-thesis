@@ -113,32 +113,26 @@ More precisely, if the hitting set is found to increase from size $|\hs|$ to siz
 
 % Example: Seesaw
 \begin{example}
-  \TODO{shorten}
   Consider the formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}. 
-  Initially there are no cores, so $\cores = \emptyset$.
-  As such, the first hitting set $\hs = \emptyset$ will also be empty.
-  Since there are no solutions $\sol$ that set $\sol(u) = 0$ for each $u \in \Obj_\inc$, the iteration ends by extracting $\Obj_\inc$ as a core. 
-  The intuition here is that at this point, we know that any solution $\sol$ of $\formula$ sets at least one variable in $\Obj_\inc$ to $1$.
-
-  In the next iteration, a hitting set over $\cores = \{ \Obj_\inc \}$ is computed. There are a number of alternatives for such hitting sets, assume $\hs = \{ i_1 \}$.
-  Since there are no solutions $\sol$ of $\formula$ that set $\sol(i_2) = \sol(i_3) = 0$, the iteration ends with extracting $\{ i_2, i_3\}$ as a new core.
-  At this point we know that any solution sets at least one variable of $\Obj_\inc$ and one from $\{i_2, i_3\}$ to $1$.
-
+  Initially there are no cores, so $\cores = \emptyset$ and $\hs = \emptyset$.
+  Since there is no $\sol$ that sets $\sol(u) = 0$ for each $u \in \Obj_\inc$, the iteration ends by extracting the core $\Obj_\inc$. 
+  The intuition is, that any solution $\sol$ of $\formula$ sets at least one variable in $\Obj_\inc$ to $1$.
+  In the next iteration, a hitting set over $\cores = \{ \Obj_\inc \}$ is computed.
+  There are a number of alternatives;
+  assume $\hs = \{ i_1 \}$.
+  Since there is no $\sol$ that set $\sol(i_2) = \sol(i_3) = 0$, the iteration ends with extracting the core $\{ i_2, i_3\}$.
+  The same intuition as earlier holds for this core.
   Assume the next hitting set computed is $\hs = \{i_2\}$.
-  Now there actually are solutions $\sol$ of $\formula$ that set $\sol(i_1) = \sol(i_3) = 0$, one that minimizes 
-  $\Obj_\dec(\sol)$ is $\sol^o_1 = \{d_1, d_3, i_2, \lnot d_2, \lnot i_1, \lnot i_3 \}$.
+  Now there is a $\sol$ that set $\sol(i_1) = \sol(i_3) = 0$;
+  one that minimizes $\Obj_\dec(\sol)$ is $\sol^o_1 = \{d_1, d_3, i_2, \lnot d_2, \lnot i_1, \lnot i_3 \}$.
   The iteration ends with extracting the core $\core = \{i_1, i_3\}$.
-  Now the intuition is that, since $\sol^o_1$ minimizes $\Obj_\dec$ over solutions that assign $\sol(u) = 0$ for every $u \notin \hs$, every solution that obtains a lower value of $\Obj_\dec$
-  assigns at least one literal of $\core$ to $1$ as well. 
-
-  In the next iteration, the set $\cores$ of cores is $\cores = \{ \Obj_\inc, \{i_2, i_3\}, \{i_1, i_3\}\}$. The only subset minimal hitting set $\hs$ of $\cores$ is $\hs = \{i_3\}$.
-  There are no solutions $\sol$ that set $\sol(i_1) = \sol(i_2) = 0$ so a new core $\{i_1, i_2\}$ is extracted. 
-  In the next iteration, one possible hitting set is $\hs = \{i_1, i_3\}$.
+  Now the intuition is that, since $\sol^o_1$ minimizes $\Obj_\dec$ over solutions that assign $\sol(u) = 0$ for every $u \notin \hs$, every solution that obtains a lower value of $\Obj_\dec$ assigns at least one literal of $\core$ to $1$ as well. 
+  Now we have $\cores = \{ \Obj_\inc, \{i_2, i_3\}, \{i_1, i_3\}\}$;
+  the only smallest hitting set is $\hs = \{i_3\}$.
+  There is no $\sol$ that sets $\sol(i_1) = \sol(i_2) = 0$ so a new core $\{i_1, i_2\}$ is extracted. 
+  Next, one possible hitting set is $\hs = \{i_1, i_3\}$.
   Since the size of the hitting set grew from $1$ to $2$, the algorithm concludes that $\sol^o_1$ is pareto-optimal. 
-  In this iteration, the pareto-optimal solution $\sol^o_2 = \{d_2, i_1, i_3, \lnot d_1, \lnot d_3, \lnot i_2 \}$ is obtained 
-  as the solution that minimizes $\Obj_\dec$ over all solutions $\sol$ that set $\sol(i_2) = 0$.  
-
-  The algorithm continues in this manner, computing the hitting sets, $\{i_1, i_2\}$, $\{i_2, i_3\}$ and $\{i_1, i_2, i_3\}$. 
+  The algorithm continues in this manner, finding the pareto-optimal $\sol^o_2$ in the process.
   After computing the hitting set consisting of all literals in $\Obj_\inc$, the core extracted is $\emptyset$ at which point the algorithm terminates. 
 \end{example}
 
