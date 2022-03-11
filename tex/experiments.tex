@@ -11,6 +11,11 @@ We evaluate the relative runtime performance of the \algname{} variants against 
 As a parametric detail, in its default \msh{} is configured to switch between \msu{} and \satunsat{} once 70\% of the literals in $\Obj_\inc$ have been added to $\tot(\Act)$.
 All experiments were run on 2.60-GHz Intel Xeon E5-2670 machines with 64-GB RAM in RHEL under a 1.5-hour per-instance time and 16-GB memory limit.
 
+\TODO{implementation of $P$-minimal}
+Since this approach is so close to ours, we are using it as one of the two approaches we compare \algname{} to.
+We were unable to obtain an implementation of the approach from the authors.
+For a fair comparison with \algname{}, we hence reimplemented $P$-minimal similarly as our algorithm.
+
 \section{Benchmarks\label{sec:benchmarks}}
 
 % Signposting
