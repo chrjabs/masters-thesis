@@ -18,7 +18,7 @@
 %%      algorithms-track-2020 = Algorithms study track
 %%      networking-track-2020 = Networking study track
 
-\documentclass[english,twoside,censored,csm,algorithms-track-2020,draft]{HYthesisML}
+\documentclass[english,twoside,censored,csm,algorithms-track-2020]{HYthesisML}
 
 
 % If wanted, open new chapters only at right page.
@@ -78,23 +78,45 @@
 
 \usepackage[capitalize,noabbrev,nameinlink]{cleveref} % For easier referencing
 \Crefname{ALC@unique}{Line}{Lines}
-\Crefrangeformat{ALC@unique}{Lines~#3#1#4--#5#2#6}
+\newcommand{\crefrangeconjunction}{--}
+
 
 \usepackage{amsthm}          % Theorems
+\usepackage{aliascnt}        % Cleveref with shared number theorems
 \newtheorem{theorem}{Theorem}[chapter]
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{exercise}[theorem]{Exercise}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{conjecture}[theorem]{Conjecture}
-\newtheorem{observation}[theorem]{Observation}
+\newaliascnt{lemma}{theorem}
+\newtheorem{lemma}[lemma]{Lemma}
+\aliascntresetthe{lemma}
+\newaliascnt{corollary}{theorem}
+\newtheorem{corollary}[corollary]{Corollary}
+\aliascntresetthe{corollary}
+\newaliascnt{proposition}{theorem}
+\newtheorem{proposition}[proposition]{Proposition}
+\aliascntresetthe{proposition}
+\newaliascnt{exercise}{theorem}
+\newtheorem{exercise}[exercise]{Exercise}
+\aliascntresetthe{exercise}
+\newaliascnt{definition}{theorem}
+\newtheorem{definition}[definition]{Definition}
+\aliascntresetthe{definition}
+\newaliascnt{conjecture}{theorem}
+\newtheorem{conjecture}[conjecture]{Conjecture}
+\aliascntresetthe{conjecture}
+\newaliascnt{observation}{theorem}
+\newtheorem{observation}[observation]{Observation}
+\aliascntresetthe{observation}
 \theoremstyle{definition}
-\newtheorem{example}[theorem]{Example}
+\newaliascnt{example}{theorem}
+\newtheorem{example}[example]{Example}
+\aliascntresetthe{example}
 \theoremstyle{remark}
-\newtheorem{note}[theorem]{Note}
+\newaliascnt{note}{theorem}
+\newtheorem{note}[note]{Note}
+\aliascntresetthe{note}
 \newtheorem*{note*}{Note}
-\newtheorem{remark}[theorem]{Remark}
+\newaliascnt{remark}{theorem}
+\newtheorem{remark}[remark]{Remark}
+\aliascntresetthe{remark}
 \newtheorem*{remark*}{Remark}
 
 \graphicspath{{./plots}}

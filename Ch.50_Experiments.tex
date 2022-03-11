@@ -32,7 +32,7 @@ In contrast, here we address directly the problem of computing all pareto-optima
 
 % Example: Decision rule
 \begin{minipage}{.75\textwidth}
-  \begin{example}
+  \begin{example}\label{ex:dr}
     Consider the sample dataset shown on the right with features $x_1$ and $x_2$, class $y$ and three samples.
     Two exemplary decision rules are the following: $r_1 = f_1$, $r_2 = f_1 \land f_2$.
     $r_1$ has size $1$ and classification error $1$ while $r_2$ has size $2$ and classification error $0$.
@@ -66,7 +66,7 @@ We also consider swapping the objectives, so that the classification error is th
 
 % Symmetry breaking clauses
 Since decision rules in CNF contain many symmetric solutions obtained by changing the order of clauses, we add additional clauses to the encoding to break these symmetries.
-The idea behind the symmetry breaking is that the bit-strings $\selector_l^1\selector_l^2\dots\selector_l^\nfeat$ are forced to be in lexicographic ordering.
+The idea behind the symmetry breaking is that the bit-strings $\sol(\selector_l^1)\sol(\selector_l^2)\dots\sol(\selector_l^\nfeat)$ are forced to be in lexicographic ordering.
 In addition to the $\selector$ variables, we introduce variables $\equals_l^j$ for $j=1,\dots,\nfeat$ and $l=2,\dots,\nclauses$ that represent whether the bit-strings of the clauses with index $(l-1)$ and $l$ are equal for the first $j$ bits.
 The semantics of this representation are encoded as follows:
 $\equals_l^1 \leftrightarrow (\selector_{l-1}^1 \leftrightarrow \selector_l^1)$ and $\equals_l^j \leftrightarrow (\equals_l^{j-1} \land (\selector_{l-1}^f \leftrightarrow \selector_l^j))$ for $j=2,\dots,\nfeat$.
@@ -74,7 +74,11 @@ The lexicographic ordering is then enforced by adding the constraints $\lnot \eq
 
 % Example: Symmetric decision rules
 \begin{example}
-  \TODO{decide if needed and write}
+  Consider the rule $r_2 = f_1 \land f_2$ for the data in \cref{ex:dr}.
+  It consists of two clauses, $C_1 = f_1$ and $C_2 = f_2$.
+  In a solution $\sol$ to the encoding, $C_1$ will be represented as the bit-string $\sol(\selector_l^1)\sol(\selector_l^2)=10$ and $C_2$ as $\sol(\selector_l^1)\sol(\selector_l^2)=01$.
+  Without symmetry breaking, either $\sol_1 = \{\selector_1^1, \lnot\selector_1^2, \lnot\selector_2^1, \selector_2^2\}$ or $\sol_2 = \{\lnot\selector_1^1, \selector_1^2, \selector_2^1, \lnot\selector_2^2\}$ would be valid solutions, even though they both map to $r_2$.
+  The symmetry breaking clauses enforce that the bit-string representing $C_1$ precedes the bit-string representing $C_2$, therefore only $\sol_1$ is a feasible solution.
 \end{example}
 
 % Benchmark datasets
@@ -128,16 +132,105 @@ Seesaw is therefore infeasible for this problem since it would enumerate every p
 
 \section{Results\label{sec:results}}
 
-\TODO{Subdivide}
+\TODO{Signposting}
+
+\subsection{Finding a Single Representative Solution per Pareto Point}
 
 \begin{figure}
     \centering
     \includegraphics{mlic-cactus-single.pdf}
-    \caption{Runtime comparison of  $P$-minimal and variants of \algname{} for LIDR; plot on the right
-      is zoomed in on the more interesting part of the left plot.
-      %        On the right, a magnified version from 195 solved instances on is shown.
-    }\label{fig:mlic-cactus}
+    \caption{Runtime comparison of $P$-minimal and variants of \algname{} for learning interpretable decision rules;
+      enumeration of a single representative solution per pareto point.
+      Plot on the right is zoomed in on the more interesting part of the left plot.
+    }\label{fig:mlic-cactus-single}
 \end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics{setcover-cactus-single.pdf}
+    \caption{Runtime comparison of $P$-minimal and variants of \algname{} for bi-objective set covering problem;
+      enumeration of a single representative solution per pareto point.
+    }\label{fig:setcover-cactus-single}
+\end{figure}
+
+\begin{table}
+  \centering
+  \caption{Solved instances by approach and benchmark family;
+    enumeration of a single representative per pareto point.
+  }\label{tab:nsolved-single}
+  \begin{tabular}{@{}lrrrrrr@{}}
+    \toprule
+    Instance Type & \satunsat{} & \unsatsat{} & \msu{} & \oll{} & \msh{} & $P$-minimal \\
+    \midrule
+    Decision Rules & 222 & 222 & 222 & 222 & \textbf{223} & 219 \\
+    \scep{} & 76 & 71 & 70 & 58 & \textbf{82} & 71 \\
+    \scsc{} & 35 & 30 & 36 & 34 & \textbf{40} & 38 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}
+  \centering
+  \includegraphics{all-datasets-msh-scatter-log-single.pdf}
+  \caption{Runtime comparison between $P$-minimal and \algname{} in the \msh{} variant;
+    enumeration of a single representatipe per pareto point.
+  }\label{fig:msh-scatter}
+\end{figure}
+
+\subsection{Enumerating All Pareto-Optimal Solutions}
+
+\begin{figure}
+  \centering
+  \includegraphics{mlic-cactus.pdf}
+  \caption{Runtime comparison of  $P$-minimal and variants of \algname{} for learning interpretable decision rules;
+    enumeration of all pareto-optimal solutions.
+    Plot on the right is zoomed in on the more interesting part of the left plot.
+  }\label{fig:mlic-cactus-multi}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{setcover-cactus.pdf}
+  \caption{Runtime comparison of $P$-minimal and variants of \algname{} for bi-objective set covering problem;
+    enumeration of all pareto-optimal solutions.
+  }\label{fig:setcover-cactus-multi}
+\end{figure}
+
+\begin{table}
+  \centering
+  \caption{Solved instances by approach and benchmark family;
+    enumeration of all pareto-optimal solutions.
+  }\label{tab:nsolved-multi}
+  \begin{tabular}{@{}lrrrrrr@{}}
+    \toprule
+    Instance Type & \satunsat{} & \unsatsat{} & \msu{} & \oll{} & \msh{} & $P$-minimal \\
+    \midrule
+    Decision Rules & \textbf{215} & \textbf{215} & \textbf{215} & 212 & \textbf{215} & 213 \\
+    \scep{} & 73 & 71 & 70 & 58 & \textbf{80} & 68 \\
+    \scsc{} & 29 & 26 & 36 & 34 & \textbf{40} & 26 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}
+  \centering
+  \includegraphics{all-datasets-single-multi-scatter-log.pdf}
+  \caption{Runtime comparison between enumerating a single representative vs.\ all solutions per pareto point with \msh{}.}\label{fig:single-multi}
+\end{figure}
+
+\subsection{Impact of Refinements}
+
+\begin{figure}
+    \centering
+    \includegraphics{all-datasets-chosen-refinements.pdf}
+    \caption{Instance runtime comparisons for the two refinements lazily building the totalizer for the decreasing objective (left) and exact core minimization (right).
+      %        Marker shapes and colours represent different instance types and instances with less than 30 seconds runtime are cropped out.}
+      } \label{fig:refinements}
+\end{figure}
+
+
+\TODO{======= Old text from here on =======}
+
 
 We start with a comparison of the runtime performance of different variants of \algname{}, $P$-minimal and (for LIDR) Seesaw.
 For LIDR, \Cref{fig:mlic-cactus} shows the number of instances solved ($x$-axis) for different per-instance time limits ($y$-axis) for the task of computing a single representative solution for each pareto point.
@@ -150,48 +243,11 @@ Here again \msh{} is the best-performing variant of \algname{}, considerably out
 $P$-minimal solves 71 (resp.~38) fixed element probability (resp., fixed set cardinality) instances, whereas \msh{} solves 82 (resp.~40) instances.
 Similar plots for the task of enumerating all solutions on the pareto front are provided in Appendix~\ref{sup:plots} \TODO{include}.
 
-\begin{figure}
-    \centering
-    \includegraphics{setcover-cactus-single.pdf}
-    \caption{Runtime comparison of $P$-minimal and variants of \algname{} for  bi-objective set covering problem.
-      %The plot on the left is over instances generated with fixed probability that an element is in a set while the plot on the right is for instances with fixed set cardinality.
-    }\label{fig:setcover-cactus}
-\end{figure}
-
 %Next, we compare \algname{} with $P$-minimal on  bi-objective set covering; see
 %\Cref{fig:setcover-cactus} for a runtime comparison for
 % fixed element probability instances (left) and fixed set cardinality instances (right).
 % $P$-minimal  solves 71 (resp., 38) fixed element probability (resp., fixed set cardinality) instances,  while the best-performing \algname{} variant (\msh{}) solves
 % 82 (resp., 40).
-
-\begin{table}
-  \centering
-  \caption{Solved instances by approach and benchmark family. \TODO{split in two}
-%      The numbers are provided for computing a \emph{single} representative solution per pareto point or \emph{all} of them.
-      %        The best approach per instance is highlighted in bold.
-  }\label{tab:nsolved}
-  \begin{tabular}{@{}lr@{\hskip 3pt}rr@{\hskip 3pt}rr@{\hskip 3pt}rr@{\hskip 3pt}rr@{\hskip 3pt}rr@{\hskip 3pt}r@{}}
-    \toprule
-    \multirow{2}{*}{Instance Type} & \multicolumn{2}{c}{\satunsat} & \multicolumn{2}{c}{\unsatsat} & \multicolumn{2}{c}{\msu} & \multicolumn{2}{c}{\oll} & \multicolumn{2}{c}{\msh} & \multicolumn{2}{c}{$P$-minimal} \\
-    \cmidrule(r){2-3} \cmidrule(r){4-5} \cmidrule(r){6-7} \cmidrule(r){8-9} \cmidrule(r){10-11} \cmidrule(r){12-13}
-    & single & all & single & all & single & all & single & all & single & all & {\hskip 6pt}single & all \\
-    \midrule
-    Decision Rules & 222 & \textbf{215} & 222 & \textbf{215} & 222 & \textbf{215} & 222 & 212 & \textbf{223} & \textbf{215} & 219 & 213 \\
-    \scep{} & 76 & 73 & 71 & 71 & 70 & 70 & 58 & 58 & \textbf{82} & \textbf{80} & 71 & 68 \\
-    \scsc{} & 35 & 29 & 30 & 26 & 36 & 36 & 34 & 34 & \textbf{40} & \textbf{40} & 38 & 26 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\begin{figure}
-    \centering
-    \includegraphics{all-datasets-combined-msh-and-enumeration.pdf}
-    \caption{Left: Runtime comparison between $P$-minimal and \algname{} in the \msh{} variant. % over different instance types.
-      Right: Runtime comparison between enumerating a single representative vs all solutions per pareto point with \msh{}.
-%      point or all pareto-optimal solutions with the \msh{} variant.
-      %        Instances with less than 30 seconds runtime are not shown.
-    }\label{fig:msh-scatter}
-\end{figure}
 
 The numbers of solved instances are summarized in \cref{tab:nsolved}, both for  enumerating a single representative solution per pareto point and for enumerating \emph{all} pareto-optimal solutions.
 \msh{} is the best-performing \algname{} variant overall, outperforming $P$-minimal in all cases.
@@ -207,14 +263,6 @@ This is in contrast to the set covering instances, which tend to have only a sin
 %More details on enumerating all representative solutions with all approaches can be found in \cref{sup:plots}.
 %  Since the set covering instances are weighted, and therefore it is significantly less likely that two solutions lead to the same objective values, these instances typically only have a single solution corresponding to every pareto point.
 %Therefore, no significant difference in runtimes is visible for enumerating a single compared to all representative solutions.
-
-\begin{figure}
-    \centering
-    \includegraphics{all-datasets-chosen-refinements.pdf}
-    \caption{Instance runtime comparisons for the two refinements lazily building the totalizer for the decreasing objective (left) and exact core minimization (right).
-      %        Marker shapes and colours represent different instance types and instances with less than 30 seconds runtime are cropped out.}
-      } \label{fig:refinements}
-\end{figure}
 
 Finally, we evaluated the impact of the proposed refinements on the runtime efficiency of the best-performing approach, \msh{}.
 %We consider two refinements in detail: lazily building $\tot(\Obj_\dec)$ and exact core minimization.

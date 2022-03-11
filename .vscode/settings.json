@@ -11,7 +11,10 @@
     "\\crefrange{}{}": "pluralDummy",
     "\\scep{}": "dummy",
     "\\scsc{}": "dummy",
-    "\\TODO{}": "ignore"
+    "\\TODO{}": "ignore",
+    "\\newtheorem{}{}[]": "ignore",
+    "\\aliascntresetthe{}": "ignore",
+    "\\newaliascnt{}{}": "ignore"
   },
   "ltex.latex.environments": {
     "algorithmic": "ignore"
