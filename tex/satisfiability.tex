@@ -12,7 +12,7 @@ The chapter concludes with a section on encoding cardinality constraints in prop
 % Propositional logic and SAT
 For a Boolean variable $x$ there are two literals, the positive $x$ and the negative $\lnot x$. 
 A clause $C$ is a set of (disjunction over) literals and a CNF formula $\formula$ is a set of (conjunction over) clauses.
-A truth assignment $\sol$ maps boolean variables to $1$ (true) or $0$ (false).
+A truth assignment $\sol$ maps boolean variables to 1 (true) or 0 (false).
 The semantics of truth assignments are extended to a clause $C$ and a formula $\formula$ in the standard way: $\sol(C) = \max\{ \sol(l) \mid l \in C\}$ and $\sol(\formula) = \min\{\sol(C) \mid C \in \formula\}$.
 When convenient, we view assignments $\sol$ over a set $X$ of variables as sets of literals $\sol = \{ x \mid x \in X,  \sol(x) = 1\} \cup \{ \lnot x \mid x \in X, \sol(x) = 0\}$.
 An assignment $\sol$ for which $\sol(\formula) = 1$ is a solution to $\formula$.

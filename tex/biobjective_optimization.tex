@@ -38,7 +38,7 @@ Furthermore, we restrict the objective functions to be linear.
 Bi-objective optimization problems can be solved by many approaches, but in this work we focus on SAT-based approaches.
 We therefore formalize the problem in a context of propositional satisfiability.
 An objective $\Obj$ is a multiset of literals, which allows for representing objective functions with non-unit coefficients.
-The value $\Obj(\sol)$ of a truth assignment $\sol$ under $\Obj$ is $\Obj(\sol) = \sum_{l \in \Obj} \sol(l)$, i.e., the number of the literals in $\Obj$ that $\sol$ assigns to $1$. 
+The value $\Obj(\sol)$ of a truth assignment $\sol$ under $\Obj$ is $\Obj(\sol) = \sum_{l \in \Obj} \sol(l)$, i.e., the number of the literals in $\Obj$ that $\sol$ assigns to 1. 
 Weighted objectives are represented by adding a literal multiple times.
 Formalizing the objectives this way and encoding the feasible set $\feasible$ as a propositional formula $\formula$ is similar to MaxSAT, where $\formula$ resembles the hard clauses while the two objectives resemble two sets of (unit) soft clauses.
 With our algorithm, we consider the task of computing a representative solution for each pareto point as well as the task of enumerating all solutions in the pareto front.
@@ -188,7 +188,7 @@ This allows for---but also requires---problem-specific instantiations of the bla
 
 % Seesaw in a SAT context
 While the original paper presents Seesaw in general terms, in our context the Seesaw algorithm computes pareto-optimal solutions of a formula $\formula$ by maintaining a collection $\cores$ of subsets of $\Obj_\inc$ that are called \emph{cores}.
-Informally speaking, every solution $\sol$ that improves on $\Obj_\dec$ needs to assign at least one literal from each core to $1$.
+Informally speaking, every solution $\sol$ that improves on $\Obj_\dec$ needs to assign at least one literal from each core to 1.
 The algorithm works iteratively by computing a hitting set $\hs \subset \Obj_\inc$ (using an integer programming solver), i.e., a subset-minimal set of literals of $\Obj_\inc$ that intersects with each core in $\cores$, and then a solution $\sol$ that sets $\sol(o) = 1$ for each $o \in \hs$ and $\sol(o) = 0$ for each $o \in \Obj_\inc \setminus \hs$ and for which $\Obj_\dec(\sol)$ is the smallest possible value for all such solutions if one exists.
 The iteration then extracts a new core that $\hs$ does not intersect with.
 The pareto-optimal solutions of $\formula$ are identified by the size of the hitting set increasing.
@@ -199,7 +199,7 @@ More precisely, if the hitting set is found to increase from size $|\hs|$ to siz
   Consider the formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}. 
   Initially there are no cores, so $\cores = \emptyset$ and $\hs = \emptyset$.
   Since there is no $\sol$ that sets $\sol(u) = 0$ for each $u \in \Obj_\inc$, the iteration ends by extracting the core $\Obj_\inc$. 
-  The intuition is, that any solution $\sol$ of $\formula$ sets at least one variable in $\Obj_\inc$ to $1$.
+  The intuition is, that any solution $\sol$ of $\formula$ sets at least one variable in $\Obj_\inc$ to 1.
   In the next iteration, a hitting set over $\cores = \{ \Obj_\inc \}$ is computed.
   There are a number of alternatives;
   assume $\hs = \{ i_1 \}$.
@@ -209,12 +209,12 @@ More precisely, if the hitting set is found to increase from size $|\hs|$ to siz
   Now there is a $\sol$ that set $\sol(i_1) = \sol(i_3) = 0$;
   one that minimizes $\Obj_\dec(\sol)$ is $\sol^o_1 = \{d_1, d_3, i_2, \lnot d_2, \lnot i_1, \lnot i_3 \}$.
   The iteration ends with extracting the core $\core = \{i_1, i_3\}$.
-  Now the intuition is that, since $\sol^o_1$ minimizes $\Obj_\dec$ over solutions that assign $\sol(u) = 0$ for every $u \notin \hs$, every solution that obtains a lower value of $\Obj_\dec$ assigns at least one literal of $\core$ to $1$ as well. 
+  Now the intuition is that, since $\sol^o_1$ minimizes $\Obj_\dec$ over solutions that assign $\sol(u) = 0$ for every $u \notin \hs$, every solution that obtains a lower value of $\Obj_\dec$ assigns at least one literal of $\core$ to 1 as well. 
   Now we have $\cores = \{ \Obj_\inc, \{i_2, i_3\}, \{i_1, i_3\}\}$;
   the only smallest hitting set is $\hs = \{i_3\}$.
   There is no $\sol$ that sets $\sol(i_1) = \sol(i_2) = 0$ so a new core $\{i_1, i_2\}$ is extracted. 
   Next, one possible hitting set is $\hs = \{i_1, i_3\}$.
-  Since the size of the hitting set grew from $1$ to $2$, the algorithm concludes that $\sol^o_1$ is pareto-optimal. 
+  Since the size of the hitting set grew from 1 to 2, the algorithm concludes that $\sol^o_1$ is pareto-optimal. 
   The algorithm continues in this manner, finding the pareto-optimal $\sol^o_2$ in the process.
   After computing the hitting set consisting of all literals in $\Obj_\inc$, the core extracted is $\emptyset$ at which point the algorithm terminates. 
 \end{example}
