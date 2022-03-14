@@ -39,14 +39,18 @@ The advantage of using SAT as a declarative programming language for solving oth
 
 % Example: SAT modelling
 \begin{example}
-  Consider the problem of whether to wear tie and shirt to a given event with the following constraints:
-  (i)~one should not wear a tie without a shirt, (ii)~not wearing a tie nor a shirt is impolite, and (iii)~wearing a shirt and a tie is considered overdressed.
-  To solve this problem with the help of SAT, it can be encoded to propositional logic by introducing variables $v_\text{shirt}$ and $v_\text{tie}$ that represent if a shirt or a tie is worn.
-  The constraint can then be encoded as the following clauses:
-  $\clause_\text{(i)} = \lnot v_\text{tie} \lor v_\text{shirt}$, $\clause_\text{(ii)} = v_\text{tie} \lor v_\text{shirt}$ and $\clause_\text{(iii)} = \lnot v_\text{tie} \lor \lnot v_\text{shirt}$.
-  The formula $\clause_\text{(i)} \land \clause_\text{(ii)} \land \clause_\text{(iii)}$ can then be solved with a SAT solver, which will return the satisfying assignment $\{ v_\text{shirt}, \lnot v_\text{tie} \}$.
-  This solution is decoded as it being appropriate to wear a shirt but no tie.
-  \TODO{can I use this example?}
+  Assume we have the following problem:
+  we want to plan a meal for a guest coming over and don't know whether to include an appetizer, a main course and a dessert.
+  However, we know the following constraints:
+  (i)~there must be a main course in every meal, (ii)~having three courses is too much effort, (iii)~your guest would like to have dessert, and (iv)~you have a new appetizer recipe that you would like to try making.
+  To model this problem as SAT, we can introduce three variables $v_\text{a}$, $v_\text{m}$, $v_\text{d}$ modelling whether appetizer, main course and dessert are included in the meal.
+  With these, the four conditions form the following four clauses:
+  $\clause_\text{(i)} = v_\text{m}$, $\clause_\text{(ii)} = \lnot v_\text{a} \lor \lnot v_\text{m} \lor \lnot v_\text{d}$, $\clause_\text{(iii)} = v_\text{d}$, and $\clause_\text{(iv)} = v_\text{a}$.
+  Next, we can solve the formula $\clause_\text{(i)} \land \clause_\text{(ii)} \land \clause_\text{(iii)} \land \clause_\text{(iv)}$ with the help of a SAT solver, which will return UNSAT.
+  This tells us that there is no choice of the three courses that satisfies all conditions.
+  As the host, we could now either put in more work for the meal (removing constraint~(i)) or decide to make the appetizer recipe some time else (removing constraint~(iv)).
+  Assume we decide to remove constraint (iv), then the solution to $\clause_\text{(i)} \land \clause_\text{(ii)} \land \clause_\text{(iii)}$ found by the SAT solver is $\sol = \{ \lnot v_\text{a}, v_\text{m}, v_\text{d} \}$.
+  Interpreting this solution, we know that making a main course and a dessert, but leaving out the appetizer, satisfies all constraints.
 \end{example}
 
 In this work, w.l.o.g.\ we assume that all formulas are satisfiable\TODO{ relevant?}.
