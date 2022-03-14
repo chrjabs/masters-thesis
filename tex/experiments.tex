@@ -7,7 +7,7 @@ Our implementations of MSU3 and OLL were inspired by their implementations in Op
 We used CaDiCaL~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers} as the internal SAT solver.
 Additionally, we implemented $P$-minimal solution enumeration and Seesaw (see \cref{sec:sat-based}) as competing approaches, since no reference implementations were available.
 As the hitting set solver for Seesaw, CPLEX 20.10 was used.
-We evaluate the relative runtime performance of the \algname{} variants against the two competing approaches, as well as the impact of the specific refinements (recall \cref{sec:refinements}; employed as applicable, by default with heuristic core minimization) to \algname{} on their runtime performance.
+We evaluate the relative runtime performance of the \algname{} variants against the two competing approaches, as well as the impact of the specific refinements (recall \cref{sec:refinements}; employed as applicable, by default with heuristic core minimization and without blocking of dominated solutions) to \algname{} on their runtime performance.
 As a parametric detail, in its default \msh{} is configured to switch between \msu{} and \satunsat{} once 70\% of the literals in $\Obj_\inc$ have been added to $\tot(\Act)$.
 All experiments were run on 2.60-GHz Intel Xeon E5-2670 machines with 64-GB RAM in RHEL under a 1.5-hour per-instance time and 16-GB memory limit.
 
@@ -288,26 +288,41 @@ The fewer solutions per pareto point for the set covering instances can be expla
 
 \subsection{Impact of Refinements}
 
+% Lazily building the totalizer for the decreasing objective
+Finally, we evaluated the impact of the refinements proposed in \cref{sec:refinements} on the runtime efficiency of the best-performing approach, \msh{}.
+As the first refinement considered, we evaluate the impact of lazily building the totalizer for the decreasing objective.
+\Cref{fig:refinements-1} (left) shows a runtime comparison between \msh{} with and without lazy building of $\tot(\Obj_\dec)$.
+It can be seen that for learning interpretable decision rules, this refinement has no evident impact.
+This is to be expected since the for these benchmarks, the literals from $\Obj_\dec$ do not appear in $\Obj_\inc$, so $\tot(\Obj_\dec)$ cannot be lazily built.
+For the set covering instances with fixed element probability, the impact of this refinement is small and tends to be slightly negative for most instances.
+For fixed set cardinality set covering however, we see a strong positive effect.
+
+% Core minimization
+Next, we look at the impact of different core minimization strategies.
+By default, \msh{} employs heuristic core minimization, in \cref{fig:refinements-1} (right), the performance of this configuration is compared to using exact core minimization instead.
+Heuristic core minimization appears to have a positive effect for the task of learning interpretable decision rules as well as for harder set covering instances.
+However, the differences to exact minimization are smaller than those regarding lazily building $\tot(\Obj_\dec)$.
+
+% refinements-1
 \begin{figure}
     \centering
-    \includegraphics{all-datasets-chosen-refinements.pdf}
-    \caption{Instance runtime comparisons for the two refinements lazily building the totalizer for the decreasing objective (left) and exact core minimization (right).
-      %        Marker shapes and colours represent different instance types and instances with less than 30 seconds runtime are cropped out.}
-      } \label{fig:refinements}
+    \includegraphics{all-datasets-chosen-refinements-1.pdf}
+    \caption{Instance runtime comparisons for the two refinements lazily building the totalizer for the decreasing objective (left) and exact core minimization (right).}\label{fig:refinements-1}
 \end{figure}
 
-\TODO{======= Old text from here on =======}
+% Blocking dominated solutions
+\Cref{fig:refinements-2} (left) shows the effect of adding the blocking of dominated solutions in the \satunsat{} phase of \msh{}.
+The impact of this refinement is miniscule on all benchmarks.
 
-Finally, we evaluated the impact of the proposed refinements on the runtime efficiency of the best-performing approach, \msh{}.
-%We consider two refinements in detail: lazily building $\tot(\Obj_\dec)$ and exact core minimization.
-\Cref{fig:refinements} shows the impact of lazily building $\tot(\Obj_\dec)$ (left) and exact vs heuristic core minimization (right).
-Lazily building $\tot(\Obj_\dec)$ has no evident impact on LIDR, as expected (the literals from $\Obj_\dec$ do not appear in $\Obj_\inc$ and $\tot(\Obj_\dec)$ can therefore not be lazily built).
-%For the set covering instances generated with fixed element probabilities, we see a slight negative effect for medium runtimes, but we have two instances that could only be solved when lazily building $\tot(\Obj_\dec)$.
-For fixed set cardinality set covering, however, we see a strong positive effect.
-%This is most likely due to the fact that the instances generated with fixed set cardinalities on average have more elements that don't appear in any of the sets and can therefore be left out of $\tot(\Obj_\dec)$.
-Heuristic core minimization appears to have a positive effect  on LIDR as well as on harder set covering instances, although the difference to exact minimization is smaller than that of lazily building $\tot(\Obj_\dec)$.
-%For set covering, exact core minimization has a slightly positive effect for instances that are solved in less time, for instances with long runtimes however, the effect is slightly negative.
-%
-%Other than those refinements, we also evaluated adding a
-%The third refinement, i.e., disjoint phase to \msu{} which we found to have no lead to an improvement in performance.
-%Data on this claim can be found in \cref{sup:plots}.
+% Disjoint phase
+As the last refinement considered, we look at adding a disjoint phase to the \msu{} phase of \msh{}.
+\Cref{fig:refinements-2} shows the impact of adding this refinement to the default configuration of \msh{}.
+It can be seen that the impact on the set covering instances is fairly small but slightly positive.
+In contrast to that, the impact on the instances for learning interpretable decision rules is overall negative and slightly stronger than for the set covering instances.
+
+% refinements-2
+\begin{figure}
+    \centering
+    \includegraphics{all-datasets-chosen-refinements-2.pdf}
+    \caption{Instance runtime comparisons for the two refinements blocking dominated solutions (left) and disjoint core extraction (right). \TODO{data not final}}\label{fig:refinements-2}
+\end{figure}
