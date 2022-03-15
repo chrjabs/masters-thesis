@@ -66,9 +66,12 @@
 
 \input{../macros.tex}
 
+\def\axmax{4.5}
+
 \begin{axis}[
-  width=5.4cm,
-  height=5.4cm,
+  width=5.5cm,
+  height=5.5cm,
+  clip=false,
   label style={font=\small},
   tick label style={font=\small},
   legend style={
@@ -83,30 +86,31 @@
   xlabel={$\textsc{O}_\text{I}$},
   ylabel={$\textsc{O}_\text{D}$},
   xmin=0,
-  xmax=4,
+  xmax=\axmax,
   ymin=0,
-  ymax=4,
+  ymax=\axmax,
   axis x line*=bottom,
   axis y line*=left,
   xtick={0,1,2,3,4},
   ytick={0,1,2,3,4},
 ]
 
-\addplot [color6,name path=border,forget plot] coordinates {(1,4) (1,2) (2,2) (2,1) (4,1)};
-\path [name path=axis] (1,4) -- (0,4) -- (0,0) -- (4,0) -- (4,1);
+\addplot [color6,name path=border,forget plot] coordinates {(1,\axmax) (1,3) (2,3) (2,2) (3,2) (3,1) (\axmax,1)};
+\path [name path=axis] (1,\axmax) -- (0,\axmax) -- (0,0) -- (\axmax,0) -- (\axmax,1);
 \addplot [color6,pattern={Lines[angle=-45, line width=.3pt]}, pattern color=color6] fill between [of=border and axis];
 \addlegendentry{Infeasible region}
 
-\draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,3) to[out=155, in=25] (2,3);
-\draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (2,3) to[out=155, in=25] (1,3);
-\draw [semithick,dashdotted, color1, ->, shorten >=3pt, shorten <=3pt] (1,3) to[out=-75, in=75] (1,2);
-\draw [semithick,dashdotdotted, color2, ->, shorten >=3pt, shorten <=3pt] (1,2) to[out=25, in=110] (3,1);
-\draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,1) to[out=155, in=25] (2,1);
+\draw [semithick,dashed,color0,->,shorten >=3pt,shorten <=3pt] (4,4) to[out=155, in=25] (2,4);
+\draw [semithick,dashed,color0,->,shorten >=3pt,shorten <=3pt] (2,4) to[out=155, in=25] (1,4);
+\draw [semithick,dashdotted,color1,->,shorten >=3pt,shorten <=3pt] (1,4) to[out=-75, in=75] (1,3);
+\draw [semithick,dashdotdotted,color2,->,shorten >=3pt,shorten <=3pt] (1,3) to[out=25, in=110] (3,2);
+\draw [semithick,dashed,color0,->,shorten >=3pt,shorten <=3pt] (3,2) to[out=155, in=25] (2,2);
+\draw [semithick,dashdotdotted,color2,->,shorten >=3pt,shorten <=3pt] (2,2) to[out=-75, in=155] (3,1);
 
-\addplot [only marks,color3, mark=o] coordinates {(3,3) (2,3) (1,3) (3,1)};
+\addplot [only marks,color3, mark=o] coordinates {(4,4) (2,4) (1,4) (3,2)};
 \addlegendentry{Solutions}
 
-\addplot [only marks,color3, mark=*] coordinates {(1,2) (2,1)};
+\addplot [only marks,color3, mark=*] coordinates {(1,3) (2,2) (3,1)};
 \addlegendentry{Pareto-optimal solutions}
 
 \addlegendimage{color0,dashed,semithick}
@@ -118,12 +122,13 @@
 \addlegendimage{color2,dashdotdotted,semithick}
 \addlegendentry{\satsolver{}}
 
-\node [label=$\sol^c_1$] at (3,3) {};
-\node [label=$\sol^c_2$] at (2,3) {};
-\node [label=left:$\sol^c_3$] at (1,3) {};
-\node [label=left:$\sol^o_1$] at (1,2) {};
-\node [label=below:$\sol^c_4$] at (3,1) {};
-\node [label=below:$\sol^o_2$] at (2,1) {};
+\node [label=$\sol^c_1$] at (4,4) {};
+\node [label=$\sol^c_2$] at (2,4) {};
+\node [label=left:$\sol^c_3$] at (1,4) {};
+\node [label=left:$\sol^o_1$] at (1,3) {};
+\node [label=right:$\sol^c_4$] at (3,2) {};
+\node [label=left:$\sol^o_2$] at (2,2) {};
+\node [label=below:$\sol^o_3$] at (3,1) {};
 
 \end{axis}
 \end{tikzpicture}

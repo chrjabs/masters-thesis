@@ -312,13 +312,14 @@ However, the differences to exact minimization are smaller than those regarding 
 
 % Blocking dominated solutions
 \Cref{fig:refinements-2} (left) shows the effect of adding the blocking of dominated solutions in the \satunsat{} phase of \msh{}.
-The impact of this refinement is miniscule on all benchmarks.
+The impact of this refinement is miniscule on all benchmarks, however, there are three instances of the set covering benchmarks with fixed element probability that were only solved when not blocking dominated solutions, giving this configuration a slight advantage.
 
 % Disjoint phase
 As the last refinement considered, we look at adding a disjoint phase to the \msu{} phase of \msh{}.
 \Cref{fig:refinements-2} shows the impact of adding this refinement to the default configuration of \msh{}.
-It can be seen that the impact on the set covering instances is fairly small but slightly positive.
-In contrast to that, the impact on the instances for learning interpretable decision rules is overall negative and slightly stronger than for the set covering instances.
+It can be seen that the effect of adding the disjoint phase does also not result in a clear positive or negative effect, however the impact per instance varies a lot more compared to the impact of blocking dominated solutions.
+The only clear negative impact can be seen on three instances for learning interpretable decision rules.
+The strongest outlier is an instance that was solved by the configuration without a disjoint phase in under 700 seconds but could not be solved within the resource constraints by the configuration with a disjoint phase.
 
 % refinements-2
 \begin{figure}
