@@ -57,30 +57,30 @@ Solution-improving search works by---starting from $k=\Obj_\dec(\tau)$---iterati
 At this point we know that there is no solution of $\formula$ that dominates $\tau$, so $\tau$ is returned as pareto-optimal on \cref{ln:stage3}.
 If one wants to enumerate all solutions $\tau^o$ that correspond to the pareto point $(b_\inc,b_\dec)$, the $\E$ procedure repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec} , \ove{\Obj_\inc}{b_\inc}\}$ and blocks each found solution until no more solutions are found.
 
+% Main algorithm example
 \begin{example}\label{ex:main-iteration}
   Invoke \algname{} on the formula $\formula$ and objectives $\Obj_\inc$, $\Obj_\dec$ detailed in \cref{fig:search-trace}. 
   The search starts by invoking a SAT solver on $\formula$.
-  The call returns a feasible solution, say $\tau^c_1 = \{i_1, i_2, i_3, d_1, d_2, d_3\}$ for which  $\Obj_\inc(\tau^c_1) = \Obj_\dec(\tau^c_1) = 3$. 
-  The first iteration of the main search loop starts with a call to $\Min$.
-  This returns $b_\inc = 1$ and (e.g.)\ the solution $\tau^c_3 = \{ i_2, d_1, d_2, d_3, \lnot i_1, \lnot i_3,\}$ for which $\Obj_\inc(\tau^c_3) = 1$ and $\Obj_\dec(\tau^c_3) = 3$. $\algname$ then proceeds to the $\Simpr$ subroutine that initializes a  totalizer $\tot(\Obj_\dec, 3)$.
-  The first call to the SAT solver is made with the assumptions $\mathcal{A} = \{ \ove{\Obj_\inc}{1}, \ov{\Obj_\dec}{3} \}$.
+  The call returns a feasible solution, say $\sol^c_1 = \solcone$ for which $\Obj_\inc(\sol^c_1) = \Obj_\dec(\sol^c_1) = 3$. 
+  The first iteration of the main search loop starts with a call to \Min{}.
+  This returns $b_\inc = 1$ and, e.g., the solution $\sol^c_3 = \solcthree$ for which $\Obj_\inc(\sol^c_3) = 1$ and $\Obj_\dec(\sol^c_3) = 3$.
+  \algname{} then proceeds to the \Simpr{} subroutine that initializes a totalizer $\tot(\Obj_\dec, 3)$.
+  The first call to the SAT solver is made with the assumptions $\mathcal{A} = \{ \ove{\Obj_\inc}{1}, \ov{\Obj_\dec}{4} \}$.
   The result is satisfiable;
-  say that the solver returns the solution $\tau^o_1 = \{d_1, d_3, i_2, \lnot i_1, \lnot i_3, \lnot d_2\}$.
-  Then, the solver is invoked with the assumptions $\mathcal{A} =  \{ \ove{\Obj_\inc}{1}, \ov{\Obj_\dec}{2} \}$.
-  The result is unsatisfiable, so the procedure returns the pareto-optimal $\tau^o_1$ and $b_\inc = \Obj_\inc(\tau^o_1) = 1$.
-  %The iteration ends with the procedure $\E$ enumerating the other pareto-optimal solutions $\tau^o$ for which $\Obj_U(\tau^o) = 1$ and
-  %$\Obj_D(\tau^o) = 2$ by iteratively invoking the SAT solver with the assumptions $\{\ove{\Obj_D}{2}, \ove{\Obj_U}{1}\}$ and blocking the solutions that are found. 
-  %During this step the pareto-optimal solutions $\{d_1, d_2, u_2, \lnot d_3, \lnot u_1, \lnot u_3\}$ and $\{d_3, d_2, u_2, \lnot d_1, \lnot u_1, \lnot u_3\}$ are enumerated. 
+  say that the solver returns the solution $\sol^o_1 = \soloone$.
+  Then, the solver is invoked with the assumptions $\mathcal{A} =  \{ \ove{\Obj_\inc}{1}, \ov{\Obj_\dec}{3} \}$.
+  The result is unsatisfiable, so the procedure returns the pareto-optimal $\sol^o_1$ and $b_\dec = \Obj_\dec(\sol^o_1) = 3$.
+  Now optionally the procedure \E can be used to enumerate all other solutions corresponding to the pareto point $(\Obj_\inc(\sol^o_1),\Obj_\dec(\sol^o_1))$.
   At the end of the iteration, the SAT solver is queried with the assumption $\{ \ov{\Obj_\dec}{2} \}$.
-  As the result is SAT and the solver returns, e.g., the solution $\tau^c_4 = \{ d_2, i_1, i_2, i_3, \lnot d_1, \lnot d_2 \}$,
-  the algorithm starts a new iteration.
-
+  As the result is SAT and the solver returns, e.g., the solution $\sol^c_4 = \solcfour$,
+  the algorithm starts a new iteration. \\
   The next iteration of \algname{} proceeds similarly to the first.
-  The procedure \Min{} returns $b_\inc = 2$ and, e.g., the solution $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2\}$.
-  \Simpr{} cannot improve on the second objective, so the solution $\tau^o_2$ is proven to be pareto-optimal.
-  %The procedure $\E$ then enumerates 
-  %the other pareto-optimal solutions $\tau^o$ that obtain $\Obj_U(\tau^o) = 2$, $\Obj_D(\tau^o) = 1$. These are $\{d_2, u_1, u_2, \lnot d_1, \lnot d_3, \lnot u_3\}$ and $\{d_2, u_2, u_3, \lnot d_1, \lnot d_3, \lnot u_1\}$. 
-  At the end of the iteration, on \cref{l:endL} the SAT solver is invoked with the assumption $\{\ov{\Obj_\dec}{1}\}$.
+  The procedure \Min{} returns $b_\inc = 2$ and, e.g., the solution $\sol^o_2 = \solotwo$.
+  \Simpr{} cannot improve on the decreasing objective, so the solution $\sol^o_2$ is proven to be pareto-optimal.
+  At the end of the iteration, on \cref{l:endL} the SAT solver is invoked with the assumption $\{\ov{\Obj_\dec}{2}\}$ which returns SAT and, e.g., the solution $\sol^o_3 = \solothree$. \\
+  The last iteration starts by calling \Min{} which returns $b_\inc = 3$ and, e.g., again the solution $\sol^o_3$.
+  \Simpr{} again cannot improve on the decreasing objective, so $\sol^o_3$ is also pareto-optimal.
+  Lastly, the SAT solver is queried with the assumption $\{\ov{\Obj_\dec}{1}\}$.
   The solver returns unsatisfiable, terminating the algorithm. 
 \end{example}
 
@@ -100,24 +100,25 @@ Then the SAT solver is iteratively invoked with the assumptions $\{\ov{\Obj_\dec
 The procedure terminates when the result is UNSAT, after which the value of $k$ and the solution obtained during the final satisfiable call are returned as $b_\inc$ and $\tau$.  
 
 \begin{example}\label{ex:satunsat}
-  Consider the invocation of $\algname$ detailed in \cref{ex:main-iteration}. 
-  We detail the invocation of $\Min$ instantiated as $\satunsat$. 
-  The full progression of the search of $\algname$ with $\Min$ instantiated as $\satunsat$ is illustrated in \cref{fig:search-trace}.
-  In the first iteration, $\satunsat$ is invoked with $b_\dec =\infty$ and $\Obj_\inc(\tau) = 3$.
+  Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}. 
+  We detail the invocation of \Min{} instantiated as \satunsat{}. 
+  The full progression of the search of \algname{} with \Min{} instantiated as \satunsat{} is illustrated in \cref{fig:search-trace}.
+  In the first iteration, \satunsat{} is invoked with $b_\dec =\infty$ and $\Obj_\inc(\sol^c_1) = 3$.
   At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by adding $\tot(\Obj_\inc, 3)$ to the solver.
-  The first call to the SAT solver is made with the assumptions $\{\ov{\Obj_\inc}{3}\}$, since $b_\dec  = \infty$ and therefore no assumption constraining $\Obj_\dec$ is needed.
-  The result is satisfiable, the solver returns, e.g., the solution $\tau^c_2 = \{d_1, d_2, d_3, i_1, i_2, \lnot i_3\}$. 
+  The first call to the SAT solver is made with the assumptions $\{\ov{\Obj_\inc}{4}\}$, since $b_\dec  = \infty$ and therefore no assumption constraining $\Obj_\dec$ is needed.
+  The result is satisfiable, the solver returns, e.g., the solution $\sol^c_2 = \solctwo$. 
   In the next iteration, the set of assumptions is $\{\ov{\Obj_\inc}{2}\}$.
-  The result is again satisfiable, returning, e.g., the solution $\tau^c_3 = \{ d_1,  d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$.
+  The result is again satisfiable, returning, e.g., the solution $\sol^c_3 = \solcthree$.
   The SAT solver is then invoked with the assumptions  $\{\ov{\Obj_\inc}{1}\}$.
-  Now the result is UNSAT so the procedure terminates and returns $\tau^c_3$ and $b_\inc = 1$. 
-  % At the end of the iteration of $\algname$, the call on Line~\ref{l:endL} to the SAT solver is invoked with the assumption $\{\ov{\Obj_D}{2}\}$ and returns for example the 
-  % solution $\tau = \{ d_2, u_1, u_2, \lnot d_1, \lnot d_3, \lnot u_3\}$.
-  In the second (and last) iteration of $\algname$, $\satunsat$ is invoked with $b_\dec = 2$ and $\Obj_\inc(\tau) = 3$.
-  The first call to the SAT solver is made with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{3}\}$.
-  The result is SAT and the solver returns, e.g., the solution $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2 \}$.
-  \satunsat{} invokes the SAT solver again with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{2} \}$.
-  The result is UNSAT, so the procedure returns $b_\inc = 2$ and $\tau^o_2$.
+  Now the result is UNSAT so the procedure terminates and returns $\sol^c_3$ and $b_\inc = 1$. \\
+  In the second iteration of \algname{}, \satunsat{} is invoked with $b_\dec = 3$ and $\Obj_\inc(\sol^c_4) = 3$.
+  The first call to the SAT solver is made with the assumptions $\{ \ov{\Obj_\dec}{3}, \ov{\Obj_\inc}{3}\}$.
+  The result is SAT and the solver returns, e.g., the solution $\sol^o_2 = \solotwo$.
+  \satunsat{} invokes the SAT solver again with the assumptions $\{ \ov{\Obj_\dec}{3}, \ov{\Obj_\inc}{2} \}$.
+  The result is UNSAT, so the procedure returns $b_\inc = 2$ and $\sol^o_2$. \\
+  In the thrid (and last) iteration of \algname{}, \satunsat{} is invoked with $b_\dec = 2$ and $\Obj_\inc(\sol^o_3) = 3$.
+  The SAT solver is queried with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{3} \}$ and returns UNSAT.
+  \satunsat{} therefore returns $\sol^o_3$ and $b_\inc = 3$.
 \end{example}
 
 \subsection{\unsatsat{}\label{sec:unsat-sat}}
@@ -131,15 +132,17 @@ Since the bound of this lower bounding search procedure will only monotonically 
 This way, the SAT solver is always loaded with a minimum number of clauses.
 
 \begin{example}
-  Consider the invocation of $\algname$ detailed in \cref{ex:main-iteration}. 
-  Here we detail the invocation of $\Min$ instantiated as $\unsatsat$.
-  In the first iteration, $\unsatsat$ is invoked with $b_\dec =\infty$ and $\Obj_\inc(\tau) = 3$.
+  Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}. 
+  Here we detail the invocation of \Min{} instantiated as \unsatsat{}.
+  In the first iteration, \unsatsat{} is invoked with $b_\dec =\infty$ and $\Obj_\inc(\sol^c_1) = 4$.
   At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by initializing $\tot(\Obj_\inc, 1)$ and invokes the SAT solver with the assumptions $\{\ove{\Obj_\inc}{0}\}$.
   The result is UNSAT, so the totalizer is extended to $\tot(\Obj_\inc, 2)$ and the SAT solver invoked with the assumptions $\{ \ove{\Obj_\inc}{1}\}$.
-  The result is SAT and the procedure returns $\tau^c_3 = \{ d_1,  d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$ and $b_\inc = 1$. 
-  In the second iteration of $\algname$, $\unsatsat$ is invoked with $b_\dec = 2$ and $\Obj_\inc(\tau) = 3$.
-  The solver is invoked with the assumptions $\ove{\Obj_\inc}{2}, \ov{\Obj_\dec}{2}\}$, starting from the previous bound $b_\inc$.
-  The result is SAT, and the solver returns (e.g.)\ $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2\}$ and $b_\inc = 2$.
+  The result is SAT and the procedure returns, e.g., $\sol^c_3 = \solcthree$ and $b_\inc = 1$. \\
+  In the second iteration of \algname{}, \unsatsat{} is invoked with $b_\dec = 3$ and $\Obj_\inc(\sol^c_4) = 3$.
+  The totalizer is extended to $\tot(\Obj_\inc, 3)$ and the solver is invoked with the assumptions $\{\ove{\Obj_\inc}{2}, \ov{\Obj_\dec}{3}\}$, starting from the previous bound $b_\inc$.
+  The result is SAT, and the solver returns, e.g., $\sol^o_2 = \solotwo$ and $b_\inc = 2$. \\
+  In the last iteration of \algname{}, \unsatsat{} is invoked with $b_\dec = 2$ and $\Obj_\inc(\sol^o_3) = 3$.
+  Since $\Obj_\inc(\sol^o_3)$ is already only 1 larger than the previous bound, the solver doesn't need to be queried and \unsatsat{} can directly return $b_\inc = 3$ and $\sol^o_3$.
 \end{example}
 
 \subsection{\msu{}\label{sec:msu3}}
