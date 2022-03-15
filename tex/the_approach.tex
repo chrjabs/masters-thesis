@@ -103,7 +103,7 @@ The procedure terminates when the result is UNSAT, after which the value of $k$ 
   Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}. 
   We detail the invocation of \Min{} instantiated as \satunsat{}. 
   The full progression of the search of \algname{} with \Min{} instantiated as \satunsat{} is illustrated in \cref{fig:search-trace}.
-  In the first iteration, \satunsat{} is invoked with $b_\dec =\infty$ and $\Obj_\inc(\sol^c_1) = 3$.
+  In the first iteration, \satunsat{} is invoked with $b_\dec =\infty$ and $\Obj_\inc(\sol^c_1) = 4$.
   At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by adding $\tot(\Obj_\inc, 3)$ to the solver.
   The first call to the SAT solver is made with the assumptions $\{\ov{\Obj_\inc}{4}\}$, since $b_\dec  = \infty$ and therefore no assumption constraining $\Obj_\dec$ is needed.
   The result is satisfiable, the solver returns, e.g., the solution $\sol^c_2 = \solctwo$. 
@@ -175,18 +175,31 @@ The following observation proves that doing so can be done without removing any 
 %Note that whenever a bound on $\Obj_\inc$ is enforced in the other subroutines of \algname{} by an assumption of type $\ove{\Obj_\inc}{k}$, for \msu{}, this assumption needs to be replaced by $\{\ove{\Act}{k}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$.
 
 \begin{example}\label{ex:msu}
-  Consider the invocation of $\algname$ detailed in \cref{ex:main-iteration}. 
-  Here we detail the invocations of $\Min$ instantiated as $\msu$. 
-  In the first iteration of $\algname$, $\msu$ is invoked with $b_\dec =\infty$ and $\Obj_\inc(\tau) = 3$.
-  Initially, the set $\Act = \emptyset$ of active literals is empty, so the first call to the SAT solver is made with the assumptions $\mathcal{A} =  \{ \lnot i_1, \lnot i_2, \lnot i_3\}$.
+  Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}. 
+  Here we detail the invocations of \Min{} instantiated as \msu{}. 
+  In the first iteration of \algname{}, \msu{} is invoked with $b_\dec =\infty$ and $\Obj_\inc(\sol^c_1) = 4$.
+  Initially, the set $\Act = \emptyset$ of active literals is empty, so the first call to the SAT solver is made with the assumptions $\mathcal{A} =  \{ \lnot i_1, \lnot i_2, \lnot i_3, \lnot i_4\}$.
   The result is unsatisfiable and the solver returns, e.g., $\mathcal{A}_s = \{i_1, i_2\}$. 
-  The literals in $\mathcal{A}_s$ are marked as active and the totalizer $\tot(\Act)$ is initialized.
-  The SAT solver is then invoked with the assumptions $\mathcal{A} = \{ \lnot i_3, \ove{\Act}{1}\}$. 
-  The result is satisfiable so the solver returns (e.g.)\ the solution $\tau^c_3 = \{ d_1,  d_2, d_3, i_2, \lnot i_1, \lnot i_3\}$ and $b_\inc = 1$.
-  In the next iteration of $\algname$, $\msu$ is invoked with $b_\dec = 2$ and $\Obj_\inc(\tau) = 2$.
-  The set $\Act = \{i_1, i_2\}$ is kept from the previous iterations, so the first call to the SAT solver is made with the assumptions  $\mathcal{A} = \{ \lnot i_3, \ove{\Act}{1},  \ov{\Obj_\dec}{2} \}$.
-  The result is unsatisfiable. If $i_3$  is a part of the assumptions $\mathcal{A}_s$ returned by the solver, it is marked as active and the totalizer $\tot(\Act)$ extended accordingly. 
-  Next, the SAT solver is invoked with the assumptions $\mathcal{A} = \{\ove{\Act}{2},  \ov{\Obj_\dec}{2} \}$. The call returns SAT, obtaining the solution $\tau^o_2 = \{ i_1, i_3, d_2, \lnot d_1, \lnot d_3, \lnot i_2\}$ and $b_\inc = 2$.
+  The literals in $\mathcal{A}_s$ are marked as active and the totalizer $\tot(\Act, 2)$ is initialized.
+  The SAT solver is then invoked with the assumptions $\mathcal{A} = \{ \lnot i_3, \lnot i_4, \ove{\Act}{1}\}$. 
+  The result is satisfiable so the solver returns, e.g., the solution $\sol^c_3 = \solcthree$ and $b_\inc = 1$. \\
+  In the next iteration of \algname{}, \msu{} is invoked with $b_\dec = 3$ and $\Obj_\inc(\sol^c_4) = 3$.
+  The set $\Act = \{i_1, i_2\}$ is kept from the previous iterations, so the first call to the SAT solver is made with the assumptions  $\mathcal{A} = \{ \lnot i_3, \lnot i_4, \ove{\Act}{1},  \ov{\Obj_\dec}{3} \}$.
+  The result is unsatisfiable;
+  assume the core returned by the solver is $\mathcal{A}_s = \{i_3, i_4, \lnot \ove{\Act}{1}, \lnot \ov{\Obj_\dec}{3}\}$.
+  The totalizer outputs $\lnot \ove{\Act}{1}$ and $\lnot \ov{\Obj_\dec}{3}$ are discarded, $i_3$ and $i_4$ are added to the active literals, and the totalizer is extended to $\tot(\Act, 3)$.
+  The SAT solver is queried again with the assumptions $\mathcal{A} = \{\ove{\Act}{2}, \ov{\Obj_\dec}{2}\}$;
+  the result is SAT and the returned solution, e.g., $\sol^o_2 = \solotwo$.
+  \msu{} returns $b_\inc = 2$ and $\sol^o_2$. \\
+  In the last iteration, \msu{} is invoked with $b_\dec = 2$ and $\Obj_\inc(\sol^o_3) = 3$.
+  The SAT solver is queried with the assumptions $\mathcal{A} = \{\ove{\Act}{2}, \ov{\Obj_\dec}{2}\}$.
+  The result is UNSAT;
+  assume the core is $\mathcal{A}_s = \{ \lnot \ove{\Act}{2}, \lnot \ov{\Obj_\dec}{2} \}$.
+  Both totalizer outputs are discarded, and the totalizer is extended to $\tot(\Act, 4)$.
+  The solver is queried again with the assumptions $\mathcal{A} = \{\ove{\Act}{3}, \ov{\Obj_\dec}{2}\}$.
+  The result is SAT;
+  assume the returned solution is $\sol^o_3 = \solothree$.
+  \msu{} returns $b_\inc = 3$ and $\sol^o_3$.
 \end{example}
 
 \subsection{\oll{}\label{sec:oll}}
@@ -212,6 +225,7 @@ Before switching over to \satunsat{}, the remaining literals are added to the to
 With this, the advantages of both \msu{} and \satunsat{} can in the best case be combined.
 
 \begin{example}
+  \TODO{Adapt to new running example.}
   Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}.
   We detail the invocations of \Min{} instantiated as \msh{}.
   Since \msh{} starts out as \msu{}, the first invocation starts by following the description in \cref{ex:msu}.
@@ -245,6 +259,10 @@ These points can all be blocked with the clause $\{ \ove{\Obj_\inc}{b_\inc}, \ov
 
 If multiple representatives of the same pareto point are of interest, the procedure $\E$ needs to block all obtained solutions. 
 While this can be done in a straight-forward manner on the CNF-level, we will in later sections give examples of how domain-specific knowledge can be used in order to derive stronger clauses that block not only a specific solution obtained, but also other, symmetric solutions.
+
+\subsection{Bound Hardening}
+
+\TODO{write}
 
 \subsection{Refinements to Core-Guided Variants}
 
