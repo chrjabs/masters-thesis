@@ -37,7 +37,7 @@
 
 %% Reference style: select one 
 %% for APA = Harvard style = authoryear -> (Einstein, 1905) use:
-\usepackage[style=numeric,bibstyle=authoryear,backend=biber,natbib=true,maxnames=99,maxcitenames=2,uniquelist=minyear,giveninits=true,uniquename=mininit,safeinputenc]{biblatex}
+\usepackage[style=numeric,backend=biber,natbib=true,maxnames=99,maxcitenames=2,uniquelist=minyear,giveninits=true,uniquename=mininit,safeinputenc,sorting=none]{biblatex}
 %% for numeric = Vancouver style -> [1] use:
 %\usepackage[style=numeric,bibstyle=numeric,backend=biber,natbib=true,maxbibnames=99,giveninits=true,uniquename=init]{biblatex}
 %% for alpahbetic -> [Ein05] use:
@@ -48,9 +48,23 @@
 % in case you want the final delimiter between authors & -> (Einstein & Zweistein, 1905) 
 % \renewcommand{\finalnamedelim}{ \& }
 % List the authors in the Bibilipgraphy as Lastname F, Familyname G,
-\DeclareNameAlias{sortname}{family-given}
+% \DeclareNameAlias{sortname}{family-given}
 % remove the punctuation between author names in Bibliography 
 %\renewcommand{\revsdnamepunct}{ }
+
+% Only print URL if no DOI or eprint is given
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map{
+      \step[fieldsource=doi,final]
+      \step[fieldset=url,null]
+    }
+    \map{
+      \step[fieldsource=eprint,final]
+      \step[fieldset=url,null]
+    }
+  }
+}
 
 
 %% Block of definitions for fonts and packages for picture management.
