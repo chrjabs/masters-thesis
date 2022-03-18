@@ -3,7 +3,7 @@
 % Signposting
 This chapter describes bi-objective optimization, starting with a definition of the problem and the more general case of multi-objective optimization.
 We also define the notation for bi-objective optimization in the context of SAT that is used in this work.
-In a second and last section, we discuss different approaches to solving bi-objective optimization problems.
+For reference of what other work has been done as well, we give an overview of other notions of optimality and different approaches to solving bi-objective optimization problems in the last two sections.
 
 \section{Multi-Objective Optimization Under Pareto Optimality\label{sec:multiopt}}
 
@@ -84,8 +84,50 @@ An important property of pareto-optimal solutions to bi-objective problems is su
   we have $\Obj_\inc(\sol^o_1) = 1 < \Obj_\inc(\sol^o_2) = 2 < \Obj_\inc(\sol^o_3) = 3$ and $\Obj_\dec(\sol^o_1) = 3 > \Obj_\dec(\sol^o_2) = 2 > \Obj_\dec(\sol^o_3) = 1$.
 \end{example}
 
+\section{Other Notions of Optimality}
+
+% Signposting
+As mentioned in the previous sections, pareto optimality is only one notion of what a ``best'' solution looks like that can be used.
+There are two other important notions of optimality for bi-objective optimization that narrow down the set of solutions that are considered optimal:
+lexicographic optimization and lexicographic max-ordering optimization~\autocite{Ehrgott2005-5}.
+We give a brief overview of these notions of optimality, focusing on showing how they relate to pareto optimality.
+
+% Lexicographic optimization
+In lexicographic optimization~\autocite{Ehrgott2005-5}, given a feasible set $\feasible$ and two objectives $\generalobj_1$ and $\generalobj_2$, a solution $x$ dominates another solution $x^d$ in the lexicographic sense if (a)~$\generalobj_1(x) < \generalobj_1(x^d)$, or (b)~$\generalobj_1(x) = \generalobj_1(x^d)$ and $\generalobj_2(x) < \generalobj_2(x^d)$.
+Informally speaking, in contrast to pareto-optimality, lexicographic optimization imposes an explicit preference over the objectives and asks to compute a solution that minimizes $\generalobj_1$ using $\generalobj_2$ as a tie-breaker.
+The comparison criterion can also be seen as lexicographically comparing the string ob objective values of two solutions, hence the name of the notion of optimality.
+From the perspective of bi-objective optimization under pareto optimality, lexicographic optimization is a method of choosing which of the potentially multiple pareto points is considered the best.
+In detail, the lexicographically optimal solution will always be one of the ``end points'' of the pareto front, i.e., a pareto optimal solution with the smallest value for the objective chosen as primary.
+
+% Example: lexicographic optimization from a perspective of pareto optimality
+\begin{example}
+  Consider again the formula $\formula$ and the objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}.
+  Assume the objective $\Obj_\inc$ is chosen as the objective with higher priority.
+  In this case, the solution $\sol^o_1 = \soloone$ is lexicographically optimal, while solutions corresponding to other pareto points are not.
+\end{example}
+
+% Lexicographic optimization with the weighted sum method
+Lexicographic optimization can be cast into an optimization problem with a single objective with the help of the weighted sum method~\autocite{Ehrgott2005-3}.
+This is a common approach to solving lexicographic optimization, since solving algorithms for optimization problems with one objective are widely available for different paradigms.
+
+% Leximax optimization
+Lexicographic max-ordering (leximax) optimization~\autocite{Ehrgott2005-5} is closely related to lexicographic optimization.
+The only difference is that for leximax optimization, the objective values are sorted in descending order before comparing them lexicographically.
+Let $\generalobj_\text{max}(x) = \max\{\generalobj_1(x), \generalobj_2(x)\}$ and $\generalobj_\text{min}(x) = \min\{\generalobj_1(x), \generalobj_2(x)\}$.
+Formally, a solution $x$ dominates another solution $x^d$ in the leximax sense if (a)~$\generalobj_\text{max}(x) < \generalobj_\text{max}(x^d)$, or (b)~$\generalobj_\text{max}(x) = \generalobj_\text{max}(x^d)$ and $\generalobj_\text{min}(x) < \generalobj_\text{min}(x^d)$.
+Informally speaking, this notion of optimality seeks to keep all objective values low by minimizing the maximum value first.
+All leximax-optimal solutions are contained in the set of pareto-optimal solutions, therefore this is another method of reducing the set of pareto points to a single one that is considered optimal.
+While lexicographic optimization yielded an ``end point'' of the pareto front, leximax optimization yields the ``min point'', that is the point has the lowest maximum objective value.
+
+% Example: lexicographic max-ordering optimization from a perspective of pareto optimality
+\begin{example}
+  Consider again the formula $\formula$ and the objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}.
+  The solution $\sol^o_2 = \solotwo$ is leximax-optimal, since it has the lowest maximum objective value.
+\end{example}
+
 \section{Approaches to Bi-Objective Optimization\label{sec:approaches}}
 
+% Signposting
 In this section, we give an overview of different approaches to solving bi-objective optimization problems.
 The focus hereby lies on the first subsection, describing SAT-based approaches.
 This is because the algorithm we are proposing in this work is SAT-based and therefore other SAT-based approaches are directly competing.
@@ -230,26 +272,11 @@ For a non-formal intuition note that, while Seesaw is guaranteed to find at leas
 \subsubsection{SAT-Based Lexicographic Optimization\label{sec:lex-opt}}
 
 % (SAT-based) lexicographic optimization
-In contrast to bi-objective optimization under pareto optimality, the objectives can also be lexicographically minimized~\autocite{Ehrgott2005-1}.
-For two objectives, given a feasible set $\feasible$ and two objectives $\generalobj_1$ and $\generalobj_2$, a solution $x$ dominates another solution $x^d$ in the lexicographic sense if (a)~$\generalobj_1(x) < \generalobj_1(x^d)$, or (b)~$\generalobj_1(x) = \generalobj_1(x^d)$ and $\generalobj_2(x) < \generalobj_2(x^d)$.
-Informally speaking, in contrast to pareto-optimality, lexicographic optimization imposes an explicit preference over the objectives and asks to compute a solution that minimizes $\Obj_1$ using $\Obj_2$ as a tie-breaker.
 There is also earlier work on SAT-based lexicographic optimization~\autocite{DBLP:journals/ors/EhrgottG00,DBLP:conf/ijcai/ArgelichLS09,DBLP:journals/amai/Marques-SilvaAGL11}. 
-
-% Lexicographic optimization from a perspective of pareto optimality
-From the perspective of bi-objective optimization under pareto optimality, lexicographic optimization is a method of choosing which of the potentially multiple pareto points is considered the best.
-In detail, the lexicographically optimal solution will always be one of the ``end points'' of the pareto front, i.e., a pareto optimal solution with the smallest value for the objective chosen as primary.
-
-% Example: lexicographic optimization from a perspective of pareto optimality
-\begin{example}
-  Consider again the formula $\formula$ and the objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}.
-  Assume the objective $\Obj_\inc$ is chosen as the objective with higher priority.
-  In this case, the solution $\sol^o_1 = \soloone$ is lexicographically optimal, while solutions corresponding to other pareto points are not.
-\end{example}
-
 % Lexicographic optimization and MaxSAT
 Lexicographic optimization is closely related to the so-called multi-level optimization problem.
 In particular, both can be cast as a single objective weighted optimization problem and solved with a MaxSAT solver~\autocite{DBLP:conf/ijcai/ArgelichLS09,DBLP:journals/amai/Marques-SilvaAGL11}.
-In fact, many modern MaxSAT solvers exploit  multilevel properties of input instances in order to improve search efficiency~\autocite{DBLP:conf/vmcai/PaxianRB21,DBLP:conf/cp/AnsoteguiBGL12}.
+In fact, many modern MaxSAT solvers exploit multilevel properties of input instances in order to improve search efficiency~\autocite{DBLP:conf/vmcai/PaxianRB21,DBLP:conf/cp/AnsoteguiBGL12}.
 
 \subsection{Other Declarative Optimization Paradigms\label{sec:other-approaches}}
 
@@ -260,6 +287,12 @@ An early algorithm that can be used in constraint programming is a lexicographic
 This filtering algorithm was improved by the pareto constraint presented in~\textcite{DBLP:conf/cp/SchausH13,DBLP:conf/aaai/HartertS14}
 The resulting search algorithm is similar to paretoMCSes in that it maintains a set $\mathcal{T}$ of solutions that do not dominate each other.
 When a new solution is found, any solution it dominates is removed from $\mathcal{T}$.
+
+% CP-based leximax optimization
+Other than approaches for finding all pareto-optimal solutions, there have also been constraint programming algorithms proposed for finding leximax-optimal solutions.
+In~\textcite{DBLP:journals/ai/BouveretL09}, five algorithms for this problem are given.
+There is one branch-and-bound-based algorithm and another algorithm based on adding constraints to encode the sorted objective value vector, minimizing multiple times over that.
+\TODO{Extend.}
 
 % MIP-based approaches
 Multi-objective optimization has also been studied in the context of mixed integer programming and zero-one-programming~\autocite{Ehrgott2005-6,Rasmussen1986,DBLP:journals/eor/AlvesC07}.

@@ -26,7 +26,7 @@ Here we consider learning of interpretable decision rules as a representative be
 In short, here a decision rule is a binary classifier in the form of a CNF formula over boolean features.
 The result of the formula evaluated on the features of a data sample is the classification assigned by the classifier to this sample.
 In~\textcite{DBLP:conf/cp/MaliotovM18} a linear combination of the two objectives, using a parameter $\lambda\geq 0$, was proposed in order to directly apply a MaxSAT solver to find decision rules under a pre-fixed value for $\lambda$.
-While this allows for finding a pareto-optimal decision rule under a specific value of $\lambda$, MaxSAT solving multiple times under different choices of $\lambda$ does not guarantee finding a representative pareto-optimal decision rule for each pareto point~\autocite{survey}.
+While this allows for finding a pareto-optimal decision rule under a specific value of $\lambda$, MaxSAT solving multiple times under different choices of $\lambda$ does not guarantee finding a representative pareto-optimal decision rule for each pareto point~\autocite{Ehrgott2005-3,survey}.
 In contrast, here we address directly the problem of computing all pareto-optimal solutions w.r.t.\ the two objectives.
 \bigskip
 
