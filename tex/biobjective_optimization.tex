@@ -45,18 +45,18 @@ With our algorithm, we consider the task of computing a representative solution 
 
 % Example: A bi-objective problem
 \begin{figure}
-  \begin{minipage}{0.37\textwidth}
+  \begin{minipage}{0.377\textwidth}
     \small
     \begin{align*}
       \formula = &\bigg\{ \texttt{As-CNF}\left(\sum_ {l \in \Obj_\inc \cup \Obj_\dec} l \geq 4 \right), \\
         &(i_1 \lor i_2), (i_2 \lor i_3), (i_2 \lor i_4) \\
-        &(d_1 \lor d_2), (d_2 \lor d_3), (d_2 \lor d_4) \bigg\} \\ \\
-      \Obj_\inc =&\{ i_1, i_2, i_3, i_4 \} \\
+        &(d_1 \lor d_2), (d_2 \lor d_3), (d_2 \lor d_4) \bigg\}, \\
+      \Obj_\inc =&\{ i_1, i_2, i_3, i_4 \}, \\
       \Obj_\dec =&\{ d_1, d_2, d_3, d_4 \} 
     \end{align*}
   \end{minipage}
   \;
-  \begin{minipage}{0.61\textwidth}
+  \begin{minipage}{0.605\textwidth}
     \includegraphics{search-trace.pdf}
   \end{minipage}
   \caption{Left: An example formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$.

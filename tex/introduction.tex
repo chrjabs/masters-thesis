@@ -1,3 +1,69 @@
 \chapter{Introduction\label{chap:intro}}
 
+% What are optimization problems and where do they occur
+% Start by telling a story (running example throughout intro)
+When somebody is looking for a new flat to buy or rent, most people will be comparing prices with the aim to find the cheapest flat possible that fulfils their requirements.
+This is an example of what in mathematics is called an optimization problem.
+Optimization problems can be summarized as the task of finding a ``best'' solution out of a collection of possible solutions available.
+The notion of ``best'' that is used there is commonly that a ``cost'' associated with each solution shall be minimal.
+Speaking in the example from above, the task is to find the flat from all flats that fulfils the requirements with the minimum cost or rent.
+If the collection of possible solutions is discrete, we speak of \emph{combinatorial} optimization.
+
+% Applications of optimization in literature
+Combinatorial optimization problems do naturally arise in many areas, ranging from industrial applications over research to everyday tasks.
+Examples in literature include scheduling of processes in an operating system~\autocite{}, supply chain optimization~\autocite{}, minimizing the loss of a neural network~\autocite{}, air traffic management~\autocite{}, clustering~\autocite{}, learning optimal classifiers~\autocite{} and many more.
+Since there is such a variety of applications for combinatorial optimization, there is a plethora of work on solving these optimization problems~\autocite{}.
+
+% Reveal conflicting second objective
+Taking a closer look at the flat search example from the beginning, we can notice a problem emerging:
+what does ``fulfilling'' the requirements mean?
+Some requirements, like the number of rooms, might be easy to specify, but consider the distance of ones daily commute.
+Rather than setting a fixed threshold as ``maximum $x$ kilometres distance'', what we might actually want to do is minimize this distance at the same time as the cost of the flat.
+Now suddenly there are multiple objectives to take into account regarding what constitutes a ``best'' solution.
+This problem is called \emph{multi-objective} optimization.
+
+% Conflicting objectives and why there might be no single optimal solution
+The crucial difference between single-objective and the multi-objective optimization is that there is no single notion of optimality for the multi-objective setting.
+Whereas for a single objective function, there is a clear minimum (or maximum) and objective values can be clearly compared, this becomes less defined for the multi-objective case:
+consider a flat with a cost of 100\,000 \texteuro{} and 4-kilometre daily commute and compare it to another flat that costs 80\,000 \texteuro{} and has a 3-kilometre commute.
+In this case it is easy to say that the second option is more optimal.
+Now compare the second option to another flat that costs 100\,000 \texteuro{} but only has a 1-kilometre commute.
+We cannot easily say which one of these options is better, and the choice would depend on ones personal preference over the two objectives.
+This situation commonly occurs when two of the objectives considered are in conflict, as the price of a flat and its commute might be if the commute is towards the city centre and flats in the city centre are more expensive.
+
+% Notions of optimality
+% Focus on pareto optimality
+% Point out different nomenclature
+\lipsum[5-5]
+
+% Bi-objective vs multi-objective
+% Why bi-objective is interesting/enough
+\lipsum[4-4]
+
+% Applications of bi-/multi-objective optimization in iterature
+\lipsum[6-6]
+
+% Hardness of optimization problems
+\lipsum[7-7]
+
+% Transition to approaches to solving optimization problems
+\lipsum[7-7]
+
+% Solving pipeline for declarative approaches
+\lipsum[8-8]
+
+% MaxSAT (and SAT)
+\lipsum[9-9]
+
+% SAT-based bi-/multi-objective optimization not very active in last years
+% Motivation for researching that direction
+\lipsum[10-10]
+
+% Contributions
+% Algorithm: single SAT solver; builds on MaxSAT; single vs all
+% Evaluation: study efficiency of different MaxSAT algorithms
 \TODO{define \algname{}}
+\lipsum[11-11]
+
+% Signposting for chapters
+\lipsum[12-12]
