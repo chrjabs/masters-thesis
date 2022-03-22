@@ -143,7 +143,7 @@ In the last subsection, we look at how the different refinements presented in \c
 % mlic-cactus-single
 For comparing the performance of the variants of \algname{} presented in \cref{sec:variants}, $P$-minimal and Seesaw, we first look at the results for learning a single decision rule per pareto point.
 \Cref{fig:mlic-cactus-single} shows the number of instances solved ($x$-axis) for different per-instance time limits ($y$-axis) for this task.
-The best-performing approach is the \algname{} variant \msh{}, solving 223 instances, while $P$-minimal solved 219 instances.
+The best-performing approaches are the \algname{} variants \msh{}, \satunsat{}, \unsatsat{} and \msu{}, solving 223 instances, while $P$-minimal solved 219 instances.
 All variants of \algname{} outperform $P$-minimal to some extent.
 Seesaw is very clearly outperformed by all other approaches, solving only 123 instances within the resource constraints.
 
@@ -162,7 +162,7 @@ Next we look at a similar comparison for the bi-objective set covering benchmark
 In this comparison, Seesaw is not included since it cannot be feasibly instantiated for this task.
 \Cref{fig:setcover-cactus-single} shows the number of solved instances per individual time limit for the two generated sets of bi-objective set covering instances.
 Here again \msh{} is the best-performing variant of \algname{}, considerably outperforming $P$-minimal:
-$P$-minimal solved 71 (respectively 38) fixed element probability (respectively set cardinality) instances, whereas \msh{} solved 82 (respectively 40) instances.
+$P$-minimal solved 71 (respectively 38) fixed element probability (respectively set cardinality) instances, whereas \msh{} solved 83 (respectively 40) instances.
 For this application, not all variants of \algname{} outperformed $P$-minimal:
 \msu{} and \oll{} were outperformed for both instance variants while \satunsat{} and \unsatsat{} were only outperformed for the instances generated with fixed set cardinality.
 
@@ -181,7 +181,7 @@ The best-performing approach for each benchmark is highlighted in bold font.
 \msh{} is the best-performing \algname{} variant overall, outperforming $P$-minimal in all cases.
 For more details, \cref{fig:msh-scatter-single} shows a per-instance runtime comparison between \msh{} and $P$-minimal.
 We note that $P$-minimal did not uniquely solve any instance.
-In general, \msh{} was outperformed by $P$-minimal on only 37 instances while \msh{} solved 308 instances in less time.
+In general, \msh{} was outperformed by $P$-minimal on only 31 instances while \msh{} solved 297 instances in less time.
 
 % nsolved-single
 \begin{table}
@@ -193,9 +193,9 @@ In general, \msh{} was outperformed by $P$-minimal on only 37 instances while \m
     \toprule
     Instance Type & \satunsat{} & \unsatsat{} & \msu{} & \oll{} & \msh{} & $P$-minimal \\
     \midrule
-    Decision Rules & 222 & 222 & 222 & 222 & \textbf{223} & 219 \\
-    \scep{} & 76 & 71 & 70 & 58 & \textbf{82} & 71 \\
-    \scsc{} & 35 & 30 & 36 & 34 & \textbf{40} & 38 \\
+    Decision Rules & \textbf{223} & \textbf{223} & \textbf{223} & 222 & \textbf{223} & 219 \\
+    \scep{} & 77 & 71 & 71 & 58 & \textbf{83} & 71 \\
+    \scsc{} & 35 & 29 & 36 & 34 & \textbf{40} & 38 \\
     \bottomrule
   \end{tabular}
 \end{table}

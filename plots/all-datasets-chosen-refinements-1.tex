@@ -115,13 +115,13 @@
 \draw [loosely dotted] (60,30) -- (5400,2700);
 \draw [loosely dotted] (30,60) -- (2700,5400);
 
-\addplot [only marks,color0,mark=x] table [x=paretosat-msh-70lits,y=paretosat-msh-70litsnolazydown,col sep=comma] {setcover-element-prob-lazydown-scatter-single.csv};
+\addplot [only marks,color0,mark=x] table [x=bioptsat-msh,y=bioptsat-msh-nolazydown,col sep=comma] {setcover-element-prob-lazydown-scatter-single.csv};
 \addlegendentry{\scep{}}
 
-\addplot [only marks,color1,mark=o] table [x=paretosat-msh-70lits,y=paretosat-msh-70litsnolazydown,col sep=comma] {setcover-set-card-lazydown-scatter-single.csv};
+\addplot [only marks,color1,mark=o] table [x=bioptsat-msh,y=bioptsat-msh-nolazydown,col sep=comma] {setcover-set-card-lazydown-scatter-single.csv};
 \addlegendentry{\scsc{}}
 
-\addplot [only marks,color2,mark=+] table [x=paretosat-msh-70lits,y=paretosat-msh-70litsnolazydown,col sep=comma] {mlic-lazydown-scatter-single.csv};
+\addplot [only marks,color2,mark=+] table [x=bioptsat-msh,y=bioptsat-msh-nolazydown,col sep=comma] {mlic-lazydown-scatter-single.csv};
 \addlegendentry{Decision Rules}
 
 \nextgroupplot[
@@ -150,11 +150,11 @@
 \draw [loosely dotted] (60,30) -- (5400,2700);
 \draw [loosely dotted] (30,60) -- (2700,5400);
 
-\addplot [only marks,color0,mark=x] table [x=paretosat-msh-70lits,y=paretosat-msh-70litsconfmin,col sep=comma] {setcover-element-prob-confmin-scatter-single.csv};
+\addplot [only marks,color0,mark=x] table [x=bioptsat-msh,y=bioptsat-msh-confmin,col sep=comma] {setcover-element-prob-confmin-scatter-single.csv};
 
-\addplot [only marks,color1,mark=o] table [x=paretosat-msh-70lits,y=paretosat-msh-70litsconfmin,col sep=comma] {setcover-set-card-confmin-scatter-single.csv};
+\addplot [only marks,color1,mark=o] table [x=bioptsat-msh,y=bioptsat-msh-confmin,col sep=comma] {setcover-set-card-confmin-scatter-single.csv};
 
-\addplot [only marks,color2,mark=+] table [x=paretosat-msh-70lits,y=paretosat-msh-70litsconfmin,col sep=comma] {mlic-confmin-scatter-single.csv};
+\addplot [only marks,color2,mark=+] table [x=bioptsat-msh,y=bioptsat-msh-confmin,col sep=comma] {mlic-confmin-scatter-single.csv};
 
 \end{groupplot}
 \end{tikzpicture}

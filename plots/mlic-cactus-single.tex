@@ -108,19 +108,19 @@
 \coordinate (orig window start) at ({rel axis cs: 1,1}-|{axis cs:\xcut,0});
 \coordinate (orig window end) at (rel axis cs: 1,1);
 
-\addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=paretosat-msh-70lits,col sep=comma] {mlic-cactus-single.csv};
-\addlegendentry{\msh}
-
-\addplot [semithick,color1,dashed,mark=+] table [x=nsolved,y=paretosat-su,col sep=comma] {mlic-cactus-single.csv};
+\addplot [semithick,color1,dashed,mark=+] table [x=nsolved,y=bioptsat-su,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{\satunsat}
 
-\addplot [semithick,color2,dashdotted,mark=star] table [x=nsolved,y=paretosat-msu3,col sep=comma] {mlic-cactus-single.csv};
-\addlegendentry{\msu}
-
-\addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=paretosat-us,col sep=comma] {mlic-cactus-single.csv};
+\addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=bioptsat-us,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{\unsatsat}
 
-\addplot [semithick,color4,dashdotted,mark=|] table [x=nsolved,y=paretosat-oll,col sep=comma] {mlic-cactus-single.csv};
+\addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {mlic-cactus-single.csv};
+\addlegendentry{\msh}
+
+\addplot [semithick,color2,dashdotted,mark=star] table [x=nsolved,y=bioptsat-msu3,col sep=comma] {mlic-cactus-single.csv};
+\addlegendentry{\msu}
+
+\addplot [semithick,color4,dashdotted,mark=|] table [x=nsolved,y=bioptsat-oll,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{\oll}
 
 \addplot [semithick,color5,solid,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {mlic-cactus-single.csv};
@@ -148,15 +148,15 @@
 \coordinate (zoom window start) at (rel axis cs: 0,1);
 \coordinate (zoom window end) at (rel axis cs: 1,1);
 
-\addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=paretosat-msh-70lits,col sep=comma] {mlic-cactus-single.csv};
+\addplot [semithick,color1,dashed,mark=+] table [x=nsolved,y=bioptsat-su,col sep=comma] {mlic-cactus-single.csv};
 
-\addplot [semithick,color1,dashed,mark=+] table [x=nsolved,y=paretosat-su,col sep=comma] {mlic-cactus-single.csv};
+\addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=bioptsat-us,col sep=comma] {mlic-cactus-single.csv};
 
-\addplot [semithick,color2,dashdotted,mark=star] table [x=nsolved,y=paretosat-msu3,col sep=comma] {mlic-cactus-single.csv};
+\addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {mlic-cactus-single.csv};
 
-\addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=paretosat-us,col sep=comma] {mlic-cactus-single.csv};
+\addplot [semithick,color2,dashdotted,mark=star] table [x=nsolved,y=bioptsat-msu3,col sep=comma] {mlic-cactus-single.csv};
 
-\addplot [semithick,color4,dashdotted,mark=|] table [x=nsolved,y=paretosat-oll,col sep=comma] {mlic-cactus-single.csv};
+\addplot [semithick,color4,dashdotted,mark=|] table [x=nsolved,y=bioptsat-oll,col sep=comma] {mlic-cactus-single.csv};
 
 \addplot [semithick,color5,solid,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {mlic-cactus-single.csv};
 
