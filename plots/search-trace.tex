@@ -105,7 +105,10 @@
 \draw [semithick,dashdotted,color1,->,shorten >=3pt,shorten <=3pt] (1,4) to[out=-75, in=75] (1,3);
 \draw [semithick,dashdotdotted,color2,->,shorten >=3pt,shorten <=3pt] (1,3) to[out=25, in=110] (3,2);
 \draw [semithick,dashed,color0,->,shorten >=3pt,shorten <=3pt] (3,2) to[out=155, in=25] (2,2);
+\draw [semithick,dashdotted,color1,->,shorten >=3pt,shorten <=3pt] (2,2) to[loop, min distance=2em, out=60, in=120] (2,2);
 \draw [semithick,dashdotdotted,color2,->,shorten >=3pt,shorten <=3pt] (2,2) to[out=-75, in=155] (3,1);
+\draw [semithick,dashed,color0,->,shorten >=3pt,shorten <=3pt] (3,1) to[loop, min distance=2em, out=120, in=60] (3,1);
+\draw [semithick,dashdotted,color1,->,shorten >=3pt,shorten <=3pt] (3,1) to[loop, min distance=2em, out=30, in=-30] (3,1);
 
 \addplot [only marks,color3, mark=o] coordinates {(4,4) (2,4) (1,4) (3,2)};
 \addlegendentry{Solutions}
