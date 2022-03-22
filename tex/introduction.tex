@@ -31,39 +31,56 @@ Now compare the second option to another flat that costs 100\,000 \texteuro{} bu
 We cannot easily say which one of these options is better, and the choice would depend on ones personal preference over the two objectives.
 This situation commonly occurs when two of the objectives considered are in conflict, as the price of a flat and its commute might be if the commute is towards the city centre and flats in the city centre are more expensive.
 
-% Notions of optimality
-% Focus on pareto optimality
+% Pareto optimality
 % Point out different nomenclature
-\lipsum[5-5]
+In the context of our work, the notion of optimality for multi-objective optimization is that of pareto-optimality (also called efficiency in other contexts)~\autocite{Ehrgott2005-2}.
+Intuitively, pareto optimality considers a solution optimal if there exists no other solution with better objective value for one objective and not worse for all the others. 
+This definition would consider the two last flats from earlier both equally optimal.
+Under pareto optimality the task of solving a multi-objective optimization problem can mean multiple things:
+finding a single pareto-optimal solution, finding a representative solution for each pareto point (also called non-dominated point in literature~\autocite{Ehrgott2005-2}), or finding all pareto-optimal solutions.
+The first of the tasks can be considered the least informative since there can be very different pareto-optimal solutions to the same problem.
+Most approaches to solving multi-objective optimization under pareto optimality seem to focus on the second approach where a single solution per pareto point (i.e., tuple of pareto-optimal objective values) is computed.
+This gives a human decision makes the ability to look at the results and choose the pareto-optimal solution that gives the best trade-off between the objectives after the fact instead of having to choose such a trade-off in advance.
+The last task goes one step further and enumerates the full pareto front (i.e., all pareto-optimal solutions), even if multiple of the solutions might lead to the same objective values.
+In this work we focus on the latter two tasks.
+
+\TODO{Do I mention other notions of optimality here?}
 
 % Bi-objective vs multi-objective
 % Why bi-objective is interesting/enough
-\lipsum[4-4]
+The handle on multiple objectives and what the objective values of an optimal solution actually mean can quickly become hard to grasp.
+As humans, we can only really visualize three dimensions meaning a pareto front over four objectives is already an entirely abstract object while even a three-dimensional one is hard to visualize.
+Imagine, for example, adding the objectives living space and renovations that need to be done into the flat search example.
+With those four objectives, a lot more flats are going to be pareto-optimal, therefore not helping in the decision process.
+Two objectives, however, form a good trade-off between gaining meaningful information from the second objective over just using a single one, being able to intuitively visualize the pareto front and not resulting in too many pareto-optimal solutions.
+Additionally, objectives that are considered ``less important'' but should still somehow be included in the optimization can still be added as a threshold condition;
+e.g., requiring that the living space is more than 60 $\text{m}^2$ rather than treating it as a separate objective.
+For this reason, in this work we focus on \emph{bi-objective} optimization, developing an algorithm for finding either a single representative per pareto point or all pareto-optimal solutions.
 
 % Applications of bi-/multi-objective optimization in iterature
-\lipsum[6-6]
+\TODO{\lipsum[6-6]}
 
 % Hardness of optimization problems
-\lipsum[7-7]
+\TODO{\lipsum[7-7]}
 
 % Transition to approaches to solving optimization problems
-\lipsum[7-7]
+\TODO{\lipsum[7-7]}
 
 % Solving pipeline for declarative approaches
-\lipsum[8-8]
+\TODO{\lipsum[8-8]}
 
 % MaxSAT (and SAT)
-\lipsum[9-9]
+\TODO{\lipsum[9-9]}
 
 % SAT-based bi-/multi-objective optimization not very active in last years
 % Motivation for researching that direction
-\lipsum[10-10]
+\TODO{\lipsum[10-10]}
 
 % Contributions
 % Algorithm: single SAT solver; builds on MaxSAT; single vs all
 % Evaluation: study efficiency of different MaxSAT algorithms
 \TODO{define \algname{}}
-\lipsum[11-11]
+\TODO{\lipsum[11-11]}
 
 % Signposting for chapters
-\lipsum[12-12]
+\TODO{\lipsum[12-12]}
