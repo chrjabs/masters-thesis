@@ -1,4 +1,4 @@
-\chapter{The Proposed Approach\label{chap:approach}}
+\chapter{The \algname{} Algorithm\label{chap:approach}}
 
 We detail the MaxSAT-based approach to bi-objective optimization developed in this work together with its variants.
 
@@ -223,6 +223,7 @@ Furthermore, if a problem instance has literals in $\Obj_\inc$ that are not cons
 With this intuition, we propose \msh{} as a hybrid variant that starts with \msu{} search and switches over to \satunsat{} as soon as a certain percentage of the literals in $\Obj_\inc$ have been added to the totalizer $\tot(\Act)$.
 Before switching over to \satunsat{}, the remaining literals are added to the totalizer to build $\tot(\Obj_\inc)$, which is needed for \satunsat{}.
 With this, the advantages of both \msu{} and \satunsat{} can in the best case be combined.
+\TODO{Expand.}
 
 \begin{example}
   Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}.
@@ -235,7 +236,7 @@ With this, the advantages of both \msu{} and \satunsat{} can in the best case be
   In the third iteration of \algname{}, \msh{} will directly invoke \satunsat{}, which proceeds as described in the third iteration in \cref{ex:satunsat}.
 \end{example}
 
-\section{Refinements\label{sec:refinements}}
+\section{Refinements to \algname{}\label{sec:refinements}}
 
 \subsection{Lazily Building $\tot(\Obj_\dec)$}
 
@@ -252,7 +253,7 @@ However, the lack of further pareto-optimal solutions is instead detected in the
 \subsection{Blocking of Dominated Solutions}
 
 Every time in the search procedure that a candidate solution $\tau_c$ with objective values $b_\inc = \Obj_\inc(\tau_c)$ and $b_\dec = \Obj_\dec(\tau_c)$ is found, the definition of a pareto-optimal point leads to the conclusion that all solutions $\tau_d$ with $\Obj_\inc(\tau_d) > b_\inc$ and $\Obj_\dec(\tau_d) > b_\dec$ cannot be pareto-optimal.
-These points can all be blocked with the clause $\{ \ove{\Obj_\inc}{b_\inc}, \ove{\Obj_\dec}{b_\dec} \}$.
+These points can all be blocked by adding the clause $\{ \ove{\Obj_\inc}{b_\inc}, \ove{\Obj_\dec}{b_\dec} \}$ to the solver.
 \TODO{elaborate}
 
 \subsection{Domain-Specific Solution Blocking}
