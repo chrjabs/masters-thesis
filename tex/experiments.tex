@@ -219,7 +219,7 @@ Next we compare the performance for learning all pareto-optimal interpretable de
 \Cref{fig:mlic-cactus-multi} shows the results for this task, presented in the same way as in \cref{fig:mlic-cactus-single}.
 For this task, the \algname{} variants \satunsat{}, \unsatsat{}, \msu{} and \msh{} all performed the best, solving 215 instances each.
 With this, they outperform $P$-minimal, which only solved 213 instances.
-For this task, the \oll{} variant of \algname{} does not manage to outperform $P$-minimal.
+For this task, the \oll{} variant of \algname{} solves the same number of instances as $P$-minimal.
 Note that the Seesaw configuration included in \cref{fig:mlic-cactus-multi} does not strictly solve the same task as the other.
 As mentioned previously, Seesaw cannot be easily extended to enumerate all pareto-optimal solutions, we still include it here to show that even when solving the potentially more complex task of enumerating all pareto-optimal solutions, the other approaches clearly outperform Seesaw.
 
@@ -227,7 +227,7 @@ As mentioned previously, Seesaw cannot be easily extended to enumerate all paret
 \begin{figure}
   \centering
   \includegraphics{mlic-cactus.pdf}
-  \caption{Runtime comparison of  $P$-minimal and variants of \algname{} for learning interpretable decision rules;
+  \caption{Runtime comparison of $P$-minimal and variants of \algname{} for learning interpretable decision rules;
     enumeration of all pareto-optimal solutions.
     Plot on the right is zoomed in on the more interesting part of the left plot.
   }\label{fig:mlic-cactus-multi}
@@ -236,7 +236,7 @@ As mentioned previously, Seesaw cannot be easily extended to enumerate all paret
 % setcover-cactus-multi
 Looking at the same comparison for bi-objective set covering, we can see in \cref{fig:setcover-cactus-multi} that \msh{} was the best-performing approach also here.
 For the instances with fixed set cardinality, all \algname{} variants solved at least as many instances as $P$-minimal, for the instances with fixed element probability only \oll{} was outperformed.
-The best-performing variant, \msh{}, solved 80 (respectively 40) of the fixed element probability (respectively set cardinality) instances while $P$-minimal only solved 68 (respectively 26).
+The best-performing variant, \msh{}, solved 81 (respectively 40) of the fixed element probability (respectively set cardinality) instances while $P$-minimal only solved 68 (respectively 26).
 
 % setcover-cactus-multi
 \begin{figure}
@@ -253,7 +253,7 @@ The best-performing approach for each benchmark is highlighted in bold font.
 It can be seen that \msh{} is the best-performing approach for this task as well.
 A per-instance runtime comparison between \msh{} and $P$-minimal for the task of enumerating all pareto-optimal solutions can be seen in \cref{fig:combined-msh-scatter-single-multi} (left).
 $P$-minimal did also not uniquely solve any instance for enumerating all pareto-optimal solutions.
-Furthermore, \msh{} was outperformed by $P$-minimal on 69 instances while \msh{} solved 256 instances faster.
+Furthermore, \msh{} was outperformed by $P$-minimal on 71 instances while \msh{} solved 257 instances faster.
 
 % nsolved-multi
 \begin{table}
@@ -265,9 +265,9 @@ Furthermore, \msh{} was outperformed by $P$-minimal on 69 instances while \msh{}
     \toprule
     Instance Type & \satunsat{} & \unsatsat{} & \msu{} & \oll{} & \msh{} & $P$-minimal \\
     \midrule
-    Decision Rules & \textbf{215} & \textbf{215} & \textbf{215} & 212 & \textbf{215} & 213 \\
-    \scep{} & 73 & 71 & 70 & 58 & \textbf{80} & 68 \\
-    \scsc{} & 29 & 26 & 36 & 34 & \textbf{40} & 26 \\
+    Decision Rules & \textbf{215} & \textbf{215} & \textbf{215} & 213 & \textbf{215} & 213 \\
+    \scep{} & 75 & 71 & 70 & 58 & \textbf{81} & 68 \\
+    \scsc{} & 35 & 29 & 36 & 34 & \textbf{40} & 26 \\
     \bottomrule
   \end{tabular}
 \end{table}
