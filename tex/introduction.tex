@@ -58,7 +58,14 @@ e.g., requiring that the living space is more than 60 $\text{m}^2$ rather than t
 For this reason, in this work we focus on \emph{bi-objective} optimization, developing an algorithm for finding either a single representative per pareto point or all pareto-optimal solutions.
 
 % Applications of bi-objective optimization in iterature
-\TODO{\lipsum[6-6]}
+Bi-objective optimization also appears naturally in many fields of application.
+In machine learning, a regularization term---expressing how complex a certain model is---is often combined with the loss based on the classification error~\autocite{}.
+Typically, this is done by forming a linear combination of the two components, but there is also research in treating the two objectives separately~\autocite{}.
+A very similar idea can be used for learning interpretable machine learning models.
+As a proxy for the objective of interpretability, typically a notion of ``size'' of the model is used, leading to a natural bi-objective optimization problem with the objectives classification error and model size~\autocite{}.
+A bi-objective optimization problem also arises when wanting to create a portfolio of different solvers that together solve a set of benchmarks as fast as possible while also containing as few solvers as possible~\autocite{}.
+There are also bi-objective optimization problems in network routing with the objectives load balancing and latency~\autocite{}.
+In supply chain optimization, in addition to cost optimization, environmental aspects can be taken into consideration as a second objective~\autocite{}.
 
 % Hardness of optimization problems
 \TODO{\lipsum[7-7]}
