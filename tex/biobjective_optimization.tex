@@ -10,7 +10,7 @@ For reference of what other work has been done as well, we give an overview of o
 \TODO{Discuss feasible and objective space explicitly.}
 
 % Multiobjective optimization
-Multi-objective optimization is the problem of optimizing $\nobj$ objective functions $\generalobj_i: \feasible \rightarrow \mathbb{R}^+$ with the decision variable $x$, while $x$ is from a feasible set $\feasible$~\autocite{Ehrgott2005-1}.
+Multi-objective optimization is the problem of optimizing $\nobj$ objective functions $\generalobj_i: \feasible \rightarrow \mathbb{R}^+$ with the solution $\decvar$, while $\decvar$ is from a feasible set $\feasible$~\autocite{Ehrgott2005-1}.
 W.l.o.g., we assume that all optimizations seek to minimize the objective function.
 Formally a multi-objective optimization problem (MOOP) is the following:
 \begin{equation}\label{eq:moop}
@@ -70,7 +70,8 @@ Formalizing the objectives this way and encoding the feasible set $\feasible$ as
   The solution space is illustrated on the right.
   The three solid dots correspond to the three pareto points of $\formula$ w.r.t.\ $\Obj_\inc$ and $\Obj_\dec$. 
   Examples of pareto-optimal solutions corresponding to these points are $\sol^o_1 = \soloone$, $\sol^o_2 = \solotwo$ and $\sol^o_3 = \solothree$.
-  The solution $\sol^c_3 = \solcthree$ is dominated by $\sol^o_1$ ($\sol^o_1 \prec \sol^c_3$) because $\Obj_\inc(\sol^o_1) \leq \Obj_\inc(\sol^c_3)$ and $\Obj_\dec(\sol^o_1) < \Obj_\dec(\sol^c_3)$.
+  The solution $\sol^c_3 = \solcthree$ is dominated by $\sol^o_1$ ($\sol^o_1 \prec \sol^c_3$) because $\Obj_\inc(\sol^o_1) \leq \Obj_\inc(\sol^c_3)$ and $\Obj_\dec(\sol^o_1) < \Obj_\dec(\sol^c_3)$. \\
+  (The arrows in \cref{fig:search-trace} represent subroutines of \algname{} and will be discussed in \cref{chap:approach}.)
 \end{example}
 
 % Proposition: Ordered pareto front
@@ -131,7 +132,7 @@ While lexicographic optimization yielded an ``end point'' of the pareto front, l
   The solution $\sol^o_2 = \solotwo$ is leximax-optimal, since it has the lowest maximum objective value.
 \end{example}
 
-\section{Related Approaches to Bi-Objective Optimization\label{sec:approaches}}
+\section{Previous Approaches to Bi-Objective Optimization\label{sec:approaches}}
 
 % Signposting
 In this section, we give an overview of different approaches to solving bi-objective optimization problems.
@@ -154,6 +155,7 @@ Since this approach is so close to ours, we are using it as one of the two appro
 The $P$-minimal approach  corresponds to enumerating the solutions of $\formula^\text{W} = \formula \land \tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$ that are subset-minimal w.r.t.\ the set of outputs of the totalizers.
 More precisely, if $P$ is the set of output literals of $\tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$, then the goal is to enumerate solutions $\sol^m$ such that no other solution $\sol$ has $\{ l \mid l \in P \land \sol(l) = 0\} \subsetneq \{ l \mid l \in P \land \sol^m(l) = 0\}$.
 The procedure for enumerating such solutions (detailed in~\textcite{DBLP:conf/ftp/KoshimuraNFH09}) works by (i)~using a solver to obtain any solution $\sol$ of $\formula^\text{W}$, (ii)~iteratively minimizing the subset of variables of $P$ set to true by the solution, and, once a minimal solution $\sol_m$ has been found, (iii)~adding the clause $(\ov{\Obj_{\inc}}{k_1} \lor \ov{\Obj_{\dec}}{k_2})$ containing the output variables corresponding to the lowest index set to true by $\sol_m$.
+We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal'' for short.
 
 % Example: P-minimal
 \begin{example}\label{ex:pmin}
@@ -225,14 +227,14 @@ The overarching idea is that an optimization problem is modelled as a set $\core
 (Note that these cores are not necessarily equal to a core in SAT solving as described in \cref{sec:inc-sat}.)
 All cores in $\cores$ need to be resolved by selecting a smallest hitting set $\hs$ that contains at least one element from each core.
 However, the set $\cores$ is not explicitly know;
-instead, it is defined implicitly through a separation oracle that can be used to test if a given hitting set $\hs$ intersects with all cores.
+instead, it is defined implicitly through a separation oracle that, for decision problems, can be used to test if a given hitting set $\hs$ intersects with all cores.
 If the hitting set does not intersect with all cores, the oracle returns a core that is not hit.
 
 % MaxHS and Seesaw
 In~\textcite{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20}, an implicit hitting set algorithm for solving MaxSAT was proposed and refined;
 other successful applications can be found in~\textcite{DBLP:conf/cp/IgnatievPLM15,DBLP:conf/kr/SaikkoWJ16,DBLP:conf/cade/FazekasBB18,DBLP:conf/kr/SaikkoDAJ18}.
 Recently, Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21} was proposed as a generalized implicit hitting set framework for bi-objective optimization.
-In contrast to our work, a main ingredient in Seesaw is the idea of treating one of the objectives as a black box.
+In contrast to our work, in Seesaw one of the objectives is treated as a block box.
 This allows for---but also requires---problem-specific instantiations of the black box.
 
 % Seesaw in a SAT context

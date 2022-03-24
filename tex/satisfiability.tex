@@ -10,12 +10,12 @@ The chapter concludes with a section on encoding cardinality constraints in prop
 \section{The Propositional Satisfiability Problem\label{sec:sat}}
 
 % Propositional logic and SAT
-For a Boolean variable $x$ there are two literals, the positive $x$ and the negative $\lnot x$. 
+For a Boolean variable $v$ there are two literals, the positive $v$ and the negative $\lnot v$. 
 A clause $C$ is a set of (disjunction over) literals and a CNF formula $\formula$ is a set of (conjunction over) clauses.
 The set of variables and literals appearing in $\formula$ are $\var(\formula)$ and $\lit(\formula)$, respectively.  
 A truth assignment $\sol$ maps boolean variables to 1 (true) or 0 (false).
 The semantics of truth assignments are extended to a clause $C$ and a formula $\formula$ in the standard way: $\sol(C) = \max\{ \sol(l) \mid l \in C\}$ and $\sol(\formula) = \min\{\sol(C) \mid C \in \formula\}$.
-When convenient, we view assignments $\sol$ over a set $\var(\formula)$ of variables as sets of literals $\sol = \{ x \mid x \in \var(\formula),  \sol(x) = 1\} \cup \{ \lnot x \mid x \in \var(\formula), \sol(x) = 0\}$.
+When convenient, we view assignments $\sol$ over a set $\var(\formula)$ of variables as sets of literals $\sol = \{ v \mid v \in \var(\formula),  \sol(v) = 1\} \cup \{ \lnot v \mid v \in \var(\formula), \sol(v) = 0\}$.
 An assignment $\sol$ for which $\sol(\formula) = 1$ is a solution to $\formula$.
 The propositional satisfiability (SAT) problem asks whether a given formula $\formula$ has a solution.
 A formula $\formula$ is satisfiable if it has solutions, otherwise it is unsatisfiable.
@@ -64,6 +64,8 @@ In order for the learned information \TODO{define learned info} from previous so
 In addition, incremental SAT solvers support solving under assumptions.
 The assumptions $\assump$ are a set of literals that are treated as unit clauses, i.e., a solver call with internal formula $\formula$ and assumptions $\assump$ either returns SAT and a solution $\sol \supset \assump$, or UNSAT and a subset $\core \subset \{\lnot l \mid l\in\assump\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
 The subset $\core$ is called an unsatisfiable \emph{core} and, intuitively, is an explanation for the unsatisfiability of the query.
+
+\TODO{Define \texttt{isSAT}.}
 
 \section{Maximum Satisfiability\label{sec:max-sat}}
 

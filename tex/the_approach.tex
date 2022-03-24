@@ -10,19 +10,21 @@ We detail the MaxSAT-based approach to bi-objective optimization developed in th
 
   \begin{algorithmic}[1]
     \STATE $\texttt{InitSATsolver}(F)$ \label{l:init-solv} 
-    \STATE $(\res, \tau) \gets \satsolver(\emptyset)$ \quad\COMMENT{Invokes the SAT solver on the formula.}  \label{l:sols} 
+    \STATE $(\res, \sol^r) \gets \satsolver(\emptyset)$ \quad\COMMENT{Invokes the SAT solver on the formula.}  \label{l:sols} 
     \IF{$\res=\text{UNSAT}$}
       \STATE \textbf{return} ``no solutions''
     \ENDIF
     \STATE $b_\dec \gets \infty, b_\inc \gets 0$ \label{l:bounds}
     \WHILE{$\res = \text{SAT}$} \label{l:loopstart}
-    \STATE $(b_\inc, \tau) \gets \Min(b_\dec , \Obj_\inc(\tau))$  \quad\COMMENT{Maintains $\tot(\Obj_\inc)$ (or similar)}\label{l:minim1}
-    \STATE $(b_\dec, \tau) \gets  \Simpr(b_\inc , \Obj_\dec(\tau))$  \quad\COMMENT{Builds $\tot(\Obj_\dec)$}\label{l:minim2}
-    \STATE \textbf{yield} $\tau$  \quad\COMMENT{Optionally:  \textbf{yield} $\E(b_\dec, b_\inc)$} \label{ln:stage3} 
-    \STATE $(\res, \tau) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}\})$\label{l:endL}
+    \STATE $(b_\inc, \sol^r) \gets \Min(b_\dec , \Obj_\inc(\sol^r))$  \quad\COMMENT{Maintains $\tot(\Obj_\inc)$ (or similar)}\label{l:minim1}
+    \STATE $(b_\dec, \sol^r) \gets  \Simpr(b_\inc , \Obj_\dec(\sol^r))$  \quad\COMMENT{Builds $\tot(\Obj_\dec)$}\label{l:minim2}
+    \STATE \textbf{yield} $\sol^r$  \quad\COMMENT{Optionally:  \textbf{yield} $\E(b_\dec, b_\inc)$} \label{ln:stage3} 
+    \STATE $(\res, \sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}\})$\label{l:endL}
     \ENDWHILE
   \end{algorithmic}
 \end{algorithm}
+
+\TODO{Make sure to differentiate between $\sol^r$ from the pseudocode and other $\sol$s.}
 
 \section{Overview of the Algorithm\label{sec:algorithm}}
 
@@ -53,7 +55,7 @@ We assume that $\Min$ maintains a way to enforce that $\Obj_\inc(\tau) < k$, e.g
 Next, the algorithm employs \emph{solution-improving search}~\autocite{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} to minimize the decreasing objective, i.e., to compute the smallest $b_\dec$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (\cref{l:minim2}).
 The totalizer $\tot(\Obj_\dec, \Obj_\dec(\tau))$ is built at the first time this subroutine is invoked.
 Building the totalizer at this point allows for only building it up to bound $\Obj_\dec(\tau)$, since all pareto-optimal solutions are known to have at most that value for $\Obj_\dec$.
-Solution-improving search works by---starting from $k=\Obj_\dec(\tau)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{k}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $k$ until the solver reports UNSAT, and returns $b_\dec$ and a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$.
+Solution-improving search works by---starting from $k=\Obj_\dec(\tau)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{k}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $k$ until the solver reports UNSAT, and returns $b_\dec=k+1$ and a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$.
 At this point we know that there is no solution of $\formula$ that dominates $\tau$, so $\tau$ is returned as pareto-optimal on \cref{ln:stage3}.
 If one wants to enumerate all solutions $\tau^o$ that correspond to the pareto point $(b_\inc,b_\dec)$, the $\E$ procedure repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec} , \ove{\Obj_\inc}{b_\inc}\}$ and blocks each found solution until no more solutions are found.
 
