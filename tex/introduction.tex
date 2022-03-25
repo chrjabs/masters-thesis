@@ -73,13 +73,31 @@ Consider the $\mathcal{NP}$-complete set covering decision problem~\autocite{DBL
 The corresponding optimization problem, where the task is to find the \emph{smallest} such cover is $\mathcal{NP}$-hard.
 Several well known $\mathcal{NP}$-commplete decision problems have corresponding $\mathcal{NP}$-hard optimization problems~\autocite{KorteVygen2018-15}.
 
-\TODO{\lipsum[7-7]}
-
 % Transition to approaches to solving optimization problems
-\TODO{\lipsum[7-7]}
+There are a plethora of approaches to solving optimization problems, ranging from stochastic local search~\autocite{}, over evolutionary~\autocite{Dasgupta2013,DBLP:journals/jgo/StornP97} to declarative algorithms~\autocite{}.
+Two main attributes in which the different approaches differ is whether they are exact or approximative, meaning if they provide \emph{the best} or \emph{a good} solution, and whether they are general or problem specific.
+Even though some others are also briefly surveyed in a later chapter, this work mainly focuses on declarative (and therefore general) and exact approaches.
 
 % Solving pipeline for declarative approaches
-\TODO{\lipsum[8-8]}
+In a declarative approach to solving an optimization problem, the problem is first \emph{encoded} into the used declarative language.
+Examples of such declarative languages are maximum satisfiability~\autocite{handbook2-maxsat} or mixed integer linear programming~\autocite{ChenEtAl2010AppliedIntegerProgramming,KorteVygen2018-5}.
+An encoding is hereby a mapping of the original problem to a problem in the declarative language, where each optimal solution to the encoded problem corresponds to an optimal solution of the original problem.
+Next, a general optimization solver for the chosen declarative language is used to solve the encoded problem and get a solution for it.
+The last step is to translate this solution back to the original problem space.
+\TODO{Decide if I want an illustration for that}
+
+% Advantages of declarative approaches
+The advantage of declarative approaches is that the solving algorithm itself is general and can be used to different problems, as long as an encoding exists.
+The task of applying a given declarative method to a new problem consists therefore in finding an encoding and not in coming up with a new algorithm.
+Furthermore, improvement that is made in developing solvers for the declarative language immediately maps to better solving performance for \emph{all} problems that can be encoded into this declarative language.
+
+% Runtimes in declarative approaches
+In the scope of this work, we focus on using declarative approaches for solving $\mathcal{NP}$-hard optimization problems.
+For this application, $\mathcal{NP}$-hard declarative languages are used, meaning the generic solving step is the only computationally hard step in the solving pipeline.
+Both the encoding and the reconstruction of the solution are typically done in polynomial time.
+Since the declarative language is $\mathcal{NP}$-hard, (assuming $\mathcal{P}\neq\mathcal{NP}$), the worst-case runtime of the solving algorithm cannot be better than exponential.
+However, in practice one can observe significantly better performance from many solving algorithms for ``interesting'' instances, i.e., instances that appear for real-world problems.
+\TODO{Feels clumsy. Do I need that? Can I move that?}
 
 % MaxSAT (and SAT)
 \TODO{\lipsum[9-9]}
