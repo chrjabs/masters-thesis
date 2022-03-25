@@ -68,6 +68,11 @@ There are also bi-objective optimization problems in network routing with the ob
 In supply chain optimization, in addition to cost optimization, environmental aspects can be taken into consideration as a second objective~\autocite{}.
 
 % Hardness of optimization problems
+In the same way that there are different complexity classes for decision problems, these complexity classes can be extended to optimization problems as well.
+Consider the $\mathcal{NP}$-complete set covering decision problem~\autocite{DBLP:conf/coco/Karp72} where for a collection $\sets$ of sets, the task is to determine whether a cover $\cover$ with cardinality smaller than a threshold $k$ exists so that the cover intersects all sets, i.e., $S \cap \cover \neq \emptyset$ for all $S\in\sets$.
+The corresponding optimization problem, where the task is to find the \emph{smallest} such cover is $\mathcal{NP}$-hard.
+Several well known $\mathcal{NP}$-commplete decision problems have corresponding $\mathcal{NP}$-hard optimization problems~\autocite{KorteVygen2018-15}.
+
 \TODO{\lipsum[7-7]}
 
 % Transition to approaches to solving optimization problems
