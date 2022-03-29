@@ -1,4 +1,4 @@
-\documentclass[11pt, aspectratio=169]{beamer}
+\documentclass[11pt,aspectratio=169,handout]{beamer}
   % papersize={16cm,9cm},
 
 \input{../macros.tex}
@@ -32,7 +32,15 @@
 \usepackage[noend]{algorithmic} % For pseudocode
 \usepackage{appendixnumberbeamer}
 \usepackage{cancel}
+
 \usepackage{tikz}
+\usetikzlibrary{overlay-beamer-styles}
+\usetikzlibrary{patterns.meta}
+\usetikzlibrary{calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{fillbetween}
+\usepgfplotslibrary{groupplots}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,6 +49,7 @@
 \definecolor{hyblue}{RGB}{0,155,255}
 \setbeamercolor{alerted text}{fg=hyblue}
 \setbeamercolor{structure}{fg=hyblue}
+\setbeamercovered{transparent}
 
 \setbeamertemplate{itemize item}{\color{hyblue}}
 
@@ -79,6 +88,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% xfgs_normal6 colour palette
 \definecolor{color0}{RGB}{64,83,211}
 \definecolor{color1}{RGB}{221,179,16}
 \definecolor{color2}{RGB}{181,29,20}
@@ -123,6 +133,8 @@
 \setlength{\unitlength}{1pt}
 }
 
+\section{Introduction}
+
 \begin{frame}{Introduction}
   % Outline of the presentation
   % Paper under review for SAT 2022
@@ -132,26 +144,27 @@
       MaxSAT-Based Bi-Objective Boolean Optimization
       }
     \end{column}
-    \begin{column}{0.25\textwidth}
+    \begin{column}{0.35\textwidth}
       \begin{enumerate}
         \item Motivation
-        \item Contribution
-        \item \algname{}
+        \item Contribution (\algname{})
         \item Results
-        \item Take away
+        \item Take away points
       \end{enumerate}
     \end{column}
   \end{columns}
 \end{frame}
 
+\section{Motivation}
+
 \begin{frame}{Motivation --- Optimization}
   % Flat example single objective
   \begin{columns}
     \begin{column}{.48\textwidth}
-      Task: Choose the \alert<3>{cheapest flat} with \alert<2>{at least two rooms}
+      \emph{Task}: Choose the \alert<3|handout:0>{cheapest flat} with \alert<2|handout:0>{at least two rooms}
 
       \begin{block}<4->{What if...}
-        .. we want to take commute distance into consideration as well?
+        ... we want to take commute distance into consideration as well?
       \end{block}
     \end{column}
     \begin{column}{.48\textwidth}
@@ -161,8 +174,8 @@
           Flat & Rooms & Price \\
           \midrule
           A & 2 & 100\,000 \texteuro \\
-          \textbf<3->{B} & \textbf<3->{2} & \alert<3>{\textbf<3->{80\,000 \texteuro}} \\
-          \xxcancel<2->{C} & \alert<2>{\xxcancel<2->{1}} & \xxcancel<2->{60\,000 \texteuro} \\
+          \textbf<3->{B} & \textbf<3->{2} & \alert<3|handout:0>{\textbf<3->{80\,000 \texteuro}} \\
+          \xxcancel<2->{C} & \alert<2|handout:0>{\xxcancel<2->{1}} & \xxcancel<2->{60\,000 \texteuro} \\
           D & 2 & 90\,000 \texteuro \\
           \bottomrule
         \end{tabular}
@@ -173,13 +186,12 @@
 
 \begin{frame}{Motivation --- Multiple Objectives}
   % Flat example multiple objectives
-  % TODO: Decide if interesting enough
   \begin{columns}
     \begin{column}{.48\textwidth}
-      Task: Choose the cheapest flat with the shortest commute and \alert<2>{at least two rooms}
+      \emph{Task}: Choose the cheapest flat \alert<1>{with the shortest commute} and \alert<2|handout:0>{at least two rooms}
 
       \begin{block}<5->{Pareto Optimality}
-        All solution for which no other solution is \alert{clearly} better are considered optimal
+        All solutions for which no other solution is \alert{clearly} better are considered optimal
       \end{block}
     \end{column}
     \begin{column}{.48\textwidth}
@@ -189,9 +201,9 @@
           Flat & Rooms & Price & Commute\\
           \midrule
           A & 2 & 100\,000 \texteuro & 4 km \\
-          \textit<4->{\textbf<3>{B}} & \textit<4->{\textbf<3>{2}} & \textit<4->{\alert<3-4>{\textbf<3>{80\,000 \texteuro}}} & \textit<4->{\alert<4>{\textbf<3>{3 km}}} \\
-          \xxcancel<2->{C} & \alert<2>{\xxcancel<2->{1}} & \xxcancel<2->{60\,000 \texteuro} & 3 km \onslide<4->\\
-          \textit<4->{D} & \textit<4->{2} & \textit<4->{\alert<4>{90\,000 \texteuro}} & \textit<4->{\alert<4>{2 km}} \\
+          \textit<4->{\textbf<3|handout:0>{B}} & \textit<4->{\textbf<3|handout:0>{2}} & \textit<4->{\alert<3-4|handout:0>{\textbf<3|handout:0>{80\,000 \texteuro}}} & \textit<4->{\alert<3-4|handout:0>{\textbf<3|handout:0>{3 km}}} \\
+          \xxcancel<2->{C} & \alert<2|handout:0>{\xxcancel<2->{1}} & \xxcancel<2->{60\,000 \texteuro} & 3 km \onslide<4->\\
+          \textit<4->{D} & \textit<4->{2} & \textit<4->{\alert<4|handout:0>{90\,000 \texteuro}} & \textit<4->{\alert<4|handout:0>{2 km}} \\
           \bottomrule
         \end{tabular}
       \end{center}
@@ -199,11 +211,411 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{Motivation --- Interpretable Classifiers}
-  % Decision rule/tree example
+\section{Contribution}
+
+\begin{frame}{Thesis Contribution}
+  % Development of BiOptSat
+  % Evaluation of 5 variants and comparison to two existing approaches
+  \begin{itemize}
+    \item Development of the \alert<2>{\algname{} algorithm}
+    \item \alert<3>{Implementation} of the \algname{} algorithm and its competitors \\ {\small (will be released open source)}
+    \item \alert<4>{Evaluation of variants} of \algname{} and comparison to two competitors
+    \item \alert<5>{Evaluation of refinements} to \algname{}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{High-Level Overview of \algname{}}
+  % Declarative approach to solving problems
+  % Search progress of lexicographic method
+  \begin{columns}
+    \begin{column}{.65\textwidth}
+      \begin{centering}
+        \begin{tikzpicture}
+          \node (p) [draw] at (0,0) {Problem};
+          \onslide<3->{
+            \node (fp) [draw] at (5,0) {Encoded Problem};
+            \node (fs) [draw] at (5,-1.5) {Encoded Solution};
+          }
+          \node (s) [draw] at (0,-1.5) {Solution};
+
+          \onslide<3->{
+            \draw [->] (p) -- (fp) node [midway,above] {Encode};
+            \draw [->] (fp) -- (fs) node [midway,right] {Solve (\alert<4>{\algname{}})};
+            \draw [->] (fs) -- (s) node [midway,below] {Reconstruct};
+          }
+          \onslide<2|handout:0>{
+            \draw [->] (p) -- (s) node [midway,right] {Problem specific solving};
+          }
+        \end{tikzpicture}
+      \end{centering}
+    \end{column}
+    \begin{column}{.31\textwidth}
+      \onslide<4->{
+        \begin{itemize}
+          \item Lexicographic method
+          \item Based on MaxSAT algorithms
+          \item Making use of so-called SAT solver
+        \end{itemize}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Search Progression of \algname{}}
+  % Step by step search trace
   \begin{columns}
     \begin{column}{.48\textwidth}
-      Task: From all valid decision trees, find the ones optimal with respect to size and classification error
+      \begin{center}
+        \begin{tikzpicture}
+          \def\axmax{4.5}
+            \begin{axis}[
+              width=5.5cm,
+              height=5.5cm,
+              label style={font=\small},
+              tick label style={font=\small},
+              legend style={
+                anchor=north west,
+                at={(1.05,0.9)},
+                font=\footnotesize,
+                fill opacity=0.8,
+                draw opacity=1,
+                text opacity=1
+              },
+              tick pos=left,
+              xlabel={$\textsc{O}_\text{I}$},
+              ylabel={$\textsc{O}_\text{D}$},
+              xmin=0,
+              xmax=4,
+              ymin=0,
+              ymax=4,
+              axis x line*=bottom,
+              axis y line*=left,
+              xtick={0,1,2,3,4},
+              ytick={0,1,2,3,4},
+            ]
+
+            \addplot [color6,name path=border,forget plot] coordinates {(1,4) (1,2) (2,2) (2,1) (4,1)};
+            \path [name path=axis] (1,4) -- (0,4) -- (0,0) -- (4,0) -- (4,1);
+            \addplot [color6,pattern={Lines[angle=-45, line width=.3pt]}, pattern color=color6] fill between [of=border and axis];
+
+
+            \only<2-4|handout:0>{
+              \node [label=$\tau^c_1$] at (3,3) {};
+              \addplot [only marks,color3, mark=o] coordinates {(3,3)};
+            }
+
+            \only<3-4|handout:0>{
+              \addplot [color2,name path=block] coordinates {(2.8,0) (2.8,4)};
+              \path [name path=right] (2.8,0) -- (4,0) -- (4,4) -- (2.8,4);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and right];
+            }
+
+            \only<4-6|handout:0>{
+              \node [label=$\tau^c_2$] at (2,3) {};
+              \addplot [only marks,color3, mark=o] coordinates {(2,3)};
+            }
+
+            \only<5-6|handout:0>{
+              \addplot [color2,name path=block] coordinates {(1.8,0) (1.8,4)};
+              \path [name path=right] (1.8,0) -- (4,0) -- (4,4) -- (1.8,4);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and right];
+            }
+
+            \only<6-8:handout:0>{
+              \node [label=left:$\tau^c_3$] at (1,3) {};
+              \addplot [only marks,color3, mark=o] coordinates {(1,3)};
+            }
+
+            \only<7-8|handout:0>{
+              \addplot [color2,name path=block] coordinates {(1.8,0) (1.8,2.8) (0,2.8)};
+              \path [name path=topright] (1.8,0) -- (4,0) -- (4,4) -- (0,4) -- (0,2.8);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and topright];
+            }
+
+            \only<8-10|handout:0>{
+              \node [label=left:$\tau^o_1$] at (1,2) {};
+              \addplot [only marks,color3, mark=*] coordinates {(1,2)};
+            }
+
+            \only<9-10|handout:0>{
+              \addplot [color2,name path=block] coordinates {(4,1.8) (0,1.8)};
+              \path [name path=top] (4,1.8) -- (4,4) -- (0,4) -- (0,1.8);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and top];
+            }
+
+            \only<10-12|handout:0>{
+              \node [label=below:$\tau^c_4$] at (3,1) {};
+              \addplot [only marks,color3, mark=o] coordinates {(3,1)};
+            }
+
+            \only<11-12|handout:0>{
+              \addplot [color2,name path=block] coordinates {(2.8,0) (2.8,1.8) (0,1.8)};
+              \path [name path=topright] (2.8,0) -- (4,0) -- (4,4) -- (0,4) -- (0,1.8);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and topright];
+            }
+
+            \only<12|handout:0>{
+              \node [label=below:$\tau^o_2$] at (2,1) {};
+              \addplot [only marks,color3, mark=*] coordinates {(2,1)};
+            }
+
+            \only<13->{
+              \addplot [only marks,color3, mark=o] coordinates {(3,3) (2,3) (1,3) (3,1)};
+              \addplot [only marks,color3, mark=*] coordinates {(1,2) (2,1)};
+
+              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,3) to[out=155, in=25] (2,3);
+              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (2,3) to[out=155, in=25] (1,3);
+              \draw [semithick,dashdotted, color1, ->, shorten >=3pt, shorten <=3pt] (1,3) to[out=-75, in=75] (1,2);
+              \draw [semithick,dashdotdotted, color5, ->, shorten >=3pt, shorten <=3pt] (1,2) to[out=25, in=110] (3,1);
+              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,1) to[out=155, in=25] (2,1);
+
+              \node [label=$\tau^c_1$] at (3,3) {};
+              \node [label=$\tau^c_2$] at (2,3) {};
+              \node [label=left:$\tau^c_3$] at (1,3) {};
+              \node [label=left:$\tau^o_1$] at (1,2) {};
+              \node [label=below:$\tau^c_4$] at (3,1) {};
+              \node [label=below:$\tau^o_2$] at (2,1) {};
+            }
+          \end{axis}
+        \end{tikzpicture}
+      \end{center}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \onslide<13->{
+        \begin{itemize}
+          \item Progression from top left to bottom right
+        \end{itemize}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Results}
+
+\begin{frame}{Results --- Solved Instances}
+  % Cactus
+  \begin{center}
+    \begin{tikzpicture}
+      \def\xcut{195}
+      \begin{groupplot}[
+        group style={
+          group size=2 by 1,
+          xlabels at=edge bottom,
+          ylabels at=edge left,
+        },
+        label style={font=\small},
+        tick label style={font=\small},
+        scaled y ticks={base 10:-3},
+        legend style={
+          anchor=north east,
+          at={(3.1,1)},
+          font=\footnotesize,
+          fill opacity=0.8,
+          draw opacity=1,
+          text opacity=1
+        },
+        tick pos=left,
+        xlabel={\# instances solved},
+        ylabel={cpu time (s)},
+        height=5.5cm,
+        width=5.5cm,
+      ]
+        \nextgroupplot[
+          xmin=70,
+          xmax=215,
+          ymin=0,
+          ymax=5400,
+          axis x line*=bottom,
+          axis y line*=left,
+          ytick={0,1000,2000,3000,4000,5000},
+          extra y ticks={5400},
+          extra y tick labels={5.4},
+          xtick={100,150,200},
+          xticklabels={100,150,},
+          extra x ticks={70,215},
+        ]
+
+        \coordinate (orig window start) at ({rel axis cs: 1,1}-|{axis cs:\xcut,0});
+        \coordinate (orig window end) at (rel axis cs: 1,1);
+
+        \only<4->{
+          \addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {../plots/mlic-cactus.csv};
+        }
+        \addlegendimage{color0,solid,semithick,mark=asterisk}
+        \addlegendentry{\algname}
+
+        \only<3->{
+          \addplot [semithick,color5,dashed,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {../plots/mlic-cactus.csv};
+        }
+        \addlegendimage{color5,dashed,semithick,mark=x}
+        \addlegendentry{Competitor 1}
+
+        \only<2->{
+          \addplot [semithick,color6,dashdotted,mark=o] table [x=nsolved,y=seesaw,col sep=comma] {../plots/mlic-cactus.csv};
+        }
+        \addlegendimage{color6,dashdotted,semithick,mark=o}
+        \addlegendentry{Commpetitor 2}
+
+        \nextgroupplot[
+          xmin=\xcut,
+          xmax=215,
+          ymin=0,
+          ymax=5400,
+          axis x line*=bottom,
+          axis y line*=left,
+          ytick={0,1000,2000,3000,4000,5000},
+          extra y ticks={5400},
+          extra y tick labels={5.4},
+          xtick={\xcut,205,215},
+        ]
+
+        \coordinate (zoom window start) at (rel axis cs: 0,1);
+        \coordinate (zoom window end) at (rel axis cs: 1,1);
+
+        \only<4->{
+          \addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {../plots/mlic-cactus.csv};
+        }
+
+        \only<3->{
+          \addplot [semithick,color5,solid,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {../plots/mlic-cactus.csv};
+        }
+      \end{groupplot}
+
+      \draw ($(orig window start) +(0,12pt)$) -- ++(0,3pt) -- ($(orig window end) +(0,15pt)$) -- ++(0,-3pt);
+      \draw ($($(orig window start) +(0,15pt)$)!.5!($(orig window end) +(0,15pt)$)$) -- ++(0,3pt) -- ($($($(zoom window start) +(0,15pt)$)!.5!($(zoom window end) +(0,15pt)$)$) +(0,3pt)$) -- ++(0,-3pt);
+      \draw ($(zoom window start) +(0,12pt)$) -- ++(0,3pt) -- ($(zoom window end) +(0,15pt)$) -- ++(0,-3pt);
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Results --- Instance Runtimes}
+  % MSH scatter
+  \begin{columns}
+    \begin{column}{.48\textwidth}
+      \begin{centering}
+        \begin{tikzpicture}
+          \begin{loglogaxis}[
+            width=5.5cm,
+            height=5.5cm,
+            label style={font=\small},
+            tick label style={
+              font=\small,
+              /pgf/number format/1000 sep=\,,
+            },
+            legend style={
+              legend pos=north west,
+              font=\footnotesize,
+              fill opacity=0.8,
+              draw opacity=1,
+              text opacity=1
+            },
+            tick pos=left,
+            xlabel={Competitor 1 (s)},
+            ylabel={\algname{} (s)},
+            xmin=30,
+            xmax=5400,
+            ymin=30,
+            ymax=5400,
+            log ticks with fixed point,
+            axis x line*=bottom,
+            axis y line*=left,
+            xtickten={2,3},
+            ytickten={2,3},
+            extra x ticks={30,5400},
+            extra y ticks={30,5400},
+            extra x tick labels={30,5\,400},
+            extra y tick labels={30,5\,400},
+            minor xtick={70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
+            minor ytick={40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
+          ]
+
+          \draw [dotted] (30,30) -- (5400,5400);
+          \draw [loosely dotted] (60,30) -- (5400,2700);
+          \draw [loosely dotted] (30,60) -- (2700,5400);
+
+          \only<3->{
+            \addplot [only marks,color0,mark=x] table [x=pminimal,y=bioptsat-msh,col sep=comma] {../plots/setcover-element-prob-msh-scatter-single.csv};
+          }
+          \addlegendimage{only marks,color0,mark=x}
+          \addlegendentry{SetCovering 1}
+
+          \only<4->{
+            \addplot [only marks,color1,mark=o] table [x=pminimal,y=bioptsat-msh,col sep=comma] {../plots/setcover-set-card-msh-scatter-single.csv};
+          }
+          \addlegendimage{only marks,color1,mark=o}
+          \addlegendentry{SetCovering 2}
+
+          \only<2->{
+            \addplot [only marks,color2,mark=+] table [x=pminimal,y=bioptsat-msh,col sep=comma] {../plots/mlic-msh-scatter-single.csv};
+          }
+          \addlegendimage{only marks,color2,mark=+}
+          \addlegendentry{Decision Rules}
+
+          \end{loglogaxis}
+        \end{tikzpicture}
+      \end{centering}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \onslide<5->{
+        \begin{itemize}
+          \item Outperformed both competitors
+          \item Amount of outperforming competitors depends on benchmark
+        \end{itemize}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Take Away Points}
+
+\begin{frame}{Take Away Points}
+  % Start with a summer internship!
+  \begin{columns}
+    \begin{column}{.48\textwidth}
+      \begin{block}{Content of Thesis}
+        \begin{itemize}
+          \item Paper in review: significant result for a thesis project
+          \item (Exact) bi-objective optimization is interesting and not that well researched
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \begin{block}{Thesis Project}
+        \begin{itemize}
+          \item Starting with a summer internship is great
+          \item Working as a research assistant allows for diving deep into a topic
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+{
+\usebackgroundtemplate{
+\transparent{0.3} % requires \usepackage{transparent} & compile twice
+\setlength{\unitlength}{1cm}
+\begin{picture}(16,9)
+\put(0.2,1){
+\includegraphics[width=15cm,height=7.5cm]{hy_brand_image_1_wide_background_hires_logo}
+}
+\end{picture}
+\setlength{\unitlength}{1pt}
+}
+
+\begin{frame}
+  \centering
+  \LARGE
+  Thank you for your attention!
+\end{frame}
+}
+
+\appendix
+
+\begin{frame}{Motivation --- Interpretable Classifiers}
+  % Decision tree example
+  \begin{columns}
+    \begin{column}{.48\textwidth}
+      \emph{Task}: From all valid decision trees, find the ones optimal with respect to size and classification error
     \end{column}
     \begin{column}{.15\textwidth}
       \begin{center}
@@ -221,85 +633,25 @@
     \begin{column}{.25\textwidth}
       \begin{center}
         \begin{tikzpicture}
-          \visible<2->{
-            \node (1n1) [circle,draw,fill,inner sep=2pt,label=right:$x_1$] at (0,0) {};
-            \node (1n2) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (-0.7,-0.6) {};
-            \node (1n3) [circle,draw,fill,inner sep=2pt,label={below:$y=1$}] at (0.7,-0.6) {};
-            \draw [dashed] (1n1) -- (1n2);
-            \draw (1n1) -- (1n3);
-          }
+          \node (1n1) [circle,draw,fill,inner sep=2pt,label=right:$x_1$] at (0,0) {};
+          \node (1n2) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (-0.7,-0.6) {};
+          \node (1n3) [circle,draw,fill,inner sep=2pt,label={below:$y=1$}] at (0.7,-0.6) {};
+          \draw [dashed] (1n1) -- (1n2);
+          \draw (1n1) -- (1n3);
 
-          \visible<3->{
-            \node (1n1) [circle,draw,fill,inner sep=2pt,label=right:$x_1$] at (0,-1.8) {};
-            \node (1n2) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (-0.7,-2.4) {};
-            \node (1n3) [circle,draw,fill,inner sep=2pt,label={right:$x_2$}] at (0.7,-2.4) {};
-            \node (1n4) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (0,-3.0) {};
-            \node (1n5) [circle,draw,fill,inner sep=2pt,label={below:$y=1$}] at (1.4,-3.0) {};
-            \draw [dashed] (1n1) -- (1n2);
-            \draw (1n1) -- (1n3);
-            \draw [dashed] (1n3) -- (1n4);
-            \draw (1n3) -- (1n5);
-          }
+          \node (1n1) [circle,draw,fill,inner sep=2pt,label=right:$x_1$] at (0,-1.8) {};
+          \node (1n2) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (-0.7,-2.4) {};
+          \node (1n3) [circle,draw,fill,inner sep=2pt,label={right:$x_2$}] at (0.7,-2.4) {};
+          \node (1n4) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (0,-3.0) {};
+          \node (1n5) [circle,draw,fill,inner sep=2pt,label={below:$y=1$}] at (1.4,-3.0) {};
+          \draw [dashed] (1n1) -- (1n2);
+          \draw (1n1) -- (1n3);
+          \draw [dashed] (1n3) -- (1n4);
+          \draw (1n3) -- (1n5);
         \end{tikzpicture}
       \end{center}
     \end{column}
   \end{columns}
-\end{frame}
-
-\begin{frame}{Thesis Contribution}
-  % Development of BiOptSat
-  % Evaluation of 5 variants and comparison to two existing approaches
-  \begin{itemize}
-    \item Development of the \algname{} algorithm
-    \item Implementation of the \algname{} algorithm and its competitors (will be released open source)
-    \item Evaluation of variants of \algname{} and comparison to two competitors
-    \item Evaluation of refinements to \algname{}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{High-Level Overview of \algname{}}
-  % Declarative approach to solving problems
-  % Search progress of lexicographic method
-  
-\end{frame}
-
-\begin{frame}{Results}
-  % Cactus and MSH scatter
-
-\end{frame}
-
-\begin{frame}{Self-Reflection}
-  % Start with a summer internship!
-  
-\end{frame}
-
-{
-\usebackgroundtemplate{
-\transparent{0.3} % requires \usepackage{transparent} & compile twice
-\setlength{\unitlength}{1cm}
-\begin{picture}(16,9)
-\put(0.2,1){
-\includegraphics[width=15cm,height=7.5cm]{hy_brand_image_1_wide_background_hires_logo}
-}
-\end{picture}
-\setlength{\unitlength}{1pt}
-}
-
-\begin{frame}
-  \centering
-  \Large
-  Thank you for your attention!
-\end{frame}
-}
-
-\appendix
-
-\begin{frame}{Propositional Satisfiability}
-  
-\end{frame}
-
-\begin{frame}{Maximum Satisfiability}
-  
 \end{frame}
 
 \begin{frame}{\algname{}}
