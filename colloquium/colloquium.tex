@@ -1,4 +1,4 @@
-\documentclass[11pt,aspectratio=169,handout]{beamer}
+\documentclass[11pt,aspectratio=169]{beamer}
   % papersize={16cm,9cm},
 
 \input{../macros.tex}
@@ -188,7 +188,11 @@
   % Flat example multiple objectives
   \begin{columns}
     \begin{column}{.48\textwidth}
-      \emph{Task}: Choose the cheapest flat \alert<1>{with the shortest commute} and \alert<2|handout:0>{at least two rooms}
+      \emph{Task}: Choose a flat with \alert<2|handout:0>{at least two rooms} that is as cheap as possible while also having \alert<1>{as short of a commute distance as possible}.
+
+      \begin{block}<4->{Optimality for Multiple Objectives}
+        There is no single definition of optimality for multiple objectives!
+      \end{block}
 
       \begin{block}<5->{Pareto Optimality}
         All solutions for which no other solution is \alert{clearly} better are considered optimal
@@ -211,6 +215,57 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}{Motivation --- Implicit Solution Set}
+  % Decision tree example
+  \begin{columns}
+    \begin{column}{.48\textwidth}
+      \emph{Task}: From all valid decision trees, find the ones optimal with respect to size and classification error
+
+      \begin{block}<4->{Hard Problems}
+        Implicit solution definitions are $\mathcal{NP}$-hard for many real-world problems
+      \end{block}
+    \end{column}
+    \begin{column}{.15\textwidth}
+      \begin{center}
+        \begin{tabular}{@{}ccc@{}}
+          \toprule
+          $x_1$ & $x_2$ & $y$ \\
+          \midrule
+          1 & 1 & 1 \\
+          0 & 1 & 0 \\
+          1 & 0 & 0 \\
+          \bottomrule
+        \end{tabular}
+      \end{center}
+    \end{column}
+    \begin{column}{.25\textwidth}
+      \begin{center}
+        \begin{tikzpicture}
+          \onslide<2->{
+            \node (1n1) [circle,draw,fill,inner sep=2pt,label=right:$x_1$] at (0,0) {};
+            \node (1n2) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (-0.7,-0.6) {};
+            \node (1n3) [circle,draw,fill,inner sep=2pt,label={below:$y=1$}] at (0.7,-0.6) {};
+            \draw [dashed] (1n1) -- (1n2);
+            \draw (1n1) -- (1n3);
+          }
+
+          \onslide<3->{
+            \node (1n1) [circle,draw,fill,inner sep=2pt,label=right:$x_1$] at (0,-1.8) {};
+            \node (1n2) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (-0.7,-2.4) {};
+            \node (1n3) [circle,draw,fill,inner sep=2pt,label={right:$x_2$}] at (0.7,-2.4) {};
+            \node (1n4) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (0,-3.0) {};
+            \node (1n5) [circle,draw,fill,inner sep=2pt,label={below:$y=1$}] at (1.4,-3.0) {};
+            \draw [dashed] (1n1) -- (1n2);
+            \draw (1n1) -- (1n3);
+            \draw [dashed] (1n3) -- (1n4);
+            \draw (1n3) -- (1n5);
+          }
+        \end{tikzpicture}
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 \section{Contribution}
 
 \begin{frame}{Thesis Contribution}
@@ -218,6 +273,9 @@
   % Evaluation of 5 variants and comparison to two existing approaches
   \begin{itemize}
     \item Development of the \alert<2>{\algname{} algorithm}
+    \begin{itemize}
+      \item Enumeration of exact \alert<2>{Pareto optimal} solutions to \alert<2>{hard problems}
+    \end{itemize}
     \item \alert<3>{Implementation} of the \algname{} algorithm and its competitors \\ {\small (will be released open source)}
     \item \alert<4>{Evaluation of variants} of \algname{} and comparison to two competitors
     \item \alert<5>{Evaluation of refinements} to \algname{}
@@ -299,91 +357,58 @@
             \addplot [color6,pattern={Lines[angle=-45, line width=.3pt]}, pattern color=color6] fill between [of=border and axis];
 
 
-            \only<2-4|handout:0>{
+            \only<2->{
               \node [label=$\tau^c_1$] at (3,3) {};
               \addplot [only marks,color3, mark=o] coordinates {(3,3)};
             }
 
-            \only<3-4|handout:0>{
-              \addplot [color2,name path=block] coordinates {(2.8,0) (2.8,4)};
-              \path [name path=right] (2.8,0) -- (4,0) -- (4,4) -- (2.8,4);
-              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and right];
-            }
+            \only<3|handout:0>{
+              \addplot [color5,name path=dom] coordinates {(3,1) (3,3) (1,3)};
+              \addplot [color5,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color5] fill between [of=dom and border];
 
-            \only<4-6|handout:0>{
-              \node [label=$\tau^c_2$] at (2,3) {};
-              \addplot [only marks,color3, mark=o] coordinates {(2,3)};
-            }
-
-            \only<5-6|handout:0>{
-              \addplot [color2,name path=block] coordinates {(1.8,0) (1.8,4)};
-              \path [name path=right] (1.8,0) -- (4,0) -- (4,4) -- (1.8,4);
-              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and right];
-            }
-
-            \only<6-8:handout:0>{
-              \node [label=left:$\tau^c_3$] at (1,3) {};
-              \addplot [only marks,color3, mark=o] coordinates {(1,3)};
-            }
-
-            \only<7-8|handout:0>{
-              \addplot [color2,name path=block] coordinates {(1.8,0) (1.8,2.8) (0,2.8)};
-              \path [name path=topright] (1.8,0) -- (4,0) -- (4,4) -- (0,4) -- (0,2.8);
-              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and topright];
-            }
-
-            \only<8-10|handout:0>{
-              \node [label=left:$\tau^o_1$] at (1,2) {};
-              \addplot [only marks,color3, mark=*] coordinates {(1,2)};
-            }
-
-            \only<9-10|handout:0>{
-              \addplot [color2,name path=block] coordinates {(4,1.8) (0,1.8)};
-              \path [name path=top] (4,1.8) -- (4,4) -- (0,4) -- (0,1.8);
-              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and top];
-            }
-
-            \only<10-12|handout:0>{
-              \node [label=below:$\tau^c_4$] at (3,1) {};
-              \addplot [only marks,color3, mark=o] coordinates {(3,1)};
-            }
-
-            \only<11-12|handout:0>{
-              \addplot [color2,name path=block] coordinates {(2.8,0) (2.8,1.8) (0,1.8)};
-              \path [name path=topright] (2.8,0) -- (4,0) -- (4,4) -- (0,4) -- (0,1.8);
-              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and topright];
-            }
-
-            \only<12|handout:0>{
-              \node [label=below:$\tau^o_2$] at (2,1) {};
-              \addplot [only marks,color3, mark=*] coordinates {(2,1)};
-            }
-
-            \only<13->{
-              \addplot [only marks,color3, mark=o] coordinates {(3,3) (2,3) (1,3) (3,1)};
               \addplot [only marks,color3, mark=*] coordinates {(1,2) (2,1)};
 
-              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,3) to[out=155, in=25] (2,3);
-              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (2,3) to[out=155, in=25] (1,3);
-              \draw [semithick,dashdotted, color1, ->, shorten >=3pt, shorten <=3pt] (1,3) to[out=-75, in=75] (1,2);
-              \draw [semithick,dashdotdotted, color5, ->, shorten >=3pt, shorten <=3pt] (1,2) to[out=25, in=110] (3,1);
-              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,1) to[out=155, in=25] (2,1);
-
-              \node [label=$\tau^c_1$] at (3,3) {};
-              \node [label=$\tau^c_2$] at (2,3) {};
-              \node [label=left:$\tau^c_3$] at (1,3) {};
               \node [label=left:$\tau^o_1$] at (1,2) {};
-              \node [label=below:$\tau^c_4$] at (3,1) {};
               \node [label=below:$\tau^o_2$] at (2,1) {};
+            }
+
+            \only<4->{
+              \node [label=$\tau^c_2$] at (2,3) {};
+              \addplot [only marks,color3, mark=o] coordinates {(2,3)};
+              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,3) to[out=155, in=25] (2,3);
+            }
+
+            \only<5->{
+              \node [label=left:$\tau^c_3$] at (1,3) {};
+              \addplot [only marks,color3, mark=o] coordinates {(1,3)};
+              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (2,3) to[out=155, in=25] (1,3);
+            }
+
+            \only<6->{
+              \node [label=left:$\tau^o_1$] at (1,2) {};
+              \addplot [only marks,color3, mark=*] coordinates {(1,2)};
+              \draw [semithick,dashdotted, color1, ->, shorten >=3pt, shorten <=3pt] (1,3) to[out=-75, in=75] (1,2);
+            }
+
+            \only<7->{
+              \node [label=below:$\tau^c_4$] at (3,1) {};
+              \addplot [only marks,color3, mark=o] coordinates {(3,1)};
+              \draw [semithick,dashdotdotted, color5, ->, shorten >=3pt, shorten <=3pt] (1,2) to[out=25, in=110] (3,1);
+            }
+
+            \only<8->{
+              \node [label=below:$\tau^o_2$] at (2,1) {};
+              \addplot [only marks,color3, mark=*] coordinates {(2,1)};
+              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,1) to[out=155, in=25] (2,1);
             }
           \end{axis}
         \end{tikzpicture}
       \end{center}
     \end{column}
     \begin{column}{.48\textwidth}
-      \onslide<13->{
+      \onslide<9->{
         \begin{itemize}
-          \item Progression from top left to bottom right
+          \item Enumeration from top left to bottom right
         \end{itemize}
       }
     \end{column}
@@ -611,54 +636,22 @@
 
 \appendix
 
-\begin{frame}{Motivation --- Interpretable Classifiers}
-  % Decision tree example
-  \begin{columns}
-    \begin{column}{.48\textwidth}
-      \emph{Task}: From all valid decision trees, find the ones optimal with respect to size and classification error
-    \end{column}
-    \begin{column}{.15\textwidth}
-      \begin{center}
-        \begin{tabular}{@{}ccc@{}}
-          \toprule
-          $x_1$ & $x_2$ & $y$ \\
-          \midrule
-          1 & 1 & 1 \\
-          0 & 1 & 0 \\
-          1 & 0 & 0 \\
-          \bottomrule
-        \end{tabular}
-      \end{center}
-    \end{column}
-    \begin{column}{.25\textwidth}
-      \begin{center}
-        \begin{tikzpicture}
-          \node (1n1) [circle,draw,fill,inner sep=2pt,label=right:$x_1$] at (0,0) {};
-          \node (1n2) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (-0.7,-0.6) {};
-          \node (1n3) [circle,draw,fill,inner sep=2pt,label={below:$y=1$}] at (0.7,-0.6) {};
-          \draw [dashed] (1n1) -- (1n2);
-          \draw (1n1) -- (1n3);
+\begin{frame}{Pareto Optimality}
+  \begin{definition}[Domination]
+    Given two objective functions $\generalobj_1,\generalobj_2$ and two solutions $x,x'$, $x$ dominates $x'$ if (i)~$\generalobj_i(x) \leq \generalobj_i(x')$ for all $i\in\{1,2\}$, and (ii)~$\generalobj_i(x) < \generalobj_i(x')$ for some $i\in\{1,2\}$.
+    We represent $x$ dominating $x'$ as $x \prec x'$.
+  \end{definition}
 
-          \node (1n1) [circle,draw,fill,inner sep=2pt,label=right:$x_1$] at (0,-1.8) {};
-          \node (1n2) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (-0.7,-2.4) {};
-          \node (1n3) [circle,draw,fill,inner sep=2pt,label={right:$x_2$}] at (0.7,-2.4) {};
-          \node (1n4) [circle,draw,fill,inner sep=2pt,label={below:$y=0$}] at (0,-3.0) {};
-          \node (1n5) [circle,draw,fill,inner sep=2pt,label={below:$y=1$}] at (1.4,-3.0) {};
-          \draw [dashed] (1n1) -- (1n2);
-          \draw (1n1) -- (1n3);
-          \draw [dashed] (1n3) -- (1n4);
-          \draw (1n3) -- (1n5);
-        \end{tikzpicture}
-      \end{center}
-    \end{column}
-  \end{columns}
+  \begin{definition}[Pareto optimality]
+    A solution $x$ is Pareto-optimal iff there is no $x'$ such that $x' \prec x$, i.e., $x$ is not dominated by any other solution.
+  \end{definition}
 \end{frame}
 
 \begin{frame}{\algname{}}
   \begin{algorithm}[H]
     \caption{\algname{}: MaxSAT-based bi-objective optimization}
     \textbf{Input}: A formula $\formula$, two objectives $\Obj_\inc$ and $\Obj_\dec$.\\
-    \textbf{Output}: Either one or all pareto-optimal solution for each pareto point of $\formula$.
+    \textbf{Output}: Either one or all Pareto-optimal solution for each Pareto point of $\formula$.
 
     \begin{algorithmic}[1]
       \STATE $\sol^r \gets \texttt{InitSATsolverAndSolve}(F)$ \quad\COMMENT{Invokes the SAT solver on the formula.}
@@ -671,6 +664,145 @@
       \ENDWHILE
     \end{algorithmic}
   \end{algorithm}
+\end{frame}
+
+\begin{frame}{Search Details of \algname{}}
+  % Step by step search trace
+  \begin{columns}
+    \begin{column}{.48\textwidth}
+      \begin{center}
+        \begin{tikzpicture}
+          \def\axmax{4.5}
+            \begin{axis}[
+              width=5.5cm,
+              height=5.5cm,
+              label style={font=\small},
+              tick label style={font=\small},
+              legend style={
+                anchor=north west,
+                at={(1.05,0.9)},
+                font=\footnotesize,
+                fill opacity=0.8,
+                draw opacity=1,
+                text opacity=1
+              },
+              tick pos=left,
+              xlabel={$\textsc{O}_\text{I}$},
+              ylabel={$\textsc{O}_\text{D}$},
+              xmin=0,
+              xmax=4,
+              ymin=0,
+              ymax=4,
+              axis x line*=bottom,
+              axis y line*=left,
+              xtick={0,1,2,3,4},
+              ytick={0,1,2,3,4},
+            ]
+
+            \addplot [color6,name path=border,forget plot] coordinates {(1,4) (1,2) (2,2) (2,1) (4,1)};
+            \path [name path=axis] (1,4) -- (0,4) -- (0,0) -- (4,0) -- (4,1);
+            \addplot [color6,pattern={Lines[angle=-45, line width=.3pt]}, pattern color=color6] fill between [of=border and axis];
+
+
+            \only<2-4|handout:0>{
+              \node [label=$\tau^c_1$] at (3,3) {};
+              \addplot [only marks,color3, mark=o] coordinates {(3,3)};
+            }
+
+            \only<3|handout:0>{
+              \addplot [color5,name path=dom] coordinates {(3,1) (3,3) (1,3)};
+              \addplot [color5,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color5] fill between [of=dom and border];
+
+              \addplot [only marks,color3, mark=*] coordinates {(1,2) (2,1)};
+
+              \node [label=left:$\tau^o_1$] at (1,2) {};
+              \node [label=below:$\tau^o_2$] at (2,1) {};
+            }
+
+            \only<4-5|handout:0>{
+              \addplot [color2,name path=block] coordinates {(2.8,0) (2.8,4)};
+              \path [name path=right] (2.8,0) -- (4,0) -- (4,4) -- (2.8,4);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and right];
+            }
+
+            \only<5-7|handout:0>{
+              \node [label=$\tau^c_2$] at (2,3) {};
+              \addplot [only marks,color3, mark=o] coordinates {(2,3)};
+            }
+
+            \only<6-7|handout:0>{
+              \addplot [color2,name path=block] coordinates {(1.8,0) (1.8,4)};
+              \path [name path=right] (1.8,0) -- (4,0) -- (4,4) -- (1.8,4);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and right];
+            }
+
+            \only<7-9|handout:0>{
+              \node [label=left:$\tau^c_3$] at (1,3) {};
+              \addplot [only marks,color3, mark=o] coordinates {(1,3)};
+            }
+
+            \only<8-9|handout:0>{
+              \addplot [color2,name path=block] coordinates {(1.8,0) (1.8,2.8) (0,2.8)};
+              \path [name path=topright] (1.8,0) -- (4,0) -- (4,4) -- (0,4) -- (0,2.8);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and topright];
+            }
+
+            \only<9-11|handout:0>{
+              \node [label=left:$\tau^o_1$] at (1,2) {};
+              \addplot [only marks,color3, mark=*] coordinates {(1,2)};
+            }
+
+            \only<10-11|handout:0>{
+              \addplot [color2,name path=block] coordinates {(4,1.8) (0,1.8)};
+              \path [name path=top] (4,1.8) -- (4,4) -- (0,4) -- (0,1.8);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and top];
+            }
+
+            \only<11-13|handout:0>{
+              \node [label=below:$\tau^c_4$] at (3,1) {};
+              \addplot [only marks,color3, mark=o] coordinates {(3,1)};
+            }
+
+            \only<12-13|handout:0>{
+              \addplot [color2,name path=block] coordinates {(2.8,0) (2.8,1.8) (0,1.8)};
+              \path [name path=topright] (2.8,0) -- (4,0) -- (4,4) -- (0,4) -- (0,1.8);
+              \addplot [color2,pattern={Lines[angle=45, line width=.3pt]}, pattern color=color2] fill between [of=block and topright];
+            }
+
+            \only<13|handout:0>{
+              \node [label=below:$\tau^o_2$] at (2,1) {};
+              \addplot [only marks,color3, mark=*] coordinates {(2,1)};
+            }
+
+            \only<14->{
+              \addplot [only marks,color3, mark=o] coordinates {(3,3) (2,3) (1,3) (3,1)};
+              \addplot [only marks,color3, mark=*] coordinates {(1,2) (2,1)};
+
+              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,3) to[out=155, in=25] (2,3);
+              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (2,3) to[out=155, in=25] (1,3);
+              \draw [semithick,dashdotted, color1, ->, shorten >=3pt, shorten <=3pt] (1,3) to[out=-75, in=75] (1,2);
+              \draw [semithick,dashdotdotted, color5, ->, shorten >=3pt, shorten <=3pt] (1,2) to[out=25, in=110] (3,1);
+              \draw [semithick,dashed, color0, ->, shorten >=3pt, shorten <=3pt] (3,1) to[out=155, in=25] (2,1);
+
+              \node [label=$\tau^c_1$] at (3,3) {};
+              \node [label=$\tau^c_2$] at (2,3) {};
+              \node [label=left:$\tau^c_3$] at (1,3) {};
+              \node [label=left:$\tau^o_1$] at (1,2) {};
+              \node [label=below:$\tau^c_4$] at (3,1) {};
+              \node [label=below:$\tau^o_2$] at (2,1) {};
+            }
+          \end{axis}
+        \end{tikzpicture}
+      \end{center}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \onslide<13->{
+        \begin{itemize}
+          \item Progression from top left to bottom right
+        \end{itemize}
+      }
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \end{document}
