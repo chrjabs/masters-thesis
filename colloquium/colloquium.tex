@@ -1,4 +1,4 @@
-\documentclass[11pt,aspectratio=169,handout]{beamer}
+\documentclass[11pt,aspectratio=169]{beamer}
   % papersize={16cm,9cm},
 
 \input{../macros.tex}
@@ -214,7 +214,7 @@ Constraint Reasoning and Optimization Research Group
           \midrule
           A & 2 & 100\,000 \texteuro & 4 km \\
           \textit<4->{\textbf<3|handout:0>{B}} & \textit<4->{\textbf<3|handout:0>{2}} & \textit<4->{\alert<3-4|handout:0>{\textbf<3|handout:0>{80\,000 \texteuro}}} & \textit<4->{\alert<3-4|handout:0>{\textbf<3|handout:0>{3 km}}} \\
-          \xxcancel<2->{C} & \alert<2|handout:0>{\xxcancel<2->{1}} & \xxcancel<2->{60\,000 \texteuro} & 3 km \onslide<4->\\
+          \xxcancel<2->{C} & \alert<2|handout:0>{\xxcancel<2->{1}} & \xxcancel<2->{60\,000 \texteuro} & \xxcancel<2->{3 km} \onslide<4->\\
           \textit<4->{D} & \textit<4->{2} & \textit<4->{\alert<4|handout:0>{90\,000 \texteuro}} & \textit<4->{\alert<4|handout:0>{2 km}} \\
           \bottomrule
         \end{tabular}
@@ -431,7 +431,7 @@ Constraint Reasoning and Optimization Research Group
   Benchmark: Learning Pareto-optimal decision rules
   \begin{center}
     \begin{tikzpicture}
-      \def\xcut{195}
+      \def\xcut{210}
       \begin{groupplot}[
         group style={
           group size=2 by 1,
@@ -461,56 +461,57 @@ Constraint Reasoning and Optimization Research Group
       ]
         \nextgroupplot[
           xmin=70,
-          xmax=215,
+          xmax=223,
           ymin=0,
           ymax=5400,
           axis x line*=bottom,
           axis y line*=left,
           xtick={100,150,200},
           xticklabels={100,150,},
-          extra x ticks={70,215},
+          extra x ticks={70,223},
         ]
 
         \coordinate (orig window start) at ({rel axis cs: 1,1}-|{axis cs:\xcut,0});
         \coordinate (orig window end) at (rel axis cs: 1,1);
 
         \only<4->{
-          \addplot [semithick,color0,solid,mark=asterisk,forget plot] table [x=nsolved,y=bioptsat-msh,col sep=comma] {../plots/mlic-cactus.csv};
+          \addplot [semithick,color0,solid,mark=asterisk,forget plot] table [x=nsolved,y=bioptsat-msh,col sep=comma] {../plots/mlic-cactus-single.csv};
         }
         \addlegendimage{color0,solid,semithick,mark=asterisk}
         \addlegendentry{\algname}
 
         \only<3->{
-          \addplot [semithick,color5,dashed,mark=x,forget plot] table [x=nsolved,y=pminimal,col sep=comma] {../plots/mlic-cactus.csv};
+          \addplot [semithick,color5,dashed,mark=x,forget plot] table [x=nsolved,y=pminimal,col sep=comma] {../plots/mlic-cactus-single.csv};
         }
         \addlegendimage{color5,dashed,semithick,mark=x}
         \addlegendentry{Competitor 1}
 
         \only<2->{
-          \addplot [semithick,color6,dashdotted,mark=o,forget plot] table [x=nsolved,y=seesaw,col sep=comma] {../plots/mlic-cactus.csv};
+          \addplot [semithick,color6,dashdotted,mark=o,forget plot] table [x=nsolved,y=seesaw,col sep=comma] {../plots/mlic-cactus-single.csv};
         }
         \addlegendimage{color6,dashdotted,semithick,mark=o}
         \addlegendentry{Competitor 2}
 
         \nextgroupplot[
           xmin=\xcut,
-          xmax=215,
+          xmax=223,
           ymin=0,
           ymax=5400,
           axis x line*=bottom,
           axis y line*=left,
-          xtick={\xcut,205,215},
+          xtick={\xcut,215,220},
+          extra x ticks={223},
         ]
 
         \coordinate (zoom window start) at (rel axis cs: 0,1);
         \coordinate (zoom window end) at (rel axis cs: 1,1);
 
         \only<4->{
-          \addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {../plots/mlic-cactus.csv};
+          \addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {../plots/mlic-cactus-single.csv};
         }
 
         \only<3->{
-          \addplot [semithick,color5,solid,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {../plots/mlic-cactus.csv};
+          \addplot [semithick,color5,solid,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {../plots/mlic-cactus-single.csv};
         }
       \end{groupplot}
 
