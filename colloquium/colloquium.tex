@@ -111,14 +111,19 @@
 }
 \setbeamertemplate{headline}{ }%
 \begin{frame}[noframenumbering]{}
-\vspace{2.5cm}
+\vspace{1cm}
+\hspace{3.5cm}
+\begin{minipage}{10cm}
+  {\huge \textcolor{hyblue}{\textbf{\inserttitle}}}
+  \bigskip
+\end{minipage}
+\vspace{.5cm}
 \begin{center}
-\huge
-\textcolor{hyblue}{ \bf
-\inserttitle
-} \\
-{\large
-\insertauthor}
+{\large \insertauthor}
+\bigskip
+
+\emph{Supervisors}: Matti Järvisalo, Jeremias Berg, Andreas Niskanen \\
+Constraint Reasoning and Optimization Research Group
 \end{center}
 \end{frame}
 }
@@ -143,6 +148,9 @@
       {\LARGE
       MaxSAT-Based Bi-Objective Boolean Optimization
       }
+      \medskip
+
+      Paper under review at international scientific conference (SAT'22)
     \end{column}
     \begin{column}{0.35\textwidth}
       \begin{enumerate}
