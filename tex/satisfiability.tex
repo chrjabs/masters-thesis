@@ -65,7 +65,9 @@ In addition, incremental SAT solvers support solving under assumptions.
 The assumptions $\assump$ are a set of literals that are treated as unit clauses, i.e., a solver call with internal formula $\formula$ and assumptions $\assump$ either returns SAT and a solution $\sol \supset \assump$, or UNSAT and a subset $\core \subset \{\lnot l \mid l\in\assump\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
 The subset $\core$ is called an unsatisfiable \emph{core} and, intuitively, is an explanation for the unsatisfiability of the query.
 
-\TODO{Define \texttt{isSAT}.}
+\TODO{Define \satsolver{}.
+Returns $\res,\sol,\core$ where $\sol$ is only returned if $\res=\text{SAT}$ and $\core$ is only returned if $\res=\text{UNSAT}$.
+When we don't need some of the returned stuff, we omit it.}
 
 \section{Maximum Satisfiability\label{sec:max-sat}}
 

@@ -16,10 +16,10 @@ We detail the MaxSAT-based approach to bi-objective optimization developed in th
     \ENDIF
     \STATE $b_\dec \gets \infty, b_\inc \gets 0$ \label{l:bounds}
     \WHILE{$\res = \text{SAT}$} \label{l:loopstart}
-    \STATE $(b_\inc, \sol^r) \gets \Min(b_\dec , \Obj_\inc(\sol^r))$  \quad\COMMENT{Maintains $\tot(\Obj_\inc)$ (or similar)}\label{l:minim1}
-    \STATE $(b_\dec, \sol^r) \gets  \Simpr(b_\inc , \Obj_\dec(\sol^r))$  \quad\COMMENT{Builds $\tot(\Obj_\dec)$}\label{l:minim2}
-    \STATE \textbf{yield} $\sol^r$  \quad\COMMENT{Optionally:  \textbf{yield} $\E(b_\dec, b_\inc)$} \label{ln:stage3} 
-    \STATE $(\res, \sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}\})$\label{l:endL}
+      \STATE $(b_\inc, \sol^r) \gets \Min(b_\dec , \Obj_\inc(\sol^r))$  \quad\COMMENT{Maintains $\tot(\Obj_\inc)$ (or similar)}\label{l:minim1}
+      \STATE $(b_\dec, \sol^r) \gets  \Simpr(b_\inc , \Obj_\dec(\sol^r))$  \quad\COMMENT{Builds $\tot(\Obj_\dec)$}\label{l:minim2}
+      \STATE \textbf{yield} $\sol^r$  \quad\COMMENT{Optionally:  \textbf{yield} $\E(b_\dec, b_\inc)$} \label{ln:stage3} 
+      \STATE $(\res, \sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}\})$\label{l:endL}
     \ENDWHILE
   \end{algorithmic}
 \end{algorithm}
@@ -92,6 +92,23 @@ We consider five different instantiations of the $\Min$ procedure for minimizing
 
 \subsection{\satunsat{}\label{sec:sat-unsat}}
 
+\begin{algorithm}[t]
+  \caption{\satunsat{} instantiation of \Min{}}\label{alg:sat-unsat}
+  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and known satisfiable starting bound $k$ on $\Obj_\inc$ \\
+  \textbf{Output}: The minimum value for $\Obj_\inc$ that can be achieved while the value for $\Obj_\dec$ is lower than $b_\dec$ and a solution fulfilling these conditions
+  \TODO{Point out that returned $\sol^r$ is from last SAT call}
+
+  \begin{algorithmic}[1]
+    \STATE build or extend $\tot(\Obj_\inc,k)$ if necessary
+    \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ov{\Obj_\inc}{k}\})$
+    \WHILE{$\res = \text{SAT}$}
+      \STATE $k \gets \Obj_\inc(\sol^r)$
+      \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ov{\Obj_\inc}{k}\})$
+    \ENDWHILE
+    \STATE \textbf{return} $k,\sol^r$
+  \end{algorithmic}
+\end{algorithm}
+
 \satunsat{} is a variant of solution-improving search that is also used for minimizing $\Obj_\dec$. 
 The procedure gets as input the current bound $b_\dec$ on $\Obj_\dec$ and the value $\Obj_\inc(\tau)$ obtained by the solution $\tau$ computed during the last SAT solver call. 
 Since the last call is made on \cref{l:endL} with the assumption $\ov{\Obj_\dec}{b_\dec}$, the solution $\tau$ will have $\Obj_\dec(\tau) < b_\dec$. 
@@ -125,6 +142,26 @@ The procedure terminates when the result is UNSAT, after which the value of $k$ 
 
 \subsection{\unsatsat{}\label{sec:unsat-sat}}
 
+\TODO{Define parameters of \Min{} (here $b_\inc$ for \satunsat{} $\Obj_\inc(\sol^r)$)}
+
+\begin{algorithm}[t]
+  \caption{\unsatsat{} instantiation of \Min{}}\label{alg:unsat-sat}
+  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and last bound $b_\inc$ on $\Obj_\inc$ \\
+  \textbf{Output}: The minimum value for $\Obj_\inc$ that can be achieved while the value for $\Obj_\dec$ is lower than $b_\dec$ and a solution fulfilling these conditions
+
+  \begin{algorithmic}[1]
+    \STATE $k \gets b_\inc$
+    \STATE build/extend $\tot(\Act,k+1)$
+    \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\})$
+    \WHILE{$\res = \text{UNSAT}$}
+      \STATE $k \gets k+1$
+      \STATE extend $\tot(\Obj_\inc,k+1)$
+      \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\})$
+    \ENDWHILE
+    \STATE \textbf{return} $k+1,\sol^r$
+  \end{algorithmic}
+\end{algorithm}
+
 \unsatsat{} takes a similar approach to \satunsat{} search but searches for the smallest value by lower-bounding instead of upper-bounding.
 It also maintains a totalizer $\tot(\Obj_\inc)$.
 For finding the next solution, the bound $k$ is set to the last known value of $b_\inc$ and the solver is then iteratively queried for a new solution under the assumptions $\{ \ove{\Obj_\inc}{k+1}, \ov{\Obj_\dec}{b_\dec} \}$.
@@ -148,6 +185,25 @@ This way, the SAT solver is always loaded with a minimum number of clauses.
 \end{example}
 
 \subsection{\msu{}\label{sec:msu3}}
+
+\begin{algorithm}[t]
+  \caption{\msu{} instantiation of \Min{}}\label{alg:msu3}
+  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and last bound $b_\inc$ on $\Obj_\inc$ \\
+  \textbf{Output}: The minimum value for $\Obj_\inc$ that can be achieved while the value for $\Obj_\dec$ is lower than $b_\dec$ and a solution fulfilling these conditions
+
+  \begin{algorithmic}[1]
+    \STATE $k \gets b_\inc$
+    \STATE $(\res,\sol^r,\core) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\} \cup \{\lnot l \mid l \in \Obj_\inc \setminus \Act\})$
+    \WHILE{$\res = \text{UNSAT}$}
+      \STATE $k \gets k+1$
+      \STATE $\core \gets \core \setminus \{\lnot\ov{\Obj_\dec}{b_\dec}, \lnot\ove{\Obj_\inc}{k+1}\}$
+      \STATE $\Act \gets \Act \cup \core$
+      \STATE extend $\tot(\Act,k)$
+      \STATE $(\res,\sol^r,\core) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\} \cup \{\lnot l \mid l \in \Obj_\inc \setminus \Act\})$
+    \ENDWHILE
+    \STATE \textbf{return} $k,\sol^r$
+  \end{algorithmic}
+\end{algorithm}
 
 \msu{} implements a core-guided approach~\autocite{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09}, maintaining a set $\Act \subset \Obj_\inc$ of \emph{active} objective literals and a totalizer $\tot(\Act)$ built over them. 
 Initially, $\Act = \emptyset$, i.e., all literals of $\Obj_\inc$ are inactive.
@@ -214,6 +270,22 @@ Similarly to $\msu$, the assumptions for enforcing a bound on $\Obj_\inc$ in the
 %by assuming the inactive literals of $l \in \Obj_{\inc} \setminus \Act$ to $0$. \TODO{Even more adaption is needed since the outputs of all the totalizers need to be assumed.}
 
 \subsection{\msh{}\label{sec:hybrid}}
+
+\begin{algorithm}[t]
+  \caption{\msh{} instantiation of \Min{}}\label{alg:msh}
+  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$, known satisfiable starting bound $k$ on $\Obj_\inc$, last bound $b_\inc$ on $\Obj_\inc$ and threshold value $0<\thr\le 1$ for when to switch to \satunsat{} \\
+  \textbf{Output}: The minimum value for $\Obj_\inc$ that can be achieved while the value for $\Obj_\dec$ is lower than $b_\dec$ and a solution fulfilling these conditions
+
+  \begin{algorithmic}[1]
+    \IF{$|\Act| < \thr \cdot |\Obj_\inc|$}
+      \STATE $b_\inc,\tau^r \gets \msu{}(b_\dec, b_\inc)$ \COMMENT{Immediately terminates once $|\Act| < \thr \cdot |\Obj_\inc|$ is reached}
+    \ENDIF
+    \IF{$|\Act| \ge \thr \cdot |\Obj_\inc|$}
+      \STATE $b_\inc,\tau^r \gets \satunsat{}(b_\dec, k)$
+    \ENDIF
+    \STATE \textbf{return} $b_\inc,\tau^r$
+  \end{algorithmic}
+\end{algorithm}
 
 The final variant proposed in this work, \msh{}, is a hybrid between \msu{} and \satunsat{} with the following intuition:
 if \msu{}  reaches the stage where all literals of the objective are active, its search will become equivalent to \unsatsat{}.
