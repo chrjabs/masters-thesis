@@ -274,7 +274,7 @@
   \begin{itemize}
     \item Development of the \alert<2>{\algname{} algorithm}
     \begin{itemize}
-      \item Enumeration of exact \alert<2>{Pareto optimal} solutions to \alert<2>{hard problems}
+      \item Enumeration of exact \alert<2>{Pareto-optimal} solutions to \alert<2>{hard problems}
     \end{itemize}
     \item \alert<3>{Implementation} of the \algname{} algorithm and its competitors \\ {\small (will be released open source)}
     \item \alert<4>{Evaluation of variants} of \algname{} and comparison to two competitors
@@ -310,6 +310,7 @@
     \begin{column}{.31\textwidth}
       \onslide<4->{
         \begin{itemize}
+          \item Encoding language: Boolean logic
           \item Lexicographic method
           \item Based on MaxSAT algorithms
           \item Making use of so-called SAT solver
@@ -408,7 +409,7 @@
     \begin{column}{.48\textwidth}
       \onslide<9->{
         \begin{itemize}
-          \item Enumeration from top left to bottom right
+          \item Ordered enumeration from top left to bottom right
         \end{itemize}
       }
     \end{column}
@@ -464,22 +465,22 @@
         \coordinate (orig window end) at (rel axis cs: 1,1);
 
         \only<4->{
-          \addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {../plots/mlic-cactus.csv};
+          \addplot [semithick,color0,solid,mark=asterisk,forget plot] table [x=nsolved,y=bioptsat-msh,col sep=comma] {../plots/mlic-cactus.csv};
         }
         \addlegendimage{color0,solid,semithick,mark=asterisk}
         \addlegendentry{\algname}
 
         \only<3->{
-          \addplot [semithick,color5,dashed,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {../plots/mlic-cactus.csv};
+          \addplot [semithick,color5,dashed,mark=x,forget plot] table [x=nsolved,y=pminimal,col sep=comma] {../plots/mlic-cactus.csv};
         }
         \addlegendimage{color5,dashed,semithick,mark=x}
         \addlegendentry{Competitor 1}
 
         \only<2->{
-          \addplot [semithick,color6,dashdotted,mark=o] table [x=nsolved,y=seesaw,col sep=comma] {../plots/mlic-cactus.csv};
+          \addplot [semithick,color6,dashdotted,mark=o,forget plot] table [x=nsolved,y=seesaw,col sep=comma] {../plots/mlic-cactus.csv};
         }
         \addlegendimage{color6,dashdotted,semithick,mark=o}
-        \addlegendentry{Commpetitor 2}
+        \addlegendentry{Competitor 2}
 
         \nextgroupplot[
           xmin=\xcut,
@@ -559,19 +560,19 @@
           \draw [loosely dotted] (30,60) -- (2700,5400);
 
           \only<3->{
-            \addplot [only marks,color0,mark=x] table [x=pminimal,y=bioptsat-msh,col sep=comma] {../plots/setcover-element-prob-msh-scatter-single.csv};
+            \addplot [only marks,color0,mark=x,forget plot] table [x=pminimal,y=bioptsat-msh,col sep=comma] {../plots/setcover-element-prob-msh-scatter-single.csv};
           }
           \addlegendimage{only marks,color0,mark=x}
           \addlegendentry{SetCovering 1}
 
           \only<4->{
-            \addplot [only marks,color1,mark=o] table [x=pminimal,y=bioptsat-msh,col sep=comma] {../plots/setcover-set-card-msh-scatter-single.csv};
+            \addplot [only marks,color1,mark=o,forget plot] table [x=pminimal,y=bioptsat-msh,col sep=comma] {../plots/setcover-set-card-msh-scatter-single.csv};
           }
           \addlegendimage{only marks,color1,mark=o}
           \addlegendentry{SetCovering 2}
 
           \only<2->{
-            \addplot [only marks,color2,mark=+] table [x=pminimal,y=bioptsat-msh,col sep=comma] {../plots/mlic-msh-scatter-single.csv};
+            \addplot [only marks,color2,mark=+,forget plot] table [x=pminimal,y=bioptsat-msh,col sep=comma] {../plots/mlic-msh-scatter-single.csv};
           }
           \addlegendimage{only marks,color2,mark=+}
           \addlegendentry{Decision Rules}
@@ -583,7 +584,7 @@
     \begin{column}{.48\textwidth}
       \onslide<5->{
         \begin{itemize}
-          \item Outperformed both competitors
+          \item \algname{} outperformed both competitors
           \item Amount of outperforming competitors depends on benchmark
         \end{itemize}
       }
@@ -638,12 +639,12 @@
 
 \begin{frame}{Pareto Optimality}
   \begin{definition}[Domination]
-    Given two objective functions $\generalobj_1,\generalobj_2$ and two solutions $x,x'$, $x$ dominates $x'$ if (i)~$\generalobj_i(x) \leq \generalobj_i(x')$ for all $i\in\{1,2\}$, and (ii)~$\generalobj_i(x) < \generalobj_i(x')$ for some $i\in\{1,2\}$.
-    We represent $x$ dominating $x'$ as $x \prec x'$.
+    Given two objective functions $\Obj_1,\Obj_2$ and two solutions $\sol,\sol'$, $x$ dominates $\sol'$ if (i)~$\Obj_i(\sol) \leq \Obj_i(\sol')$ for all $i\in\{1,2\}$, and (ii)~$\Obj_i(\sol) < \Obj_i(\sol')$ for some $i\in\{1,2\}$.
+    We represent $\sol$ dominating $\sol'$ as $\sol \prec \sol'$.
   \end{definition}
 
   \begin{definition}[Pareto optimality]
-    A solution $x$ is Pareto-optimal iff there is no $x'$ such that $x' \prec x$, i.e., $x$ is not dominated by any other solution.
+    A solution $\sol$ is Pareto-optimal iff there is no $\sol'$ such that $\sol' \prec \sol$, i.e., $\sol$ is not dominated by any other solution.
   \end{definition}
 \end{frame}
 
