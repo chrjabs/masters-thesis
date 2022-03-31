@@ -428,6 +428,7 @@ Constraint Reasoning and Optimization Research Group
 
 \begin{frame}{Results --- Solved Instances}
   % Cactus
+  Benchmark: Learning Pareto-optimal decision rules
   \begin{center}
     \begin{tikzpicture}
       \def\xcut{195}
@@ -442,7 +443,7 @@ Constraint Reasoning and Optimization Research Group
         scaled y ticks={base 10:-3},
         legend style={
           anchor=north east,
-          at={(3.1,1)},
+          at={(3.2,1)},
           font=\footnotesize,
           fill opacity=0.8,
           draw opacity=1,
@@ -451,8 +452,12 @@ Constraint Reasoning and Optimization Research Group
         tick pos=left,
         xlabel={\# instances solved},
         ylabel={cpu time (s)},
-        height=5.5cm,
-        width=5.5cm,
+        height=5cm,
+        width=5cm,
+        ytick={0,1000,2000,3000,4000,5000},
+        yticklabels={0,1,2,3,4,},
+        extra y ticks={5400},
+        extra y tick labels={5.4},
       ]
         \nextgroupplot[
           xmin=70,
@@ -461,9 +466,6 @@ Constraint Reasoning and Optimization Research Group
           ymax=5400,
           axis x line*=bottom,
           axis y line*=left,
-          ytick={0,1000,2000,3000,4000,5000},
-          extra y ticks={5400},
-          extra y tick labels={5.4},
           xtick={100,150,200},
           xticklabels={100,150,},
           extra x ticks={70,215},
@@ -497,9 +499,6 @@ Constraint Reasoning and Optimization Research Group
           ymax=5400,
           axis x line*=bottom,
           axis y line*=left,
-          ytick={0,1000,2000,3000,4000,5000},
-          extra y ticks={5400},
-          extra y tick labels={5.4},
           xtick={\xcut,205,215},
         ]
 

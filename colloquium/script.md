@@ -94,6 +94,9 @@
 - Horizontal: #instances, vertical: for given (per-instance) timeout (up to 1,5h)
 - The further in the bottom right a line is, the better
 - Right is magnified version to see details
+- 2 benchmark domains
+  - Set covering (2 variants)
+  - **Pareto-optimal decision rules**
 - ➡️ Competitor 2: poor performance, only solves 123 instances
 - ➡️ Competitor 1: a lot better, solves 219 instances
 - ➡️ BiOptSat: best, solves 223 instances
