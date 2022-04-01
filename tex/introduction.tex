@@ -70,10 +70,10 @@ In supply chain optimization, in addition to the economic objective, environment
 
 % 8. Hardness of optimization problems
 In the same way that there are different complexity classes for decision problems, these complexity classes can be extended to optimization problems as well.
-Consider the $\mathcal{NP}$-complete~\autocite{} set covering decision problem~\autocite{DBLP:conf/coco/Karp72} where for a collection $\sets$ of sets, the task is to determine whether a cover $\cover$ with cardinality smaller than a threshold $k$ exists so that the cover intersects all sets, i.e., $S \cap \cover \neq \emptyset$ for all $S\in\sets$.
-The corresponding optimization problem, where the task is to find the \emph{smallest} such cover is $\mathcal{NP}$-hard.
-Several well known $\mathcal{NP}$-complete decision problems have corresponding $\mathcal{NP}$-hard optimization problems~\autocite{KorteVygen2018-15}.
-\TODO{Add intuition on $\mathcal{NP}$-completeness/-hardness}
+Consider the \NP-complete~\autocite{} set covering decision problem~\autocite{DBLP:conf/coco/Karp72} where for a collection $\sets$ of sets, the task is to determine whether a cover $\cover$ with cardinality smaller than a threshold $k$ exists so that the cover intersects all sets, i.e., $S \cap \cover \neq \emptyset$ for all $S\in\sets$.
+The corresponding optimization problem, where the task is to find the \emph{smallest} such cover is \NP-hard.
+Several well known \NP-complete decision problems have corresponding \NP-hard optimization problems~\autocite{KorteVygen2018-15}.
+\TODO{Add intuition on \NP-completeness/-hardness}
 
 % 9. Transition to approaches to solving optimization problems
 A plethora of algorithmic approaches to solving optimization problems have been proposed, ranging from stochastic local search~\autocite{}, over evolutionary~\autocite{Dasgupta2013,DBLP:journals/jgo/StornP97} to declarative algorithms~\autocite{}.
@@ -96,10 +96,10 @@ Furthermore, improvement that is made in developing solvers for the declarative 
 
 % 12. Runtimes in declarative approaches
 \TODO{Move to earlier.}
-In the scope of this work, we focus on using declarative approaches for solving $\mathcal{NP}$-hard optimization problems.
-For this application, $\mathcal{NP}$-hard declarative languages are used, meaning the generic solving step is the only computationally hard step in the solving pipeline.
+In the scope of this work, we focus on using declarative approaches for solving \NP-hard optimization problems.
+For this application, \NP-hard declarative languages are used, meaning the generic solving step is the only computationally hard step in the solving pipeline.
 Both the encoding and the reconstruction of the solution are typically done in polynomial time.
-Since the declarative language is $\mathcal{NP}$-hard (assuming $\mathcal{P}\neq\mathcal{NP}$), the worst-case runtime of the solving algorithm cannot be better than exponential.
+Since the declarative language is \NP-hard (assuming $\mathcal{P}\neq\mathcal{NP}$), the worst-case runtime of the solving algorithm cannot be better than exponential.
 However, in practice one can observe significantly better performance from many solving algorithms for ``interesting'' instances, i.e., instances that appear for real-world problems.
 
 \TODO{Focus more on solving rather than languages and modelling.}

@@ -43,7 +43,13 @@ By these observations, \algname{} performs search in an ordered fashion along th
 
 In detail, given a formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$, the search of \algname{} in \cref{alg:base-algorithm} starts by initializing a SAT solver with all clauses in $\formula$ on \cref{l:init-solv}.
 Satisfiability (i.e., the existence of any pareto-optimal solutions) is checked by invoking the SAT solver on its internal formula without assumptions via the $\satsolver(\emptyset)$ function (\cref{l:sols}).
-If $\res$ is UNSAT, the formula has no pareto-optimal solutions and the algorithm terminates.
+$\satsolver(\assumps)$ denotes an incremental invocation of the algorithms SAT solver (initialized on \cref{l:init-solv}) with the set of assumptions $\assumps$.
+It has three return parameters, $\res,\sol,\core$ where the first is either SAT or UNSAT, indicating if the internal formula is satisfiable with the given assumptions.
+If $\res=\text{SAT}$, $\sol$ is populated by a satisfying assignment, $\core$ is not modified;
+if $\res=\text{UNSAT}$, $\core$ is populated with an unsatisfiable core and $\sol$ is not modified.
+In case the returned core of a specific call is not used, we will omit it as a return parameter.
+
+On \cref{l:sols}, if $\res$ is UNSAT, the formula has no pareto-optimal solutions and the algorithm terminates.
 Otherwise, $\tau$ is an assignment that satisfies the formula.
 Before the main enumeration procedure starts, the bounds $b_\inc$ and $b_\dec$ on $\Obj_\inc$ and $\Obj_\dec$ are set to $0$ and $\infty$, respectively.
 
