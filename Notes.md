@@ -65,6 +65,7 @@
 # 01.04.2022 - Feedback Matti
 
 ## Chap 1
+
 - P1: can't read some stuff
 - P2: NN loss?
 - P4: what's that stuff regarding the commute?
@@ -94,3 +95,22 @@
 - P16 (and in general)
   - Always using absolute references to chapters/sections feels repetitive, hence was trying to mix absolute and relative
   - Is absolute just more common? Reason for preference?
+
+## Chap 2
+
+- 2.1: can title be the same as chapter title?
+- 2.2: title comment? References?
+- 2.3: soundness?
+
+## Chap 3
+
+- Signposting: first underline? comment?
+- 3.1
+  - solution x and feasible set?
+  - subject to?
+  - Domination?
+  - x \prec x'?
+- 3.2: ???
+- 3.3: last part of comment
+- 3.4.1
+  - Seesaw: different in style in what way?

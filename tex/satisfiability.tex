@@ -1,13 +1,13 @@
 \chapter{Propositional Satisfiability\label{chap:satisfiability}}
 
 % Signposting
-In this chapter, an overview of propositional satisfiability (SAT) is given.
-The first section, defines the SAT decision problem.
-In the second section, an overview of incremental SAT solving, a technique that our algorithm makes heavy use of, is given.
+In this chapter, an overview of propositional satisfiability (SAT) is provided.
+We start by defining the SAT decision problem.
+\Cref{sec:inc-sat} gives an overview of incremental SAT solving, a technique that the algorithmic approch proposed in this thesis makes heavy use of.
 Next, we briefly discuss maximum satisfiability, the optimization variant of propositional satisfiability.
 The chapter concludes with a section on encoding cardinality constraints in propositional logic.
 
-\section{The Propositional Satisfiability Problem\label{sec:sat}}
+\section{Propositional Satisfiability\label{sec:sat}}
 
 % Propositional logic and SAT
 For a Boolean variable $v$ there are two literals, the positive $v$ and the negative $\lnot v$. 
@@ -22,27 +22,27 @@ A formula $\formula$ is satisfiable if it has solutions, otherwise it is unsatis
 
 % Example: SAT
 \begin{example}
-  Take the propositional formula $\formula_1 = a \land \lnot b$ over variables $\var(\formula_1) = \{a,b\}$.
-  It is satisfiable since the assignment $\sol=\{a,\lnot b\}$ has $\sol(\formula_1)=1$.
-  The formula $\formula_2 = a \land \lnot a$ on the other hand is not satisfiable.
+  Consider the propositional formula $\formula_1 = a \land \lnot b$ over variables $\var(\formula_1) = \{a,b\}$.
+  This formula is satisfiable since for $\sol=\{a,\lnot b\}$, $\sol(\formula_1)=1$.
+  The formula $\formula_2 = a \land b \land (\lnot a \lor \lnot b)$ on the other hand is not satisfiable.
 \end{example}
 
 % SAT solvers
 A SAT solver is an algorithm that determines the satisfiability of a given formula $\formula$.
-If the formula is satisfiable, it returns ``satisfiable'' (SAT) and a solution $\sol$ with $\sol(\formula)=1$;
-if it is unsatisfiable, it returns ``unsatisfiable'' (UNSAT).
+If the formula is satisfiable, the solver returns ``satisfiable'' (SAT) and a solution $\sol$ with $\sol(\formula)=1$;
+if $\formula$ is unsatisfiable, the return value is ``unsatisfiable'' (UNSAT).
 
 % SAT as a declarative modelling language
 \TODO{Extend and explain solving pipeline properly. Maybe move to Intro.}
-The SAT problem was proved to be $\mathcal{NP}$-complete in~\textcite{DBLP:conf/stoc/Cook71}.
-This result is very central to the modern day use of SAT as a declarative programming approach to solving other $\mathcal{NP}$-complete problems by encoding them as a propositional formula first, solving them with a SAT solver and then decoding the solution to the original problem context.
-The advantage of using SAT as a declarative programming language for solving other problems comes from the fact that---even though SAT is $\mathcal{NP}$-complete, and it is unclear if a polynomial time algorithm for solving it exists---conflict-driven clause learning solvers~\autocite{handbook2-cdcl} for SAT are efficient in practice and can solve problems with millions of variables and clauses~\autocite{}.
+The SAT problem was proved to be $\mathcal{NP}$-complete by~\textcite{DBLP:conf/stoc/Cook71}.
+This result is central to the modern day use of SAT as a declarative programming approach to solving other $\mathcal{NP}$-complete problems by encoding them as a propositional formula first, solving them with a SAT solver and then decoding the solution to the original problem context.
+The advantage of using SAT as a declarative programming language for solving other problems comes from the fact that---even though SAT is $\mathcal{NP}$-complete, and it is unclear if a polynomial time algorithm for solving it exists---conflict-driven clause learning solvers~\autocite{handbook2-cdcl} for SAT are efficient in practice and can solve instances with millions of variables and clauses~\autocite{}.
 
 % Example: SAT modelling
 \begin{example}\label{ex:sat-modelling}
   We give an example of a real-world problem, modelling and solving it with the help of SAT.
-  Assume you have the following problem:
-  you want to plan a meal for a guest coming over and don't know whether to include an appetizer, a main course and a dessert.
+  Assume you have the following situation:
+  you want to plan a meal for a guest coming over, and you do not know whether to include an appetizer, a main course and a dessert.
   However, you know the following constraints:
   (i)~there must be a main course in every meal, (ii)~having three courses is too much effort, (iii)~your guest would like to have dessert, and (iv)~you have a new appetizer recipe that you would like to try making.
   To model this problem as SAT, you can introduce three variables $v_\text{a}$, $v_\text{m}$, $v_\text{d}$ modelling whether appetizer, main course and dessert are included in the meal.
@@ -63,7 +63,7 @@ To be able to solve these sub-problems more efficiently, most modern SAT solvers
 In order for the learned information \TODO{define learned info} from previous solver queries to still hold for subsequent calls, it is only possible to \emph{add} clauses to the solvers internal formula, not remove them.
 In addition, incremental SAT solvers support solving under assumptions.
 The assumptions $\assump$ are a set of literals that are treated as unit clauses, i.e., a solver call with internal formula $\formula$ and assumptions $\assump$ either returns SAT and a solution $\sol \supset \assump$, or UNSAT and a subset $\core \subset \{\lnot l \mid l\in\assump\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
-The subset $\core$ is called an unsatisfiable \emph{core} and, intuitively, is an explanation for the unsatisfiability of the query.
+The subset $\core$ is called an unsatisfiable \emph{core}~\autocite{} and, intuitively, is an explanation for the unsatisfiability of the query.
 
 \TODO{Define \satsolver{}.
 Returns $\res,\sol,\core$ where $\sol$ is only returned if $\res=\text{SAT}$ and $\core$ is only returned if $\res=\text{UNSAT}$.
@@ -76,6 +76,7 @@ Maximum satisfiability (MaxSAT) is the optimization variant of the SAT decision 
 In it, the goal is to find a solution that satisfies as many of the given clauses as possible.
 Most commonly and in this work, MaxSAT refers to the extension of \emph{weighted partial} MaxSAT, in which a set of \emph{hard} clauses $\formula$ and another set of \emph{soft} clauses $\softs$ are given.
 Each clause $\clause \in \softs$ is assigned a weight $w_\clause$ and a solution $\sol$ that satisfies $\formula$ while achieving minimal weight of falsified soft clauses $\sum_{\clause\in\softs \mid \tau(\clause)=0} w_\clause$ is optimal for the problem.
+\TODO{Mention hardness (and soundness?).}
 
 % MaxSAT as a modelling language
 In the same way that SAT can be used as a declarative language to solve other decision problems, MaxSAT can be used to solve optimization problems.
@@ -86,6 +87,8 @@ In the same way that SAT can be used as a declarative language to solve other de
 \end{example}
 
 \section{Encoding Cardinality Constraints as Totalizers\label{sec:card-const}}
+
+\TODO{Mention why this is discussed here.}
 
 % Cardinality constraints
 A common type of constraint to appear when encoding problems into SAT is that of a cardinality constraint.
