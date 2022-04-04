@@ -114,3 +114,20 @@
 - 3.3: last part of comment
 - 3.4.1
   - Seesaw: different in style in what way?
+
+# 04.04.2022 - Meeting Matti
+
+- _The_ declarative approach with different paradigms
+- Signposting can be list-like
+- Example 2.2: Change from instance to problem (with real-world representation)
+- Expand on CDCL
+  - Intuitively, what is learned clause
+- CP 21 branch-and-bound MaxSAT paper
+- Other notions: We have those enumerated, they are presumably easier
+- Rework reference style
+- Conclusions past tense
+
+## Intro Rewrite
+
+- Mention what we're focusing on once it comes up
+- Millions of vars and clauses: only _some_

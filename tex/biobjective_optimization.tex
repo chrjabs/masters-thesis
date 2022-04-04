@@ -91,21 +91,18 @@ An important property of Pareto-optimal solutions to bi-objective problems is su
 
 \section{On Other Notions of Optimality}
 
-\TODO{Rephrase with stronger focus on seleting subset of Pareto-optimal solutions.}
-
 % Signposting
 As mentioned in \cref{sec:multiopt}, Pareto optimality is only one notion of what a ``best'' solution looks like that can be used.
 There are two other important notions of optimality for bi-objective optimization that narrow down the set of solutions that are considered optimal:
 lexicographic optimization and lexicographic max-ordering optimization~\autocite{Ehrgott2005-5}.
-We give a brief overview of these notions of optimality, focusing on showing how they relate to Pareto optimality.
+These notions of optimality can be seen as a way of specifying in advance which Pareto-optimal solutions are of interest, considering only a subset of all Pareto-optimal solutions optimal.
 Both lexicographic optimization and lexicographic max-ordering optimization are general for any number of objectives, however, here we describe them in the context of bi-objective optimization.
 
 % Lexicographic optimization
-In lexicographic optimization~\autocite{Ehrgott2005-5}, given a feasible set $\feasible$ and two objectives $\generalobj_1$ and $\generalobj_2$, a solution $x$ dominates another solution $x^d$ in the lexicographic sense if (a)~$\generalobj_1(x) < \generalobj_1(x^d)$, or (b)~$\generalobj_1(x) = \generalobj_1(x^d)$ and $\generalobj_2(x) < \generalobj_2(x^d)$.
-Informally speaking, in contrast to Pareto optimality, lexicographic optimization imposes an explicit preference over the objectives and asks to compute a solution that minimizes $\generalobj_1$ using $\generalobj_2$ as a tie-breaker.
+In lexicographic optimization~\autocite{Ehrgott2005-5}, a preference over the objectives is enforced, considering only one of the ``end points'' of the Pareto front---i.e., a Pareto-optimal solution with the smallest value for the objective chosen as primary---optimal.
+Formally, given a feasible set $\feasible$ and two objectives $\generalobj_1$ and $\generalobj_2$, a solution $x$ dominates another solution $x^d$ in the lexicographic sense if (a)~$\generalobj_1(x) < \generalobj_1(x^d)$, or (b)~$\generalobj_1(x) = \generalobj_1(x^d)$ and $\generalobj_2(x) < \generalobj_2(x^d)$.
+Intuitively, we can also say lexicographic optimization asks to compute a solution that minimizes $\generalobj_1$ using $\generalobj_2$ as a tie-breaker.
 The comparison criterion can also be seen as lexicographically comparing the string ob objective values of two solutions, hence the name of the notion of optimality.
-From the perspective of bi-objective optimization under Pareto optimality, lexicographic optimization is a method of choosing which of the potentially multiple Pareto points is considered the best.
-In detail, the lexicographically optimal solution will always be one of the ``end points'' of the Pareto front, i.e., a Pareto-optimal solution with the smallest value for the objective chosen as primary.
 
 % Example: lexicographic optimization from a perspective of Pareto optimality
 \begin{example}
@@ -119,14 +116,13 @@ Lexicographic optimization can be cast into an optimization problem with a singl
 This is a common approach to solving lexicographic optimization, since solving algorithms for optimization problems with one objective are widely available for different paradigms.
 
 % Leximax optimization
-\TODO{Point out that leximax can correspond to multiple Pareto points.}
 Lexicographic max-ordering (leximax) optimization~\autocite{Ehrgott2005-5} is closely related to lexicographic optimization.
 The only difference is that for leximax optimization, the objective values are sorted in descending order before comparing them lexicographically.
+This leads to the Pareto points with smalles maximum objective value being considered optimal.
 Let $\generalobj_\text{max}(x) = \max\{\generalobj_1(x), \generalobj_2(x)\}$ and $\generalobj_\text{min}(x) = \min\{\generalobj_1(x), \generalobj_2(x)\}$.
 Formally, a solution $x$ dominates another solution $x^d$ in the leximax sense if (a)~$\generalobj_\text{max}(x) < \generalobj_\text{max}(x^d)$, or (b)~$\generalobj_\text{max}(x) = \generalobj_\text{max}(x^d)$ and $\generalobj_\text{min}(x) < \generalobj_\text{min}(x^d)$.
 Informally speaking, this notion of optimality seeks to keep all objective values low by minimizing the maximum value first.
-All leximax-optimal solutions are contained in the set of Pareto-optimal solutions, therefore this is another method of reducing the set of Pareto points to a single one that is considered optimal.
-While lexicographic optimization yielded an ``end point'' of the Pareto front, leximax optimization yields the ``min point'', that is the point has the lowest maximum objective value.
+All leximax-optimal solutions are contained in the set of Pareto-optimal solutions, however, they might correspond to different Pareto points.
 
 % Example: lexicographic max-ordering optimization from a perspective of Pareto optimality
 \begin{example}
