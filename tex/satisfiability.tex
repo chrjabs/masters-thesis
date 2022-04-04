@@ -13,7 +13,7 @@ The chapter concludes with a section on encoding cardinality constraints in prop
 For a Boolean variable $v$ there are two literals, the positive $v$ and the negative $\lnot v$. 
 A clause $C$ is a set of (disjunction over) literals and a CNF formula $\formula$ is a set of (conjunction over) clauses.
 The set of variables and literals appearing in $\formula$ are $\var(\formula)$ and $\lit(\formula)$, respectively.  
-A truth assignment $\sol$ maps boolean variables to 1 (true) or 0 (false).
+A truth assignment $\sol$ maps Boolean variables to 1 (true) or 0 (false).
 The semantics of truth assignments are extended to a clause $C$ and a formula $\formula$ in the standard way: $\sol(C) = \max\{ \sol(l) \mid l \in C\}$ and $\sol(\formula) = \min\{\sol(C) \mid C \in \formula\}$.
 When convenient, we view assignments $\sol$ over a set $\var(\formula)$ of variables as sets of literals $\sol = \{ v \mid v \in \var(\formula),  \sol(v) = 1\} \cup \{ \lnot v \mid v \in \var(\formula), \sol(v) = 0\}$.
 An assignment $\sol$ for which $\sol(\formula) = 1$ is a solution to $\formula$.
@@ -97,23 +97,21 @@ The specific works that this thesis builds on are the solution-improving \satuns
 
 \section{Encoding Cardinality Constraints as Totalizers\label{sec:card-const}}
 
-\TODO{Mention why this is discussed here.}
-
 % Cardinality constraints
-A common type of constraint to appear when encoding problems into SAT is that of a cardinality constraint.
+The algorithmic approach presented in this thesis makes heavy use of cardinality constraints.
 Informally speaking, cardinality constraints enforce a bound on how many literals in a set can be assigned to true.
 Formally, for a set $L$ of literals and a bound $b \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \circ b\right)$ denotes a CNF formula that encodes the linear inequality $\sum_{l \in L} l \circ b$, where $\circ \in \{< ,> ,\geq, \leq, =\}$.
-Numerous methods of forming such CNF formulas are known~\autocite{DBLP:conf/cp/BailleuxB03}\TODO{better reference}.
+Numerous methods of forming such CNF formulas are known (e.g.,~\autocite{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/Sinz05,DBLP:journals/jsat/EenS06}).
 
 % Totalizer encoding
 In this work we make use of the totalizer encoding.
 Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocite{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$:
-if $\tau$ is an assignment that satisfies $\tot(L)$, then $\tau(\ov{L}{b}) = 1$ if $\sum_{l \in L} \tau(l) < b$.
-Even though the full totalizer encoding also supports lower bounding the number of literals (in which case we would have $\tau(\ov{L}{b})=1$ \emph{if and only if} $\sum_{l \in L} \tau(l) < b$), since in this work we only use upper bounds, the size of the encoded totalizer can be reduced by leaving the corresponding clauses out.
-\TODO{Rewrite previous sentence(s). Possibly first define full totalizers and then discuss reduced variant.}
-The incremental totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula:
+if $\sol$ is an assignment that satisfies $\tot(L)$, then $\sol(\ov{L}{b}) = 1$ iff $\sum_{l \in L} \sol(l) < b$.
+For applications where only either upper or lower bounding on the number of true literals is needed, the size of the encoded totalizer can be reduced by encoding implications in only one direction instead of in both (i.e., $\ov{L}{b} \leftarrow (\sum_{l \in L} l < b)$ or $\ov{L}{b} \rightarrow \sum_{l \in L} l < b$ but not both, depending on if upper or lower bounding is needed).
+The algorithmic approach presented in this paper only uses upper bounding cardinality constraints, we therefore use the size-reduced version of the totalizer encoding.
+The \emph{incremental} totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula:
 we have that $\tot(L, k) \subset \tot(L, k')$ and $\tot(L, k) \subset  \tot(L \cup L', k)$ hold for any bound $k' > k$ and set $L'$ of literals for which $L \cap L' =  \emptyset$. 
-\TODO{Discuss why this is desirable.}
+This is desirable when making incremental SAT calls where the bound or the set of input literals changes between calls, since it allows for making earlier calls to the SAT solver on a formula with fewer clauses and retaining information from these calls since extending the totalizer means adding clauses while reusing the ones that were previously added.
 We use $\ove{L}{k}$ as a shorthand for the literal $\ov{L}{k+1}$.
 Note that the assignments of the auxiliary variables of the totalizer encoding are functionally defined by the assignment of the input and output variables.
 As such we will leave them out from the solutions we describe in favour of brevity and clarity of examples. 

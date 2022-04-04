@@ -34,15 +34,15 @@ Typically, a situation like that occurs when two of the objectives considered ar
 
 % 5. Pareto optimality
 % Point out different nomenclature
-In the context of our work, the notion of optimality for multi-objective optimization is that of pareto optimality (also called efficiency in other contexts)~\autocite{Ehrgott2005-2}.
-Intuitively, pareto optimality considers a solution optimal if there are no other solutions with better objective values for one objective and not worse for all the others. 
+In the context of our work, the notion of optimality for multi-objective optimization is that of Pareto optimality (also called efficiency in other contexts)~\autocite{Ehrgott2005-2}.
+Intuitively, Pareto optimality considers a solution optimal if there are no other solutions with better objective values for one objective and not worse for all the others. 
 This definition would consider the two last flats from earlier both equally optimal.
-Under pareto optimality, the task of solving a multi-objective optimization problem can mean multiple things:
-finding a single pareto-optimal solution, finding a representative solution for each pareto point (also called non-dominated point in literature~\autocite{Ehrgott2005-2}), or finding all pareto-optimal solutions.
-The first of the tasks can be considered the least informative since there can be very different pareto-optimal solutions to the same problem.
-Most approaches to solving multi-objective optimization under pareto optimality seem to focus on the second approach where a single solution per pareto point (i.e., tuple of pareto-optimal objective values) is computed.
-This gives a human decision maker the ability to look at the results and choose the pareto-optimal solution that gives the best trade-off between the objectives after the fact instead of having to choose such a trade-off in advance.
-The last task goes one step further and enumerates the full pareto front (i.e., all pareto-optimal solutions), even if multiple of the solutions might lead to the same objective values.
+Under Pareto optimality, the task of solving a multi-objective optimization problem can mean multiple things:
+finding a single Pareto-optimal solution, finding a representative solution for each Pareto point (also called non-dominated point in literature~\autocite{Ehrgott2005-2}), or finding all Pareto-optimal solutions.
+The first of the tasks can be considered the least informative since there can be very different Pareto-optimal solutions to the same problem.
+Most approaches to solving multi-objective optimization under Pareto optimality seem to focus on the second approach where a single solution per Pareto point (i.e., tuple of Pareto-optimal objective values) is computed.
+This gives a human decision maker the ability to look at the results and choose the Pareto-optimal solution that gives the best trade-off between the objectives after the fact instead of having to choose such a trade-off in advance.
+The last task goes one step further and enumerates the full Pareto front (i.e., all Pareto-optimal solutions), even if multiple of the solutions might lead to the same objective values.
 In this work we focus on the latter two tasks.
 
 \TODO{Do I mention other notions of optimality here?}
@@ -50,13 +50,13 @@ In this work we focus on the latter two tasks.
 % 6. Bi-objective vs multi-objective
 % Why bi-objective is interesting/enough
 The handle on multiple objectives and what the objective values of an optimal solution actually mean can quickly become hard to grasp.
-As humans, we can only visualize three dimensions meaning a pareto front over four objectives is already an entirely abstract object while even a three-dimensional one is hard to visualize.
+As humans, we can only visualize three dimensions meaning a Pareto front over four objectives is already an entirely abstract object while even a three-dimensional one is hard to visualize.
 Imagine, for example, adding the objectives living space and renovations that need to be done into the flat search example.
-With those four objectives, a lot more flats are going to be pareto-optimal and the set of pareto-optimal solutions becomes less helpful for making a decision.
-Two objectives, however, form a good trade-off between gaining meaningful information from the second objective over just using a single one, being able to intuitively visualize the pareto front and not resulting in too many pareto-optimal solutions.
+With those four objectives, a lot more flats are going to be Pareto-optimal and the set of Pareto-optimal solutions becomes less helpful for making a decision.
+Two objectives, however, form a good trade-off between gaining meaningful information from the second objective over just using a single one, being able to intuitively visualize the Pareto front and not resulting in too many Pareto-optimal solutions.
 Additionally, objectives that are considered ``less important'' but should still somehow be included in the optimization can still be added as a threshold condition;
 e.g., requiring that the living space is more than 60 $\text{m}^2$ rather than treating it as a separate objective.
-In this work we focus on \emph{bi-objective} optimization and develop an algorithm for finding either a single representative per pareto point or all pareto-optimal solutions.
+In this work we focus on \emph{bi-objective} optimization and develop an algorithm for finding either a single representative per Pareto point or all Pareto-optimal solutions.
 
 % 7. Applications of bi-objective optimization in iterature
 Bi-objective optimization problems also arise naturally in many fields of application.
@@ -114,14 +114,14 @@ This progress is mainly due to development on the underlying SAT solvers used in
 % Motivation for researching that direction
 Approaches for SAT- and MaxSAT-based bi- or multi-objective optimization have been proposed in the past~\autocite{DBLP:conf/cp/SohBTB17,DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18}, but it is not a very active field of research.
 Most recently, in~\textcite{DBLP:conf/cp/JanotaMSM21} an algorithm that \emph{can} be MaxSAT-based but does not need to, has been proposed, but other than that, there seems to be a lack of work on extend the progress in MaxSAT solving to multiple objectives.
-In this work we study MaxSAT-based boolean bi-objective optimization, developing a new algorithm for the problem.
+In this work we study MaxSAT-based Boolean bi-objective optimization, developing a new algorithm for the problem.
 
 % 15. Contributions
 % Algorithm: single SAT solver; builds on MaxSAT; single vs all
 % Evaluation: study efficiency of different MaxSAT algorithms
 The main contributions of this work is the \algname{} algorithm, a MaxSAT-based bi-objective optimization approach.
 \algname{} builds on advances in MaxSAT solving, allowing for variants based on different solution-improving~\autocite{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} and core-guided~\autocite{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09,DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19} algorithms.
-Furthermore, \algname{} allows for solving two possible tasks for bi-objective optimization: finding one representative solution for each pareto point or enumerating all pareto-optimal solutions.
+Furthermore, \algname{} allows for solving two possible tasks for bi-objective optimization: finding one representative solution for each Pareto point or enumerating all Pareto-optimal solutions.
 In experiments on two benchmark domains, we empirically evaluate the performance of different \algname{} variants and compare them to two previously proposed SAT-based approaches to bi-objective optimization: enumeration of $P$-minimal solutions~\autocite{DBLP:conf/cp/SohBTB17} and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
 The used benchmark domains are learning of interpretable classifiers~\autocite{DBLP:conf/cp/MaliotovM18} and the bi-objective set covering problem.
 As a result of this evaluation, we also determine which variant of \algname{} is the best-performing overall.

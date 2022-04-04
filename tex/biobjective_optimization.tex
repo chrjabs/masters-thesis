@@ -1,39 +1,40 @@
-\chapter{Bi-Objective Optimization and Pareto Optimality\label{chap:biobjective-optimization}}
+\chapter{Pareto Optimality and Bi-Objective Optimization\label{chap:biobjective-optimization}}
 
 % Signposting
 This chapter describes bi-objective optimization, starting with a definition of the problem and the more general case of multi-objective optimization.
 We also define the notation for bi-objective optimization in the context of SAT that is used in this work.
 For reference of what other work has been done as well, we give an overview of other notions of optimality for multiple objectives and different approaches to solving bi-objective optimization problems.
 
-\section{Multi-Objective Optimization Under Pareto Optimality\label{sec:multiopt}}
-\TODO{Rephrase because ugly}
-
-\TODO{Discuss feasible and objective space explicitly.}
+\section{Pareto-Optimal Multi-Objective Optimization\label{sec:multiopt}}
 
 % Multiobjective optimization
 Multi-objective optimization deals with optimizing $\nobj$ given objective functions $\generalobj_i: \feasible \rightarrow \mathbb{R}^+$ with the solution $\decvar$, while $\decvar$ is from a feasible set $\feasible$~\autocite{Ehrgott2005-1}.
-W.l.o.g., we assume that all optimizations seek to minimize the objective function.
+W.l.o.g., we assume that all optimizations seek to \emph{minimize} the objective functions.
 Formally a multi-objective optimization problem (MOOP) is of the form:
 \begin{equation}\label{eq:moop}
   \min (\generalobj_1(x),\dots,\generalobj_\nobj(x)),\ \text{subject to}\ x\in \feasible.
 \end{equation}
+The space that the feasible set $\feasible$ is a subset of is called \emph{decision space}.
+Every point in the decision space is mapped to a point in \emph{objective space} by the objective functions.
 
 % Pareto optimality
 For multi-objective optimization problems, since the objectives might be in conflict with each other, no single optimal solution exists.
-One natural way to define optimality for multiple objectives is pareto optimality, based on dominated solutions.
+One natural way to define optimality for multiple objectives is Pareto optimality, based on dominated solutions.
 \begin{definition}[Dominated Solutions~\autocite{Ehrgott2005-2}]
   Given a MOOP as defined in \cref{eq:moop} and two solutions $x,x' \in \feasible$, $x$ dominates $x'$ (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj$) if (i)~$\generalobj_i(x) \leq \generalobj_i(x')$ for $i=1,\dots,\nobj$, and (ii)~$\generalobj_i(x) < \generalobj_i(x')$ for some $i\in\{1,\dots,\nobj\}$.
   We represent $x$ dominating $x'$ by $x \prec x'$.
 \end{definition}
 \begin{definition}[Pareto Optimality~\autocite{Ehrgott2005-2}]
-  Given a MOOP as defined in \cref{eq:moop}, a solution $x \in \feasible$ is pareto-optimal (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj$) iff there is no $x' \in \feasible$ such that $x' \prec x$, i.e., $x$ is not dominated by any other solution.
+  Given a MOOP as defined in \cref{eq:moop}, a solution $x \in \feasible$ is Pareto-optimal (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj$) iff there is no $x' \in \feasible$ such that $x' \prec x$, i.e., $x$ is not dominated by any other solution.
 \end{definition}
-When the objectives are clear from context, we will simply say that a solution $x$ is pareto-optimal.
-Note that there can be multiple pareto-optimal solutions to a MOOP.
-The set of all pareto-optimal solutions is called the pareto front (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj$);
-the tuple $(\generalobj_1(x),\dots,\generalobj_\nobj(x))$ for a pareto-optimal $x$---i.e., the image of $x$ in objective space---is a pareto point (which multiple solutions can correspond to).
+When the objectives are clear from context, we will simply say that a solution $x$ is Pareto-optimal.
+Note that there can be multiple Pareto-optimal solutions to a MOOP.
+The set of all Pareto-optimal solutions is called the Pareto front (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj$);
+the tuple $(\generalobj_1(x),\dots,\generalobj_\nobj(x))$ for a Pareto-optimal $x$---i.e., the image of $x$ in objective space---is a Pareto point (which multiple solutions can correspond to).
 
-\TODO{Define possible tasks under pareto optimality.}
+Multi-objective optimization under Pareto optimality gives rise to three different tasks:
+(i)~finding a single Pareto-optimal solution, (ii)~finding a representative solution for every Pareto point, and (iii)~finding all Pareto-optimal solutions.
+The algorithmic approach proposed in this thesis can be used for solving all three of these tasks, however, we focus on the latter two.
 
 \section{Bi-Objective Optimization in a SAT Context\label{sec:biopt}}
 
@@ -63,54 +64,54 @@ Formalizing the objectives this way and encoding the feasible set $\feasible$ as
     \includegraphics{search-trace.pdf}
   \end{minipage}
   \caption{Left: An example formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$.
-    Right: the solution space of $\formula$ w.r.t.\ $\Obj_\inc$ and $\Obj_\dec$.
-    The solutions $\tau^o_1$ and $\tau^o_2$ (solid points) are pareto-optimal, while $\tau^c_i$ for $i=1,\ldots,4$ are not.\label{fig:search-trace}}
+    Right: the feasible region of $\formula$ in the objective space defined by $\Obj_\inc$ and $\Obj_\dec$.
+    The solutions $\tau^o_1$ and $\tau^o_2$ (solid points) are Pareto-optimal, while $\tau^c_i$ for $i=1,\ldots,4$ are not.\label{fig:search-trace}}
 \end{figure}
 \begin{example}\label{ex:main}
   An example formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ are shown on the left side of \cref{fig:search-trace}. 
   The solution space is illustrated on the right.
-  The three solid dots correspond to the three pareto points of $\formula$ w.r.t.\ $\Obj_\inc$ and $\Obj_\dec$. 
-  Examples of pareto-optimal solutions corresponding to these points are $\sol^o_1 = \soloone$, $\sol^o_2 = \solotwo$ and $\sol^o_3 = \solothree$.
+  The three solid dots correspond to the three Pareto points of $\formula$ w.r.t.\ $\Obj_\inc$ and $\Obj_\dec$. 
+  Examples of Pareto-optimal solutions corresponding to these points are $\sol^o_1 = \soloone$, $\sol^o_2 = \solotwo$ and $\sol^o_3 = \solothree$.
   The solution $\sol^c_3 = \solcthree$ is dominated by $\sol^o_1$ ($\sol^o_1 \prec \sol^c_3$) because $\Obj_\inc(\sol^o_1) \leq \Obj_\inc(\sol^c_3)$ and $\Obj_\dec(\sol^o_1) < \Obj_\dec(\sol^c_3)$. \\
   (The arrows in \cref{fig:search-trace} represent subroutines of \algname{} and will be discussed in \cref{chap:approach}.)
 \end{example}
 
-% Proposition: Ordered pareto front
-An important property of pareto-optimal solutions to bi-objective problems is summarized by the next proposition.
+% Proposition: Ordered Pareto front
+An important property of Pareto-optimal solutions to bi-objective problems is summarized by the next proposition.
 \begin{proposition}[Adapted from~\autocite{DBLP:conf/aaai/HartertS14}] \label{prop:biobjective}
-  Sorting the pareto-optimal solutions of $\formula$ w.r.t.\ increasing values of $\generalobj_1$ is equivalent to sorting them w.r.t.\ decreasing values of $\generalobj_2$ and vice-versa.
+  Sorting the Pareto-optimal solutions of $\formula$ w.r.t.\ increasing values of $\generalobj_1$ is equivalent to sorting them w.r.t.\ decreasing values of $\generalobj_2$ and vice-versa.
 \end{proposition}
 
-% Example: Ordered pareto front
+% Example: Ordered Pareto front
 \begin{example}
-  Consider the formula $\formula$, the objectives $\Obj_\inc$ and $\Obj_\dec$ and the three pareto-optimal solutions $\sol^o_1$, $\sol^o_2$ and $\sol^o_3$ from \cref{fig:search-trace} and \cref{ex:main}.
-  By the definition of pareto-optimality, lowering the value of one objective of a pareto-optimal solution has to increase the value of the other;
+  Consider the formula $\formula$, the objectives $\Obj_\inc$ and $\Obj_\dec$ and the three Pareto-optimal solutions $\sol^o_1$, $\sol^o_2$ and $\sol^o_3$ from \cref{fig:search-trace} and \cref{ex:main}.
+  By the definition of Pareto optimality, lowering the value of one objective of a Pareto-optimal solution has to increase the value of the other;
   we have $\Obj_\inc(\sol^o_1) = 1 < \Obj_\inc(\sol^o_2) = 2 < \Obj_\inc(\sol^o_3) = 3$ and $\Obj_\dec(\sol^o_1) = 3 > \Obj_\dec(\sol^o_2) = 2 > \Obj_\dec(\sol^o_3) = 1$.
 \end{example}
 
 \section{On Other Notions of Optimality}
 
-\TODO{Rephrase with stronger focus on seleting subset of pareto-optimal solutions.}
+\TODO{Rephrase with stronger focus on seleting subset of Pareto-optimal solutions.}
 
 % Signposting
-As mentioned in \cref{sec:multiopt}, pareto optimality is only one notion of what a ``best'' solution looks like that can be used.
+As mentioned in \cref{sec:multiopt}, Pareto optimality is only one notion of what a ``best'' solution looks like that can be used.
 There are two other important notions of optimality for bi-objective optimization that narrow down the set of solutions that are considered optimal:
 lexicographic optimization and lexicographic max-ordering optimization~\autocite{Ehrgott2005-5}.
-We give a brief overview of these notions of optimality, focusing on showing how they relate to pareto optimality.
+We give a brief overview of these notions of optimality, focusing on showing how they relate to Pareto optimality.
 Both lexicographic optimization and lexicographic max-ordering optimization are general for any number of objectives, however, here we describe them in the context of bi-objective optimization.
 
 % Lexicographic optimization
 In lexicographic optimization~\autocite{Ehrgott2005-5}, given a feasible set $\feasible$ and two objectives $\generalobj_1$ and $\generalobj_2$, a solution $x$ dominates another solution $x^d$ in the lexicographic sense if (a)~$\generalobj_1(x) < \generalobj_1(x^d)$, or (b)~$\generalobj_1(x) = \generalobj_1(x^d)$ and $\generalobj_2(x) < \generalobj_2(x^d)$.
-Informally speaking, in contrast to pareto-optimality, lexicographic optimization imposes an explicit preference over the objectives and asks to compute a solution that minimizes $\generalobj_1$ using $\generalobj_2$ as a tie-breaker.
+Informally speaking, in contrast to Pareto optimality, lexicographic optimization imposes an explicit preference over the objectives and asks to compute a solution that minimizes $\generalobj_1$ using $\generalobj_2$ as a tie-breaker.
 The comparison criterion can also be seen as lexicographically comparing the string ob objective values of two solutions, hence the name of the notion of optimality.
-From the perspective of bi-objective optimization under pareto optimality, lexicographic optimization is a method of choosing which of the potentially multiple pareto points is considered the best.
-In detail, the lexicographically optimal solution will always be one of the ``end points'' of the pareto front, i.e., a pareto optimal solution with the smallest value for the objective chosen as primary.
+From the perspective of bi-objective optimization under Pareto optimality, lexicographic optimization is a method of choosing which of the potentially multiple Pareto points is considered the best.
+In detail, the lexicographically optimal solution will always be one of the ``end points'' of the Pareto front, i.e., a Pareto-optimal solution with the smallest value for the objective chosen as primary.
 
-% Example: lexicographic optimization from a perspective of pareto optimality
+% Example: lexicographic optimization from a perspective of Pareto optimality
 \begin{example}
   Consider again the formula $\formula$ and the objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}.
   Assume the objective $\Obj_\inc$ is chosen as the objective with higher priority.
-  In this case, all solutions corresponding to the pareto point $(3,1)$ (e.g., $\sol^o_1 = \soloone$) are lexicographically optimal.
+  In this case, all solutions corresponding to the Pareto point $(3,1)$ (e.g., $\sol^o_1 = \soloone$) are lexicographically optimal.
 \end{example}
 
 % Lexicographic optimization with the weighted sum method
@@ -118,16 +119,16 @@ Lexicographic optimization can be cast into an optimization problem with a singl
 This is a common approach to solving lexicographic optimization, since solving algorithms for optimization problems with one objective are widely available for different paradigms.
 
 % Leximax optimization
-\TODO{Point out that leximax can correspond to multiple pareto points.}
+\TODO{Point out that leximax can correspond to multiple Pareto points.}
 Lexicographic max-ordering (leximax) optimization~\autocite{Ehrgott2005-5} is closely related to lexicographic optimization.
 The only difference is that for leximax optimization, the objective values are sorted in descending order before comparing them lexicographically.
 Let $\generalobj_\text{max}(x) = \max\{\generalobj_1(x), \generalobj_2(x)\}$ and $\generalobj_\text{min}(x) = \min\{\generalobj_1(x), \generalobj_2(x)\}$.
 Formally, a solution $x$ dominates another solution $x^d$ in the leximax sense if (a)~$\generalobj_\text{max}(x) < \generalobj_\text{max}(x^d)$, or (b)~$\generalobj_\text{max}(x) = \generalobj_\text{max}(x^d)$ and $\generalobj_\text{min}(x) < \generalobj_\text{min}(x^d)$.
 Informally speaking, this notion of optimality seeks to keep all objective values low by minimizing the maximum value first.
-All leximax-optimal solutions are contained in the set of pareto-optimal solutions, therefore this is another method of reducing the set of pareto points to a single one that is considered optimal.
-While lexicographic optimization yielded an ``end point'' of the pareto front, leximax optimization yields the ``min point'', that is the point has the lowest maximum objective value.
+All leximax-optimal solutions are contained in the set of Pareto-optimal solutions, therefore this is another method of reducing the set of Pareto points to a single one that is considered optimal.
+While lexicographic optimization yielded an ``end point'' of the Pareto front, leximax optimization yields the ``min point'', that is the point has the lowest maximum objective value.
 
-% Example: lexicographic max-ordering optimization from a perspective of pareto optimality
+% Example: lexicographic max-ordering optimization from a perspective of Pareto optimality
 \begin{example}
   Consider again the formula $\formula$ and the objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}.
   The solution $\sol^o_2 = \solotwo$ is leximax-optimal, since it has the lowest maximum objective value.
@@ -139,14 +140,14 @@ While lexicographic optimization yielded an ``end point'' of the pareto front, l
 In this section, we give an overview of different approaches to solving bi-objective optimization problems.
 The focus hereby lies on \cref{sec:sat-based}, describing SAT-based approaches.
 In the section thereafter, we survey exact approaches based on other declarative optimization paradigms, mainly constraint and mixed integer programming.
-\Cref{sec:approximative} gives a brief overview of methods to approximate the pareto front.
-In addition to approaches solving bi-objective optimization under pareto optimality, we also discuss some approaches that make use of different optimality definitions.
+\Cref{sec:approximative} gives a brief overview of methods to approximate the Pareto front.
+In addition to approaches solving bi-objective optimization under Pareto optimality, we also discuss some approaches that make use of different optimality definitions.
 
 \subsection{SAT-Based Approaches\label{sec:sat-based}}
 
 % Signposting
 We highlight three SAT-based approaches to bi-objective optimization:
-enumeration of $P$-minimal solutions, Seesaw, and enumeration of pareto-minimal correction sets.
+enumeration of $P$-minimal solutions, Seesaw, and enumeration of Pareto-minimal correction sets.
 
 \subsubsection{$P$-minimal Solution Enumeration\label{sec:p-minimal}}
 
@@ -171,54 +172,54 @@ We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal
   Again, a clause $(\ov{\Obj_\inc}{3} \lor \ov{\Obj_\dec}{3})$ is added, and the SAT solver is queried with assumptions $\{ \ove{\Obj_\inc}{3}, \ove{\Obj_\dec}{3} \}$.
   The result is SAT, assume the solution obtained is $\sol^o_2 = \soloone$. 
   $P$-minimal then adds the clause $(\ov{\Obj_\inc}{2} \lor \ov{\Obj_\dec}{2})$ and invokes the solver again under the assumptions $\{ \ove{\Obj_\inc}{2}, \ove{\Obj_\dec}{2} \}$.
-  The result is UNSAT which proves that $\sol^o_2$ is pareto-optimal. 
-  To find a next pareto-optimal solution, the solver is queried without any assumptions for a new solution to start the minimization process from.
+  The result is UNSAT which proves that $\sol^o_2$ is Pareto-optimal. 
+  To find a next Pareto-optimal solution, the solver is queried without any assumptions for a new solution to start the minimization process from.
 \end{example}
 
 % P-minimal not ordered
 \TODO{Move to \cref{chap:approach}.}
 Note that $P$-minimal has no guarantee on the order that the solutions are enumerated in. 
-Intuitively, when an intermediate solution $\sol$ is found, the following SAT solver call either provides another solution that dominates $\sol$, or proves that $\sol$ is pareto-optimal.  
+Intuitively, when an intermediate solution $\sol$ is found, the following SAT solver call either provides another solution that dominates $\sol$, or proves that $\sol$ is Pareto-optimal.  
 
-% Extending P-minimal to enumerate the full pareto front
-As presented in~\cite{DBLP:conf/cp/SohBTB17}, the $P$-minimal approach will only enumerate one representative solution per pareto point.
-In our implementation we extended $P$-minimal to the task of enumerating all solutions on the pareto front.
-Specifically, we add a new relaxation variable $r$ to the clause added each iteration for use as an assumption to enumerate all solutions at that pareto point:
+% Extending P-minimal to enumerate the full Pareto front
+As presented in~\cite{DBLP:conf/cp/SohBTB17}, the $P$-minimal approach will only enumerate one representative solution per Pareto point.
+In our implementation we extended $P$-minimal to the task of enumerating all solutions on the Pareto front.
+Specifically, we add a new relaxation variable $r$ to the clause added each iteration for use as an assumption to enumerate all solutions at that Pareto point:
 the next SAT solver query is done including the assumption $\lnot r$, if a dominating solution is found, the clause is hardened by adding $\lnot r$ as a unit clause.
-If no dominating solution is found, all solutions corresponding to the just discovered pareto point can be enumerated when removing the assumption $\lnot r$ by blocking every found solution and querying the solver again until it returns UNSAT.
+If no dominating solution is found, all solutions corresponding to the just discovered Pareto point can be enumerated when removing the assumption $\lnot r$ by blocking every found solution and querying the solver again until it returns UNSAT.
 If the next solution found dominates the previous one, we harden the clause added at the previous iteration by adding $\lnot r$ as a unit clause.
-Once all solutions for that pareto point are enumerated, the clause is hardened.
+Once all solutions for that Pareto point are enumerated, the clause is hardened.
 \TODO{Rewrite second halve of paragraph to be ``less papery''}
 
-% Example: P-minimal for full pareto front
+% Example: P-minimal for full Pareto front
 \begin{example}
   Consider the same invocation of $P$-minimal as in \cref{ex:pmin}.
-  In order to enumerate all solutions in the pareto front, the clause added in the first iteration is $(\ov{\Obj_\inc}{4} \lor \ov{\Obj_\dec}{4} \lor r_1)$ and the solver is queried again with the assumptions $\{ \ove{\Obj_\inc}{4}, \ove{\Obj_\dec}{4}, \lnot r_1 \}$.
+  In order to enumerate all solutions in the Pareto front, the clause added in the first iteration is $(\ov{\Obj_\inc}{4} \lor \ov{\Obj_\dec}{4} \lor r_1)$ and the solver is queried again with the assumptions $\{ \ove{\Obj_\inc}{4}, \ove{\Obj_\dec}{4}, \lnot r_1 \}$.
   Since the solver will return a dominating solution, the clause added is hardened by adding the unit clause $\lnot r$ to the solver.
   The second iteration is modified similarly as the first, adding the relaxation variable $r_2$.
   In the third iteration, the added clause is $(\ov{\Obj_\inc}{2} \lor \ov{\Obj_\dec}{2} \lor r_3)$ and the solver call with assumptions $\{ \ove{\Obj_\inc}{2}, \ove{\Obj_\dec}{2}, \lnot r_3 \}$ is unsatisfiable.
-  Now, by iteratively querying the solver with the assumptions $\{ \ove{\Obj_\inc}{2}, \ove{\Obj_\dec}{2} \}$ and blocking all found solutions, the set of solutions corresponding to the pareto point $(2,2)$ are enumerated.
+  Now, by iteratively querying the solver with the assumptions $\{ \ove{\Obj_\inc}{2}, \ove{\Obj_\dec}{2} \}$ and blocking all found solutions, the set of solutions corresponding to the Pareto point $(2,2)$ are enumerated.
 \end{example}
 
 \subsubsection{Enumeration of Pareto-Minimal Correction Sets\label{sec:pareto-mcs}}
 
 % Pareto MSCes
-\Textcite{DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18} proposed an approach for computing pareto-optimal solutions via so-called pareto-minimal correction sets (paretoMCSes).
-A paretoMCS (w.r.t.\ two objectives $\Obj_1$ and $\Obj_2$) consists of two sets of literals $(M_1, M_2)$ such that (i)~$M_1 \subset \Obj_1$ and $M_2 \subset \Obj_2$, and (ii)~there is a pareto-optimal solution $\sol$ that sets $\sol(l) = 1$ for all $l \in M_1 \cup M_2$ and $\sol(l) = 0$ for all other $l \in (\Obj_1 \cup \Obj_2) \setminus (M_1 \cup M_2)$.
-\Textcite{DBLP:conf/ijcai/Terra-NevesLM18a} reduced the computation of pareto-optimal solutions to the computation of paretoMCSes.
-The task of computing paretoMCSes is accomplished by enumerating all subsets $S \subset  (\Obj_1 \cup \Obj_2)$ for which (i)~$\formula \land \bigwedge_{l \in  (\Obj_1 \cup \Obj_2) \setminus S} (\lnot l)$ is satisfiable, and (ii)~$\formula \land \bigwedge_{l \in  (\Obj_1 \cup \Obj_2) \setminus S'} (\lnot l)$ is unsatisfiable for all $S' \subsetneq S$.
+\Textcite{DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18} proposed an approach for computing Pareto-optimal solutions via so-called Pareto-minimal correction sets (ParetoMCSes).
+A ParetoMCS (w.r.t.\ two objectives $\Obj_1$ and $\Obj_2$) consists of two sets of literals $(M_1, M_2)$ such that (i)~$M_1 \subset \Obj_1$ and $M_2 \subset \Obj_2$, and (ii)~there is a Pareto-optimal solution $\sol$ that sets $\sol(l) = 1$ for all $l \in M_1 \cup M_2$ and $\sol(l) = 0$ for all other $l \in (\Obj_1 \cup \Obj_2) \setminus (M_1 \cup M_2)$.
+\Textcite{DBLP:conf/ijcai/Terra-NevesLM18a} reduced the computation of Pareto-optimal solutions to the computation of ParetoMCSes.
+The task of computing ParetoMCSes is accomplished by enumerating all subsets $S \subset  (\Obj_1 \cup \Obj_2)$ for which (i)~$\formula \land \bigwedge_{l \in  (\Obj_1 \cup \Obj_2) \setminus S} (\lnot l)$ is satisfiable, and (ii)~$\formula \land \bigwedge_{l \in  (\Obj_1 \cup \Obj_2) \setminus S'} (\lnot l)$ is unsatisfiable for all $S' \subsetneq S$.
 Let $\mathcal{S}$ be the collection of all such sets.
-The pareto-optimal solutions are obtained by extracting the solutions satisfying $\formula \land \bigwedge_{l \in  (\Obj_{\inc} \cup \Obj_\dec) \setminus S} (\lnot l)$ for all $S \in \mathcal{S}$ and removing the dominated ones~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}.
+The Pareto-optimal solutions are obtained by extracting the solutions satisfying $\formula \land \bigwedge_{l \in  (\Obj_{\inc} \cup \Obj_\dec) \setminus S} (\lnot l)$ for all $S \in \mathcal{S}$ and removing the dominated ones~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}.
 The computation of $\mathcal{S}$ corresponds to MCS enumeration to which numerous algorithms have been proposed~\autocite{DBLP:conf/lpar/BendikC20,DBLP:conf/hvc/MorgadoLM12,DBLP:conf/sat/PrevitiMJM17}.
-The paretoMCS approach to multi-objective optimization is approximative in that it can only guarantee that a solution is pareto-optimal once the full set $\mathcal{S}$ has been computed.
-Since paretoMCS enumeration is approximative in this sense, we are not comparing the performance of \algname{} to this approach, since our algorithm has the algorithmic difference that all found solutions are immediately known to be pareto-optimal.
-% In contrast, every minimal solution found during the $P$-minimal approach of~\textcite{DBLP:conf/cp/SohBTB17} and every solution returned by the $\E$ subroutine of \cref{alg:base-algorithm} is immediately known to be pareto-optimal.
+The ParetoMCS approach to multi-objective optimization is approximative in that it can only guarantee that a solution is Pareto-optimal once the full set $\mathcal{S}$ has been computed.
+Since ParetoMCS enumeration is approximative in this sense, we are not comparing the performance of \algname{} to this approach, since our algorithm has the algorithmic difference that all found solutions are immediately known to be Pareto-optimal.
+% In contrast, every minimal solution found during the $P$-minimal approach of~\textcite{DBLP:conf/cp/SohBTB17} and every solution returned by the $\E$ subroutine of \cref{alg:base-algorithm} is immediately known to be Pareto-optimal.
 
-% Example: A MCS that is not pareto-optimal
+% Example: A MCS that is not Pareto-optimal
 \begin{example}\label{ex:MCS}
   Consider the formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}.
-  The paretoMCS enumeration procedure will return the solution $\sol = \solmcstrap$ since no solution $\sol_s$ of $\formula$ has $\{l \in \Obj_\inc \cup \Obj_\dec \mid  \sol_s(l) = 1\} \subsetneq \{i_1, i_3, i_4, d_1, d_3, d_4\}$.
-  The solution $\sol$ is not pareto-optimal, but only filtered out when a solution that dominates it is enumerated.
+  The ParetoMCS enumeration procedure will return the solution $\sol = \solmcstrap$ since no solution $\sol_s$ of $\formula$ has $\{l \in \Obj_\inc \cup \Obj_\dec \mid  \sol_s(l) = 1\} \subsetneq \{i_1, i_3, i_4, d_1, d_3, d_4\}$.
+  The solution $\sol$ is not Pareto-optimal, but only filtered out when a solution that dominates it is enumerated.
   However, there are no guarantees on when such a dominating solution is found. 
 \end{example}
 
@@ -245,12 +246,12 @@ In contrast to our work, in Seesaw one of the objectives is treated as a block b
 This allows for---but also requires---problem-specific instantiations of the black box.
 
 % Seesaw in a SAT context
-While the original paper presents Seesaw in general terms, in our context the Seesaw algorithm computes pareto-optimal solutions of a formula $\formula$ by maintaining a collection $\cores$ of cores that are subsets of $\Obj_\inc$.
+While the original paper presents Seesaw in general terms, in our context the Seesaw algorithm computes Pareto-optimal solutions of a formula $\formula$ by maintaining a collection $\cores$ of cores that are subsets of $\Obj_\inc$.
 Informally speaking, in the bi-objective setting, every solution $\sol$ that improves on $\Obj_\dec$ needs to assign at least one literal from each core to 1.
 The algorithm works iteratively by computing a hitting set $\hs \subset \Obj_\inc$ (using an integer programming solver), i.e., a subset-minimal set of literals of $\Obj_\inc$ that intersects with each core in $\cores$, and then a solution $\sol$ that sets $\sol(l) = 1$ for each $l \in \hs$ and $\sol(l) = 0$ for each $l \in \Obj_\inc \setminus \hs$ and for which $\Obj_\dec(\sol)$ is the smallest possible value for all such solutions if one exists.
 The iteration then extracts a new core that $\hs$ does not intersect with.
-The pareto-optimal solutions of $\formula$ are identified by the size of the hitting set increasing.
-More precisely, if the hitting set is found to increase from size $|\hs|$ to size $|\hs_2|$ with $|\hs_2|>|\hs|$, the solution $\sol$ found with a hitting set of size $|\hs|$ that has the smallest minimal value $\Obj_\dec(\sol)$ is pareto-optimal~\autocite{DBLP:conf/cp/JanotaMSM21}.
+The Pareto-optimal solutions of $\formula$ are identified by the size of the hitting set increasing.
+More precisely, if the hitting set is found to increase from size $|\hs|$ to size $|\hs_2|$ with $|\hs_2|>|\hs|$, the solution $\sol$ found with a hitting set of size $|\hs|$ that has the smallest minimal value $\Obj_\dec(\sol)$ is Pareto-optimal~\autocite{DBLP:conf/cp/JanotaMSM21}.
 
 % Example: Seesaw
 \begin{example}
@@ -274,16 +275,16 @@ More precisely, if the hitting set is found to increase from size $|\hs|$ to siz
   the only minimal hitting set is $\hs = \{ i_4 \}$.
   There is no $\sol$ that sets $\sol(i_1) = \sol(i_2) = \sol(i_3) = 0$ so a new core $\{i_1, i_2, i_3\}$ is extracted. 
   Next, one possible hitting set is $\hs = \{i_1, i_3\}$.
-  Since the size of the hitting set grew from 1 to 2, the algorithm concludes that $\sol^o_1$ is pareto-optimal. 
-  The algorithm continues in this manner, finding the pareto-optimal $\sol^o_2$ and $\sol^o_3$ in the process.
+  Since the size of the hitting set grew from 1 to 2, the algorithm concludes that $\sol^o_1$ is Pareto-optimal. 
+  The algorithm continues in this manner, finding the Pareto-optimal $\sol^o_2$ and $\sol^o_3$ in the process.
   After computing the hitting set consisting of all literals in $\Obj_\inc$, the core extracted is $\emptyset$ at which point the algorithm terminates. 
 \end{example}
 
 % Refined core extraction strategy
 Note that the core-extraction strategy that only computes $\Obj_\inc \setminus \hs$ as the new core detailed in the example corresponds to what is called the weakest possible strategy in~\textcite{DBLP:conf/cp/JanotaMSM21}.
 Seesaw is only feasible in practice when using a stronger core-extraction strategy---like the improved version detailed in the original Seesaw paper---since Seesaw otherwise reduces to enumerating all subsets of $\Obj_\inc$ as hitting sets~\autocite{DBLP:conf/cp/JanotaMSM21}.
-Also note that, in contrast to \algname{} and $P$-minimal, extending Seesaw as it is presented in~\textcite{DBLP:conf/cp/JanotaMSM21} to support the enumeration of all pareto-optimal solutions seems non-trivial.
-For a non-formal intuition note that, while Seesaw is guaranteed to find at least one solution obtaining the objective values of each pareto-optimal point, the non-deterministic hitting set computation might steer the algorithm past other solutions that obtain the same values.
+Also note that, in contrast to \algname{} and $P$-minimal, extending Seesaw as it is presented in~\textcite{DBLP:conf/cp/JanotaMSM21} to support the enumeration of all Pareto-optimal solutions seems non-trivial.
+For a non-formal intuition note that, while Seesaw is guaranteed to find at least one solution obtaining the objective values of each Pareto-optimal point, the non-deterministic hitting set computation might steer the algorithm past other solutions that obtain the same values.
 
 \subsubsection{SAT-Based Lexicographic Optimization\label{sec:lex-opt}}
 
@@ -300,12 +301,12 @@ In fact, many modern MaxSAT solvers exploit multilevel properties of input insta
 Beyond SAT-based approaches, multi-objective optimization has been studied in other declarative optimization paradigms.
 An early algorithm that can be used in constraint programming is a lexicographic method first presented in~\textcite{Wassenhove1980}.
 \Textcite{DBLP:conf/ecai/Gavanelli02} proposed a branch-and-bound-based algorithm that outperforms that presented in~\textcite{Wassenhove1980}.
-This filtering algorithm was improved by the pareto constraint presented in~\textcite{DBLP:conf/cp/SchausH13,DBLP:conf/aaai/HartertS14}
-The resulting search algorithm is similar to paretoMCSes in that it maintains a set $\mathcal{T}$ of solutions that do not dominate each other.
+This filtering algorithm was improved by the Pareto constraint presented in~\textcite{DBLP:conf/cp/SchausH13,DBLP:conf/aaai/HartertS14}
+The resulting search algorithm is similar to ParetoMCSes in that it maintains a set $\mathcal{T}$ of solutions that do not dominate each other.
 When a new solution is found, any solution it dominates is removed from $\mathcal{T}$.
 
 % CP-based leximax optimization
-Other than approaches for finding all pareto-optimal solutions, there have also been constraint programming algorithms proposed for finding leximax-optimal solutions.
+Other than approaches for finding all Pareto-optimal solutions, there have also been constraint programming algorithms proposed for finding leximax-optimal solutions.
 In~\textcite{DBLP:journals/ai/BouveretL09}, five algorithms for this problem are given.
 There is one branch-and-bound-based algorithm and another algorithm based on adding constraints to encode the sorted objective value vector, minimizing multiple times over that.
 \TODO{Extend.}
@@ -319,7 +320,7 @@ based on the Simplex algorithm~\autocite{Ehrgott2005-7,DBLP:journals/mp/EvansS73
 
 % Approximative vs. exact methods
 Other than the exact algorithms presented so far, there are also probabilistic and mate-heuristic search algorithms for multi-objective optimization problems~\autocite{Saini2021}.
-These algorithms are \emph{not} guaranteed to return the exact pareto front, but they will return good solutions that might be sufficiently close approximations.
+These algorithms are \emph{not} guaranteed to return the exact Pareto front, but they will return good solutions that might be sufficiently close approximations.
 Probabilistic and meta-heuristic algorithms are mainly used for problems that are too large to solve them with exact methods under given resource constraints.
 Comparing exact with approximative approaches does not necessarily give much insight, however for the sake of completeness we are giving a short overview of these approximative methods as well.
 
@@ -331,7 +332,7 @@ An example of an algorithm building on multi-objective simulated annealing can b
 
 % Evolutionary algorithms
 A second big group of algorithms are evolutionary algorithms~\autocite{Saini2021,Dasgupta2013}.
-These meta-heuristic algorithms hold a set of candidate solutions referred to as \emph{population}, which is then developed over multiple iterations to approximate the pareto front;
+These meta-heuristic algorithms hold a set of candidate solutions referred to as \emph{population}, which is then developed over multiple iterations to approximate the Pareto front;
 this process simulates evolution in nature, hence the name.
 Algorithms for this category were presented for example in~\textcite{DBLP:journals/jgo/StornP97,DBLP:journals/tec/DebAPM02}.
 

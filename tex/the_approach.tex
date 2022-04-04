@@ -6,7 +6,7 @@ We detail the MaxSAT-based approach to bi-objective optimization developed in th
   \caption{\algname{}: MaxSAT-based  bi-objective optimization} %\TODO{Alternatively ``enumeration of'', but then it sounds like full enumeration again.}}
   \label{alg:base-algorithm}
   \textbf{Input}: A formula $\formula$, two objectives $\Obj_\inc$ and $\Obj_\dec$.\\
-  \textbf{Output}: Either one or all pareto-optimal solution corresponding to each pareto point of $\formula$.
+  \textbf{Output}: Either one or all Pareto-optimal solution corresponding to each Pareto point of $\formula$.
 
   \begin{algorithmic}[1]
     \STATE $\texttt{InitSATsolver}(F)$ \label{l:init-solv} 
@@ -28,42 +28,44 @@ We detail the MaxSAT-based approach to bi-objective optimization developed in th
 
 \section{Overview of the Algorithm\label{sec:algorithm}}
 
-\Cref{alg:base-algorithm}, which we refer to as \algname{}, details the  framework for computing the pareto-optimal solutions of a CNF formula $\formula$ w.r.t.\ two objectives $\Obj_\inc$ and $\Obj_\dec$ that we focus on.
+\TODO{Mention that task of finding a single Pareto-optimal solution can be solved by terminating algorithm at first yield.}
+
+\Cref{alg:base-algorithm}, which we refer to as \algname{}, details the  framework for computing the Pareto-optimal solutions of a CNF formula $\formula$ w.r.t.\ two objectives $\Obj_\inc$ and $\Obj_\dec$ that we focus on.
 The framework is an instantiation of the general lexicographic optimization method~\autocite{survey} instantiated with a SAT solver.
 More specifically, all subroutines of the procedure are implemented using a single instantiation of a SAT solver that is invoked incrementally and preserved (i.e., not reset) during the whole search. 
 \algname{} maintains the bounds $b_\inc$ and $b_\dec$ on the two objectives $\Obj_\inc$ and $\Obj_\dec$, respectively.
-In each iteration, the value of $b_\inc$ is set to the smallest value for which there is a still-undiscovered pareto-optimal solution $\tau$ for which $\Obj_\inc(\tau) = b_\inc$ by the $\Min$ procedure.
+In each iteration, the value of $b_\inc$ is set to the smallest value for which there is a still-undiscovered Pareto-optimal solution $\tau$ for which $\Obj_\inc(\tau) = b_\inc$ by the $\Min$ procedure.
 The value of $b_\dec$ is then set to $\Obj_\dec(\tau)$ by the $\Simpr$ procedure.
-In case one wishes to enumerate all pareto-optimal solutions (in contrast to a single representative solution for each pareto point), the $\E$ procedure then enumerates all pareto-optimal solutions $\tau^o$ for which $\Obj_\inc(\tau^o) = b_\inc$ and $\Obj_\dec(\tau^o) = b_\dec$.
+In case one wishes to enumerate all Pareto-optimal solutions (in contrast to a single representative solution for each Pareto point), the $\E$ procedure then enumerates all Pareto-optimal solutions $\tau^o$ for which $\Obj_\inc(\tau^o) = b_\inc$ and $\Obj_\dec(\tau^o) = b_\dec$.
 
 Importantly, since the value of $\Obj_\inc$ is always minimized first, the value $b_\inc$ returned each iteration is monotonically increasing. 
 We therefore call $\Obj_\inc$ the \emph{increasing objective}.
 By \cref{prop:biobjective}, this means that the sequence of values $b_\dec$ is monotonically decreasing, leading us to calling $\Obj_\dec$ \emph{decreasing}.
-By these observations, \algname{} performs search in an ordered fashion along the pareto front.
+By these observations, \algname{} performs search in an ordered fashion along the Pareto front.
 
 In detail, given a formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$, the search of \algname{} in \cref{alg:base-algorithm} starts by initializing a SAT solver with all clauses in $\formula$ on \cref{l:init-solv}.
-Satisfiability (i.e., the existence of any pareto-optimal solutions) is checked by invoking the SAT solver on its internal formula without assumptions via the $\satsolver(\emptyset)$ function (\cref{l:sols}).
+Satisfiability (i.e., the existence of any Pareto-optimal solutions) is checked by invoking the SAT solver on its internal formula without assumptions via the $\satsolver(\emptyset)$ function (\cref{l:sols}).
 $\satsolver(\assumps)$ denotes an incremental invocation of the algorithms SAT solver (initialized on \cref{l:init-solv}) with the set of assumptions $\assumps$.
 It has three return parameters, $\res,\sol,\core$ where the first is either SAT or UNSAT, indicating if the internal formula is satisfiable with the given assumptions.
 If $\res=\text{SAT}$, $\sol$ is populated by a satisfying assignment, $\core$ is not modified;
 if $\res=\text{UNSAT}$, $\core$ is populated with an unsatisfiable core and $\sol$ is not modified.
 In case the returned core of a specific call is not used, we will omit it as a return parameter.
 
-On \cref{l:sols}, if $\res$ is UNSAT, the formula has no pareto-optimal solutions and the algorithm terminates.
+On \cref{l:sols}, if $\res$ is UNSAT, the formula has no Pareto-optimal solutions and the algorithm terminates.
 Otherwise, $\tau$ is an assignment that satisfies the formula.
 Before the main enumeration procedure starts, the bounds $b_\inc$ and $b_\dec$ on $\Obj_\inc$ and $\Obj_\dec$ are set to $0$ and $\infty$, respectively.
 
-The main search loop (\crefrange{l:loopstart}{l:endL}) iterates as long as there are pareto-optimal solutions of $\formula$ that have not been enumerated yet. 
+The main search loop (\crefrange{l:loopstart}{l:endL}) iterates as long as there are Pareto-optimal solutions of $\formula$ that have not been enumerated yet. 
 This is the case if there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$, checked by invoking the SAT solver under the assumption $\ov{\Obj_\dec}{b_\dec}$ on \cref{l:endL}.
 In the beginning of each main loop iteration, the procedure $\Min$ is employed to minimize the increasing objective, i.e., compute the smallest value $b_\inc$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (\cref{l:minim1}). 
 We assume that $\Min$ maintains a way to enforce that $\Obj_\inc(\tau) < k$, e.g., through a totalizer $\tot(\Obj_\inc)$, and that \algname{} and all of its subroutines have access to a set of assumptions to enforce this bound for any $k$.
 
 Next, the algorithm employs \emph{solution-improving search}~\autocite{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} to minimize the decreasing objective, i.e., to compute the smallest $b_\dec$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (\cref{l:minim2}).
 The totalizer $\tot(\Obj_\dec, \Obj_\dec(\tau))$ is built at the first time this subroutine is invoked.
-Building the totalizer at this point allows for only building it up to bound $\Obj_\dec(\tau)$, since all pareto-optimal solutions are known to have at most that value for $\Obj_\dec$.
+Building the totalizer at this point allows for only building it up to bound $\Obj_\dec(\tau)$, since all Pareto-optimal solutions are known to have at most that value for $\Obj_\dec$.
 Solution-improving search works by---starting from $k=\Obj_\dec(\tau)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{k}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $k$ until the solver reports UNSAT, and returns $b_\dec=k+1$ and a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$.
-At this point we know that there is no solution of $\formula$ that dominates $\tau$, so $\tau$ is returned as pareto-optimal on \cref{ln:stage3}.
-If one wants to enumerate all solutions $\tau^o$ that correspond to the pareto point $(b_\inc,b_\dec)$, the $\E$ procedure repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec} , \ove{\Obj_\inc}{b_\inc}\}$ and blocks each found solution until no more solutions are found.
+At this point we know that there is no solution of $\formula$ that dominates $\tau$, so $\tau$ is returned as Pareto-optimal on \cref{ln:stage3}.
+If one wants to enumerate all solutions $\tau^o$ that correspond to the Pareto point $(b_\inc,b_\dec)$, the $\E$ procedure repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec} , \ove{\Obj_\inc}{b_\inc}\}$ and blocks each found solution until no more solutions are found.
 
 % Main algorithm example
 \begin{example}\label{ex:main-iteration}
@@ -77,17 +79,17 @@ If one wants to enumerate all solutions $\tau^o$ that correspond to the pareto p
   The result is satisfiable;
   say that the solver returns the solution $\sol^o_1 = \soloone$.
   Then, the solver is invoked with the assumptions $\assumps =  \{ \ove{\Obj_\inc}{1}, \ov{\Obj_\dec}{3} \}$.
-  The result is unsatisfiable, so the procedure returns the pareto-optimal $\sol^o_1$ and $b_\dec = \Obj_\dec(\sol^o_1) = 3$.
-  Now optionally the procedure \E can be used to enumerate all other solutions corresponding to the pareto point $(\Obj_\inc(\sol^o_1),\Obj_\dec(\sol^o_1))$.
+  The result is unsatisfiable, so the procedure returns the Pareto-optimal $\sol^o_1$ and $b_\dec = \Obj_\dec(\sol^o_1) = 3$.
+  Now optionally the procedure \E can be used to enumerate all other solutions corresponding to the Pareto point $(\Obj_\inc(\sol^o_1),\Obj_\dec(\sol^o_1))$.
   At the end of the iteration, the SAT solver is queried with the assumption $\{ \ov{\Obj_\dec}{2} \}$.
   As the result is SAT and the solver returns, e.g., the solution $\sol^c_4 = \solcfour$,
   the algorithm starts a new iteration. \\
   The next iteration of \algname{} proceeds similarly to the first.
   The procedure \Min{} returns $b_\inc = 2$ and, e.g., the solution $\sol^o_2 = \solotwo$.
-  \Simpr{} cannot improve on the decreasing objective, so the solution $\sol^o_2$ is proven to be pareto-optimal.
+  \Simpr{} cannot improve on the decreasing objective, so the solution $\sol^o_2$ is proven to be Pareto-optimal.
   At the end of the iteration, on \cref{l:endL} the SAT solver is invoked with the assumption $\{\ov{\Obj_\dec}{2}\}$ which returns SAT and, e.g., the solution $\sol^o_3 = \solothree$. \\
   The last iteration starts by calling \Min{} which returns $b_\inc = 3$ and, e.g., again the solution $\sol^o_3$.
-  \Simpr{} again cannot improve on the decreasing objective, so $\sol^o_3$ is also pareto-optimal.
+  \Simpr{} again cannot improve on the decreasing objective, so $\sol^o_3$ is also Pareto-optimal.
   Lastly, the SAT solver is queried with the assumption $\{\ov{\Obj_\dec}{1}\}$.
   The solver returns unsatisfiable, terminating the algorithm. 
 \end{example}
@@ -225,13 +227,13 @@ For enforcing $\ove{\Obj_\inc}{k}$ when employing $\msu$, consider an invocation
 In the next call to $\Simpr$, the number of literals in $\Obj_\inc$ set to $1$ needs to be restricted to at most $b_{\inc}$. 
 Since the totalizer maintained by $\msu$ only has $\Act \subset \Obj_{\inc}$ as inputs, we do not have access to an output literal of form  $\ove{\Obj_\inc}{b_{\inc}}$.
 Instead, we use  the assumptions $\{\ove{\Act}{b_{\inc}}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$, i.e., restrict the number of literals in $\Act$ set to $1$ to $b_{\inc}$ and assume the value of each inactive literal $l \in \Obj_{\inc} \setminus \Act$ to $0$. 
-The following observation proves that doing so can be done without removing any pareto-optimal solutions from the search. 
+The following observation proves that doing so can be done without removing any Pareto-optimal solutions from the search. 
 \begin{observation}\label{obs:sound}
-  Let $\tau$ be a pareto-optimal solution of $\formula$ for which $\Obj_{\inc}(\tau) = b_{\inc}$.
+  Let $\tau$ be a Pareto-optimal solution of $\formula$ for which $\Obj_{\inc}(\tau) = b_{\inc}$.
   Then $\tau(l) = 0$ for all $l \in \Obj_{\inc} \setminus \Act$. 
 \end{observation}
 \begin{proof}(Sketch)
-  Since, $b_{\inc}$ was returned by $\msu$, we know that there exists a pareto-optimal $\tau^o$ for which $\Obj_{\inc}(\tau^o) = b_{\inc}$ and $\Obj_{\dec}(\tau^o) < b_{\dec}$.
+  Since, $b_{\inc}$ was returned by $\msu$, we know that there exists a Pareto-optimal $\tau^o$ for which $\Obj_{\inc}(\tau^o) = b_{\inc}$ and $\Obj_{\dec}(\tau^o) < b_{\dec}$.
   By the properties of cores, we also know that \emph{any} solution $\tau^s$ of $\formula$ for which $\Obj_{\dec}(\tau^s) < b_\dec$ assigns at least $b_{\inc}$ literals in $\Act$ to $1$.
   Thus, any $\tau^n$ that assigns $\tau^n(l) = 1$ for an inactive literal $l \in  \Obj_{\inc} \setminus \Act$ will have $\Obj_{\inc}(\tau^n) > b_{\inc}$.
 \end{proof}
@@ -324,21 +326,21 @@ Assume \algname{} is invoked on a formula $\formula$ and a pair of overlapping o
 Lazy building of $\tot(\Obj_\dec)$ refers to only having $(\Obj_\dec \setminus \Obj_\inc) \cup  (\Act \cap \Obj_\dec)$ as input to the totalizer (incrementally extending the totalizer as the set $\Act$ grows), and assuming the value of each literal $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$ to $0$ in each SAT call made during invocations of $\Simpr$.
 The soundness of doing so follows by an argument very similar to the one we made in \cref{obs:sound}.
 \TODO{elaborate}
-%Essentially, the properties of cores imply that the pareto optimal solutions $\tau$ of $\formula$ for which $\Obj_{\inc}(\tau) = b_\inc$ assign $\tau(l) = 0$ for all  $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$ to $1$. 
+%Essentially, the properties of cores imply that the Pareto optimal solutions $\tau$ of $\formula$ for which $\Obj_{\inc}(\tau) = b_\inc$ assign $\tau(l) = 0$ for all  $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$ to $1$. 
 
 Lazy building of $\tot(\Obj_\dec)$ requires a minor adaption to the termination criterion of \cref{alg:base-algorithm}.
 More specifically, as the totalizer maintained by $\Simpr$ might not have all literals of $\Obj_\dec$ as inputs, the algorithm does not have a (straight-forward) way of checking if there exists a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$.
-However, the lack of further pareto-optimal solutions is instead detected in the next call to $\Min$ by the SAT solver returning an empty core, or more precisely, a subset of assumptions that doesn't contain any inactive literals nor outputs of $\tot(\Obj_\inc)$.
+However, the lack of further Pareto-optimal solutions is instead detected in the next call to $\Min$ by the SAT solver returning an empty core, or more precisely, a subset of assumptions that doesn't contain any inactive literals nor outputs of $\tot(\Obj_\inc)$.
 
 \subsection{Blocking of Dominated Solutions}
 
-Every time in the search procedure that a candidate solution $\tau_c$ with objective values $b_\inc = \Obj_\inc(\tau_c)$ and $b_\dec = \Obj_\dec(\tau_c)$ is found, the definition of a pareto-optimal point leads to the conclusion that all solutions $\tau_d$ with $\Obj_\inc(\tau_d) > b_\inc$ and $\Obj_\dec(\tau_d) > b_\dec$ cannot be pareto-optimal.
+Every time in the search procedure that a candidate solution $\tau_c$ with objective values $b_\inc = \Obj_\inc(\tau_c)$ and $b_\dec = \Obj_\dec(\tau_c)$ is found, the definition of a Pareto-optimal point leads to the conclusion that all solutions $\tau_d$ with $\Obj_\inc(\tau_d) > b_\inc$ and $\Obj_\dec(\tau_d) > b_\dec$ cannot be Pareto-optimal.
 These points can all be blocked by adding the clause $\{ \ove{\Obj_\inc}{b_\inc}, \ove{\Obj_\dec}{b_\dec} \}$ to the solver.
 \TODO{elaborate}
 
 \subsection{Domain-Specific Solution Blocking}
 
-If multiple representatives of the same pareto point are of interest, the procedure $\E$ needs to block all obtained solutions. 
+If multiple representatives of the same Pareto point are of interest, the procedure $\E$ needs to block all obtained solutions. 
 While this can be done in a straight-forward manner on the CNF-level, we will in later sections give examples of how domain-specific knowledge can be used in order to derive stronger clauses that block not only a specific solution obtained, but also other, symmetric solutions.
 
 \subsection{Bound Hardening}
