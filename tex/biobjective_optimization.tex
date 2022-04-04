@@ -150,7 +150,7 @@ enumeration of $P$-minimal solutions, Seesaw, and enumeration of Pareto-minimal 
 \TODO{Move comparison arguments to experiments.}
 
 % P-minimal solution enumeration
-The approach perhaps closest to ours is solving multi-objective constraint optimization problems by enumerating so-called $P$-minimal solutions~\autocite{DBLP:conf/cp/SohBTB17,DBLP:conf/ftp/KoshimuraNFH09}.
+The approach perhaps closest to ours is solving multi-objective constraint optimization problems by enumerating so-called $P$-minimal solutions~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ftp/KoshimuraNFH09}.
 Since this approach is arguably the most similar among existing to the approach developed in this thesis, we are using it as one of the two approaches we empirically compare \algname{} to in \cref{chap:experiments}.
 The $P$-minimal approach  corresponds to enumerating the solutions of $\formula^\text{W} = \formula \land \tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$ that are subset-minimal w.r.t.\ the set of outputs of the totalizers.
 More precisely, if $P$ is the set of output literals of $\tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$, then the goal is to enumerate solutions $\sol^m$ such that no other solution $\sol$ has $\{ l \mid l \in P \land \sol(l) = 0\} \subsetneq \{ l \mid l \in P \land \sol^m(l) = 0\}$.
@@ -200,13 +200,13 @@ Once all solutions for that Pareto point are enumerated, the clause is hardened.
 \subsubsection{Enumeration of Pareto-Minimal Correction Sets\label{sec:pareto-mcs}}
 
 % Pareto MSCes
-\Textcite{DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18} proposed an approach for computing Pareto-optimal solutions via so-called Pareto-minimal correction sets (ParetoMCSes).
+\Textcites{DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18} proposed an approach for computing Pareto-optimal solutions via so-called Pareto-minimal correction sets (ParetoMCSes).
 A ParetoMCS (w.r.t.\ two objectives $\Obj_1$ and $\Obj_2$) consists of two sets of literals $(M_1, M_2)$ such that (i)~$M_1 \subset \Obj_1$ and $M_2 \subset \Obj_2$, and (ii)~there is a Pareto-optimal solution $\sol$ that sets $\sol(l) = 1$ for all $l \in M_1 \cup M_2$ and $\sol(l) = 0$ for all other $l \in (\Obj_1 \cup \Obj_2) \setminus (M_1 \cup M_2)$.
 \Textcite{DBLP:conf/ijcai/Terra-NevesLM18a} reduced the computation of Pareto-optimal solutions to the computation of ParetoMCSes.
 The task of computing ParetoMCSes is accomplished by enumerating all subsets $S \subset  (\Obj_1 \cup \Obj_2)$ for which (i)~$\formula \land \bigwedge_{l \in  (\Obj_1 \cup \Obj_2) \setminus S} (\lnot l)$ is satisfiable, and (ii)~$\formula \land \bigwedge_{l \in  (\Obj_1 \cup \Obj_2) \setminus S'} (\lnot l)$ is unsatisfiable for all $S' \subsetneq S$.
 Let $\mathcal{S}$ be the collection of all such sets.
 The Pareto-optimal solutions are obtained by extracting the solutions satisfying $\formula \land \bigwedge_{l \in  (\Obj_{\inc} \cup \Obj_\dec) \setminus S} (\lnot l)$ for all $S \in \mathcal{S}$ and removing the dominated ones~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}.
-The computation of $\mathcal{S}$ corresponds to MCS enumeration to which numerous algorithms have been proposed~\autocite{DBLP:conf/lpar/BendikC20,DBLP:conf/hvc/MorgadoLM12,DBLP:conf/sat/PrevitiMJM17}.
+The computation of $\mathcal{S}$ corresponds to MCS enumeration to which numerous algorithms have been proposed~\autocites{DBLP:conf/lpar/BendikC20,DBLP:conf/hvc/MorgadoLM12,DBLP:conf/sat/PrevitiMJM17}.
 The ParetoMCS approach to multi-objective optimization is approximative in that it can only guarantee that a solution is Pareto-optimal once the full set $\mathcal{S}$ has been computed.
 Since ParetoMCS enumeration is approximative in this sense, we are not comparing the performance of \algname{} to this approach, since our algorithm has the algorithmic difference that all found solutions are immediately known to be Pareto-optimal.
 % In contrast, every minimal solution found during the $P$-minimal approach of~\textcite{DBLP:conf/cp/SohBTB17} and every solution returned by the $\E$ subroutine of \cref{alg:base-algorithm} is immediately known to be Pareto-optimal.
@@ -235,8 +235,8 @@ instead, it is defined implicitly through a separation oracle that, for decision
 If the hitting set does not intersect with all cores, the oracle returns a core that is not hit.
 
 % MaxHS and Seesaw
-In~\textcite{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20}, an implicit hitting set algorithm for solving MaxSAT was proposed and refined;
-other successful applications can be found in~\textcite{DBLP:conf/cp/IgnatievPLM15,DBLP:conf/kr/SaikkoWJ16,DBLP:conf/cade/FazekasBB18,DBLP:conf/kr/SaikkoDAJ18}.
+In~\textcites{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20}, an implicit hitting set algorithm for solving MaxSAT was proposed and refined;
+other successful applications can be found in~\textcites{DBLP:conf/cp/IgnatievPLM15,DBLP:conf/kr/SaikkoWJ16,DBLP:conf/cade/FazekasBB18,DBLP:conf/kr/SaikkoDAJ18}.
 Recently, Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21} was proposed as a generalized implicit hitting set framework for bi-objective optimization.
 In contrast to our work, in Seesaw one of the objectives is treated as a block box.
 This allows for---but also requires---problem-specific instantiations of the black box.
@@ -285,11 +285,11 @@ For a non-formal intuition note that, while Seesaw is guaranteed to find at leas
 \subsubsection{SAT-Based Lexicographic Optimization\label{sec:lex-opt}}
 
 % (SAT-based) lexicographic optimization
-There is also earlier work on SAT-based lexicographic optimization~\autocite{DBLP:journals/ors/EhrgottG00,DBLP:conf/ijcai/ArgelichLS09,DBLP:journals/amai/Marques-SilvaAGL11}. 
+There is also earlier work on SAT-based lexicographic optimization~\autocites{DBLP:journals/ors/EhrgottG00,DBLP:conf/ijcai/ArgelichLS09,DBLP:journals/amai/Marques-SilvaAGL11}. 
 % Lexicographic optimization and MaxSAT
 Lexicographic optimization is closely related to the so-called multi-level optimization problem.
-In particular, both can be cast as a single objective weighted optimization problem and solved with a MaxSAT solver~\autocite{DBLP:conf/ijcai/ArgelichLS09,DBLP:journals/amai/Marques-SilvaAGL11}.
-In fact, many modern MaxSAT solvers exploit multilevel properties of input instances in order to improve search efficiency~\autocite{DBLP:conf/vmcai/PaxianRB21,DBLP:conf/cp/AnsoteguiBGL12}.
+In particular, both can be cast as a single objective weighted optimization problem and solved with a MaxSAT solver~\autocites{DBLP:conf/ijcai/ArgelichLS09,DBLP:journals/amai/Marques-SilvaAGL11}.
+In fact, many modern MaxSAT solvers exploit multilevel properties of input instances in order to improve search efficiency~\autocites{DBLP:conf/vmcai/PaxianRB21,DBLP:conf/cp/AnsoteguiBGL12}.
 
 \subsection{Other Declarative Optimization Paradigms\label{sec:other-approaches}}
 
@@ -308,9 +308,9 @@ There is one branch-and-bound-based algorithm and another algorithm based on add
 \TODO{Extend.}
 
 % MIP-based approaches
-Multi-objective optimization has also been studied in the context of mixed integer programming and zero-one-programming~\autocite{Ehrgott2005-6,Rasmussen1986,DBLP:journals/eor/AlvesC07}.
+Multi-objective optimization has also been studied in the context of mixed integer programming and zero-one-programming~\autocites{Ehrgott2005-6,Rasmussen1986,DBLP:journals/eor/AlvesC07}.
 There are different algorithmic approaches in this field:
-based on the Simplex algorithm~\autocite{Ehrgott2005-7,DBLP:journals/mp/EvansS73}, branch-and-bound approaches~\autocite{Adelgren2021,DBLP:journals/siamjo/SantisENR20} and based on reducing it to a different mixed integer programming problem~\autocite{DBLP:journals/jota/Sun17,DBLP:journals/ol/LuMS20,Soland1979}.
+based on the Simplex algorithm~\autocites{Ehrgott2005-7,DBLP:journals/mp/EvansS73}, branch-and-bound approaches~\autocites{Adelgren2021,DBLP:journals/siamjo/SantisENR20} and based on reducing it to a different mixed integer programming problem~\autocites{DBLP:journals/jota/Sun17,DBLP:journals/ol/LuMS20,Soland1979}.
 
 \subsection{Probabilistic and Meta-Heuristic Approaches\label{sec:approximative}}
 
@@ -327,10 +327,10 @@ It was first proposed in~\textcite{DBLP:journals/science/KirkpatrickGV83} and ex
 An example of an algorithm building on multi-objective simulated annealing can be found in~\textcite{DBLP:journals/isci/SenguptaS18}.
 
 % Evolutionary algorithms
-A second big group of algorithms are evolutionary algorithms~\autocite{Saini2021,Dasgupta2013}.
+A second big group of algorithms are evolutionary algorithms~\autocites{Saini2021,Dasgupta2013}.
 These meta-heuristic algorithms hold a set of candidate solutions referred to as \emph{population}, which is then developed over multiple iterations to approximate the Pareto front;
 this process simulates evolution in nature, hence the name.
-Algorithms for this category were presented for example in~\textcite{DBLP:journals/jgo/StornP97,DBLP:journals/tec/DebAPM02}.
+Algorithms for this category were presented for example in~\textcites{DBLP:journals/jgo/StornP97,DBLP:journals/tec/DebAPM02}.
 
 % Why we don't compare to these approaches
 Our focus in this work is to develop a MaxSAT-based exact approach for solving bi-objective optimization problems, especially suited for problems naturally represented in propositional logic.

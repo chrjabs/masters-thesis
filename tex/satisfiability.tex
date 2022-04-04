@@ -58,7 +58,7 @@ The advantage of using SAT as a declarative programming language for solving oth
 
 % Incremental SAT solving
 It is common that algorithms that solve problems with the help of SAT solvers produce a series of SAT problems that only differ slightly.
-To be able to solve these sub-problems more efficiently, most modern SAT solvers provide an incremental interface that allows for retaining information learned in previous solver calls~\autocite{DBLP:journals/entcs/EenS03,handbook2-cdcl}.
+To be able to solve these sub-problems more efficiently, most modern SAT solvers provide an incremental interface that allows for retaining information learned in previous solver calls~\autocites{DBLP:journals/entcs/EenS03,handbook2-cdcl}.
 CDCL solvers learn information in the form of clauses that are logical implications of the given clauses.
 Retaining these learned clauses from previous calls allows the solver to determine satisfiability faster in subsequent calls.
 In order for these learned clauses from previous queries to still hold for subsequent calls, it is only possible to \emph{add} clauses to the solvers internal formula, not remove them.
@@ -101,11 +101,11 @@ The specific works that this thesis builds on are the solution-improving \satuns
 The algorithmic approach presented in this thesis makes heavy use of cardinality constraints.
 Informally speaking, cardinality constraints enforce a bound on how many literals in a set can be assigned to true.
 Formally, for a set $L$ of literals and a bound $b \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \circ b\right)$ denotes a CNF formula that encodes the linear inequality $\sum_{l \in L} l \circ b$, where $\circ \in \{< ,> ,\geq, \leq, =\}$.
-Numerous methods of forming such CNF formulas are known (e.g.,~\autocite{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/Sinz05,DBLP:journals/jsat/EenS06}).
+Numerous methods of forming such CNF formulas are known (e.g.,~\autocites{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/Sinz05,DBLP:journals/jsat/EenS06}).
 
 % Totalizer encoding
 In this work we make use of the totalizer encoding.
-Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocite{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$:
+Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocites{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$:
 if $\sol$ is an assignment that satisfies $\tot(L)$, then $\sol(\ov{L}{b}) = 1$ iff $\sum_{l \in L} \sol(l) < b$.
 For applications where only either upper or lower bounding on the number of true literals is needed, the size of the encoded totalizer can be reduced by encoding implications in only one direction instead of in both (i.e., $\ov{L}{b} \leftarrow (\sum_{l \in L} l < b)$ or $\ov{L}{b} \rightarrow \sum_{l \in L} l < b$ but not both, depending on if upper or lower bounding is needed).
 The algorithmic approach presented in this paper only uses upper bounding cardinality constraints, we therefore use the size-reduced version of the totalizer encoding.

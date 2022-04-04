@@ -60,7 +60,7 @@ This is the case if there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\d
 In the beginning of each main loop iteration, the procedure $\Min$ is employed to minimize the increasing objective, i.e., compute the smallest value $b_\inc$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) < b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (\cref{l:minim1}). 
 We assume that $\Min$ maintains a way to enforce that $\Obj_\inc(\tau) < k$, e.g., through a totalizer $\tot(\Obj_\inc)$, and that \algname{} and all of its subroutines have access to a set of assumptions to enforce this bound for any $k$.
 
-Next, the algorithm employs \emph{solution-improving search}~\autocite{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} to minimize the decreasing objective, i.e., to compute the smallest $b_\dec$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (\cref{l:minim2}).
+Next, the algorithm employs \emph{solution-improving search}~\autocites{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} to minimize the decreasing objective, i.e., to compute the smallest $b_\dec$ for which there is a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$  (\cref{l:minim2}).
 The totalizer $\tot(\Obj_\dec, \Obj_\dec(\tau))$ is built at the first time this subroutine is invoked.
 Building the totalizer at this point allows for only building it up to bound $\Obj_\dec(\tau)$, since all Pareto-optimal solutions are known to have at most that value for $\Obj_\dec$.
 Solution-improving search works by---starting from $k=\Obj_\dec(\tau)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{k}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $k$ until the solver reports UNSAT, and returns $b_\dec=k+1$ and a solution $\tau$ for which $\Obj_\dec(\tau) = b_\dec$ and $\Obj_\inc(\tau) = b_\inc$.
@@ -213,7 +213,7 @@ This way, the SAT solver is always loaded with a minimum number of clauses.
   \end{algorithmic}
 \end{algorithm}
 
-\msu{} implements a core-guided approach~\autocite{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09}, maintaining a set $\Act \subset \Obj_\inc$ of \emph{active} objective literals and a totalizer $\tot(\Act)$ built over them. 
+\msu{} implements a core-guided approach~\autocites{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09}, maintaining a set $\Act \subset \Obj_\inc$ of \emph{active} objective literals and a totalizer $\tot(\Act)$ built over them. 
 Initially, $\Act = \emptyset$, i.e., all literals of $\Obj_\inc$ are inactive.
 Informally speaking, an inactive literal $l \in \Obj_\inc \setminus \Act$ is assumed to the value $0$ in every invocation of the SAT solver until it is returned as part of a core.
 More precisely, on input $b_\dec$ and $\Obj_\inc(\tau)$, the algorithm starts from the value $b_\inc$ computed in the previous iteration and invokes the SAT solver with the assumptions $\assumps = \{\ove{\Act}{b_\inc}, \ov{\Obj_\dec}{b_\dec}  \} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act\}$.
@@ -270,7 +270,7 @@ The following observation proves that doing so can be done without removing any 
 
 \subsection{\oll{}\label{sec:oll}}
 
-\oll{}, as another core-guided procedure (originally proposed in the context of ASP~\autocite{DBLP:conf/iclp/AndresKMS12} and also successfully applied in MaxSAT~\autocite{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}), handles the cardinality constraint over the literals in $\Obj_\inc$ differently to \msu{}.
+\oll{}, as another core-guided procedure (originally proposed in the context of ASP~\autocite{DBLP:conf/iclp/AndresKMS12} and also successfully applied in MaxSAT~\autocites{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}), handles the cardinality constraint over the literals in $\Obj_\inc$ differently to \msu{}.
 Instead of a single totalizer over all literals in $\Act$, a separate totalizer is built for every core returned after the unsatisfiable SAT solver calls.
 In each iteration, the assumptions given to the SAT solver consist of (i)~the inactive literals of $\Obj_\inc$, (ii)~the outputs of previously built totalizers corresponding to the lowest number of input literals that should be assigned to $1$ in any possible satisfying assignment and (iii)~the bound $\ov{\Obj_\dec}{b_\dec}$.
 The procedure terminates when the SAT solver returns a solution $\tau$.
@@ -350,7 +350,7 @@ While this can be done in a straight-forward manner on the CNF-level, we will in
 \subsection{Refinements to Core-Guided Variants}
 
 Our implementation of the variants $\algname$ with $\msu$ or $\oll$ make use of refinements commonly used in core-guided MaxSAT solving.
-More specifically, we employ core minimization~\autocite{DBLP:journals/jsat/IgnatievMM19} (either exact or heuristic) and core-exhaustion~\autocite{DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/AnsoteguiBGL13}.
+More specifically, we employ core minimization~\autocite{DBLP:journals/jsat/IgnatievMM19} (either exact or heuristic) and core-exhaustion~\autocites{DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/AnsoteguiBGL13}.
 %(We also considered and implemented a disjoint core phase~\cite{DBLP:conf/cp/DaviesB11} but did not observe noticeable impact on runtime performance in practice.)
 Given a core $\core$ returned by the SAT solver, heuristic core minimization refers to reinvoking the SAT solver with $\{\lnot l \mid l \in \core\}$ as the assumptions hoping that the solver returns a smaller set of assumptions.
 Exact core minimization refers to iteratively finding a minimal unsatisfiable subset by attempting to remove each assumption separately.
