@@ -221,77 +221,85 @@ This way, the SAT solver is always loaded with a minimum number of clauses.
   The result is \sat{}, and \unsatsat{} returns, e.g., $b_\inc = 3$ and $\sol^o_3 = \solothree$.
 \end{example}
 
-\subsection{\msu{}\label{sec:msu3}}
+\subsection{\msu{}\label{sec:msu}}
 
+% MSU3 pseudo-code
 \begin{algorithm}[t]
-  \caption{\msu{} instantiation of \Min{}}\label{alg:msu3}
-  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and last bound $b_\inc$ on $\Obj_\inc$ \\
-  \textbf{Output}: The minimum value for $\Obj_\inc$ that can be achieved while the value for $\Obj_\dec$ is lower than $b_\dec$ and a solution fulfilling these conditions
+  \caption{\msu{} instantiation of \Min{}}\label{alg:msu}
+  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and last bound $b_\inc$ on $\Obj_\inc$. \\
+  \textbf{Output}: Solution $\sol^r$ and smallest $k=\Obj_\inc(\sol^r)$ so that $\Obj_\dec(\sol^r)<b_\dec$.
 
   \begin{algorithmic}[1]
-    \STATE $k \gets b_\inc$
-    \STATE $(\res,\sol^r,\core) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\} \cup \{\lnot l \mid l \in \Obj_\inc \setminus \Act\})$
+    \STATE $k \gets \max\{b_\inc,0\}$
+    \STATE $(\res,\sol^r,\core) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k}\} \cup \{\lnot l \mid l \in \Obj_\inc \setminus \Act\})$ \label{ln:msu-firstquery}
     \WHILE{$\res = \unsat$}
-      \STATE $k \gets k+1$
-      \STATE $\core \gets \core \setminus \{\lnot\ov{\Obj_\dec}{b_\dec}, \lnot\ove{\Obj_\inc}{k+1}\}$
+      \STATE $k \gets k+1$ \label{ln:msu-inc}
+      \STATE $\core \gets \core \setminus \{\lnot\ov{\Obj_\dec}{b_\dec}, \lnot\ove{\Obj_\inc}{k}\}$
       \STATE $\Act \gets \Act \cup \core$
-      \STATE extend $\tot(\Act,k)$
-      \STATE $(\res,\sol^r,\core) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\} \cup \{\lnot l \mid l \in \Obj_\inc \setminus \Act\})$
+      \STATE build or extend $\tot(\Act,k)$ \label{ln:msu-tot}
+      \STATE $(\res,\sol^r,\core) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k}\} \cup \{\lnot l \mid l \in \Obj_\inc \setminus \Act\})$ \label{ln:msu-mainquery}
     \ENDWHILE
-    \STATE \textbf{return} $k,\sol^r$
+    \STATE \textbf{return} $(k,\sol^r)$
   \end{algorithmic}
 \end{algorithm}
 
-\msu{} implements a core-guided approach~\autocites{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09}, maintaining a set $\Act \subset \Obj_\inc$ of \emph{active} objective literals and a totalizer $\tot(\Act)$ built over them. 
+% MSU3 and input parameters
+\msu{} implements a core-guided approach inspired from the MSU3 MaxSAT algorithm~\autocites{DBLP:journals/corr/abs-0712-1097}.
+The input parameters of this subroutine are the last bound $b_\dec$ on $\Obj_\dec$ and the last bound $b_\inc$ on $\Obj_inc$ as a lower bound on the sought-after smallest value.
+The upper bound on the smallest value is not needed for this variant.
+
+% Details of MSU3
+The \msu{} instantiation does not maintain a totalizer $\tot(\Obj_\inc)$, but a set $\Act \subset \Obj_\inc$ of \emph{active} objective literals and a totalizer $\tot(\Act)$ built over them. 
 Initially, $\Act = \emptyset$, i.e., all literals of $\Obj_\inc$ are inactive.
 Informally speaking, an inactive literal $l \in \Obj_\inc \setminus \Act$ is assumed to the value $0$ in every invocation of the SAT solver until it is returned as part of a core.
-More precisely, on input $b_\dec$ and $\Obj_\inc(\sol)$, the algorithm starts from the value $b_\inc$ computed in the previous iteration and invokes the SAT solver with the assumptions $\assumps = \{\ove{\Act}{b_\inc}, \ov{\Obj_\dec}{b_\dec}  \} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act\}$.
+\Cref{alg:msu} illustrates the search performed by \msu{}.
+The algorithm starts from the value $k=b_\inc$ computed in the previous iteration and invokes the SAT solver with the assumptions $\assumps = \{\ove{\Act}{k}, \ov{\Obj_\dec}{b_\dec}  \} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act\}$ on \cref{ln:msu-firstquery}.
 If the result is unsatisfiable, the SAT solver returns a core $\core \subset \{\lnot l \mid l \in \assumps\}$.
-Next, the bound $b_\inc$ is increased by one, the inactive literals in $\core$ are added to $\Act$ and the totalizer $\tot(\Act)$ is extended.
-The procedure continues until the SAT solver returns satisfiable, and a solution $\sol$ which sets $\Obj_\inc(\sol) \leq b_\inc$ and $\Obj_\dec(\sol) < b_\dec$.
-At that point the value $b_\inc$ is the minimum value of $\Obj_\inc(\sol)$ subject to $\Obj_\dec(\sol) < b_\dec$.
-This is because the value of $b_\inc$ is increased monotonically, and the solver returned unsatisfiable in the second-to-last iteration. 
+Next, the bound $k$ is increased by one, the inactive literals in $\core$ are added to $\Act$ and the totalizer $\tot(\Act)$ is extended (\crefrange{ln:msu-inc}{ln:msu-tot}).
+The procedure continues until the SAT solver returns satisfiable, and a solution $\sol^r$ which has $\Obj_\inc(\sol^r) = k$ and $\Obj_\dec(\sol^r) < b_\dec$ is found.
+At that point the value $k$ is the minimum value $\Obj_\inc(\sol)$ for any solution $\sol$ subject to $\Obj_\dec(\sol) < b_\dec$.
+This is because the value of $k$ is increased monotonically, and the solver returned unsatisfiable in the second-to-last iteration. 
 
-For enforcing $\ove{\Obj_\inc}{k}$ when employing $\msu$, consider an invocation of $\msu(b_\dec , \Obj_\inc(\sol))$ made during $\algname$ and assume it returns the tuple $(b_\inc, \sol)$. 
-In the next call to $\Simpr$, the number of literals in $\Obj_\inc$ set to $1$ needs to be restricted to at most $b_{\inc}$. 
-Since the totalizer maintained by $\msu$ only has $\Act \subset \Obj_{\inc}$ as inputs, we do not have access to an output literal of form  $\ove{\Obj_\inc}{b_{\inc}}$.
-Instead, we use  the assumptions $\{\ove{\Act}{b_{\inc}}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$, i.e., restrict the number of literals in $\Act$ set to $1$ to $b_{\inc}$ and assume the value of each inactive literal $l \in \Obj_{\inc} \setminus \Act$ to $0$. 
+% Enforcing an upper bound on O_I in other places and proof of correctness
+For enforcing $\ove{\Obj_\inc}{k}$ when employing \msu{}, consider an invocation of $\msu(b_\dec, b_\inc)$ made during \algname{} and assume it returns the tuple $(b_\inc, \sol^r)$. 
+In the next call to \Simpr{}, the number of literals in $\Obj_\inc$ set to $1$ needs to be restricted to at most $b_\inc$. 
+Since the totalizer maintained by \msu{} only has $\Act \subset \Obj_\inc$ as inputs, we do not have access to an output literal of form  $\ove{\Obj_\inc}{b_\inc}$.
+Instead, we use  the assumptions $\{ \ove{\Act}{b_\inc}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$, i.e., restrict the number of literals in $\Act$ set to $1$ to $b_\inc$ and assume the value of each inactive literal $l \in \Obj_\inc \setminus \Act$ to $0$. 
 The following observation proves that doing so can be done without removing any Pareto-optimal solutions from the search. 
 \begin{observation}\label{obs:sound}
-  Let $\sol$ be a Pareto-optimal solution of $\formula$ for which $\Obj_{\inc}(\sol) = b_{\inc}$.
-  Then $\sol(l) = 0$ for all $l \in \Obj_{\inc} \setminus \Act$. 
+  Let $\sol^o$ be a Pareto-optimal solution of $\formula$ for which $\Obj_\inc(\sol^o) = b_\inc$.
+  Then $\sol^o(l) = 0$ for all $l \in \Obj_\inc \setminus \Act$. 
 \end{observation}
 \begin{proof}(Sketch)
-  Since, $b_{\inc}$ was returned by $\msu$, we know that there exists a Pareto-optimal $\sol^o$ for which $\Obj_{\inc}(\sol^o) = b_{\inc}$ and $\Obj_{\dec}(\sol^o) < b_{\dec}$.
-  By the properties of cores, we also know that \emph{any} solution $\sol^s$ of $\formula$ for which $\Obj_{\dec}(\sol^s) < b_\dec$ assigns at least $b_{\inc}$ literals in $\Act$ to $1$.
-  Thus, any $\sol^n$ that assigns $\sol^n(l) = 1$ for an inactive literal $l \in  \Obj_{\inc} \setminus \Act$ will have $\Obj_{\inc}(\sol^n) > b_{\inc}$.
+  Since, $b_\inc$ was returned by \msu{}, we know that there exists a Pareto-optimal $\sol^o$ for which $\Obj_\inc(\sol^o) = b_\inc$ and $\Obj_\dec(\sol^o) < b_\dec$.
+  By the properties of cores, we also know that \emph{any} solution $\sol^s$ of $\formula$ for which $\Obj_\dec(\sol^s) < b_\dec$ assigns at least $b_\inc$ literals in $\Act$ to $1$.
+  Thus, any $\sol^n$ that assigns $\sol^n(l) = 1$ for an inactive literal $l \in \Obj_\inc \setminus \Act$ will have $\Obj_\inc(\sol^n) > b_\inc$.
 \end{proof}
 
-%Note that whenever a bound on $\Obj_\inc$ is enforced in the other subroutines of \algname{} by an assumption of type $\ove{\Obj_\inc}{k}$, for \msu{}, this assumption needs to be replaced by $\{\ove{\Act}{k}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$.
-
+% Example: MSU3
 \begin{example}\label{ex:msu}
   Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}. 
   Here we detail the invocations of \Min{} instantiated as \msu{}. 
-  In the first iteration of \algname{}, \msu{} is invoked with $b_\dec =\infty$ and $\Obj_\inc(\sol^c_1) = 4$.
-  Initially, the set $\Act = \emptyset$ of active literals is empty, so the first call to the SAT solver is made with the assumptions $\assumps =  \{ \lnot i_1, \lnot i_2, \lnot i_3, \lnot i_4\}$.
+  In the first iteration of \algname{}, \msu{} is invoked with $b_\dec =\infty$ and $b_\inc = -1$.
+  Initially, the set $\Act = \emptyset$ of active literals is empty, so the first call to the SAT solver is made with the assumptions $\assumps =  \{ \lnot i_1, \allowbreak \lnot i_2, \allowbreak \lnot i_3, \allowbreak \lnot i_4\}$.
   The result is unsatisfiable and the solver returns, e.g., $\core = \{i_1, i_2\}$. 
   The literals in $\core$ are marked as active and the totalizer $\tot(\Act, 2)$ is initialized.
   The SAT solver is then invoked with the assumptions $\assumps = \{ \lnot i_3, \lnot i_4, \ove{\Act}{1}\}$. 
-  The result is satisfiable so the solver returns, e.g., the solution $\sol^c_3 = \solcthree$ and $b_\inc = 1$. \\
-  In the next iteration of \algname{}, \msu{} is invoked with $b_\dec = 3$ and $\Obj_\inc(\sol^c_4) = 3$.
-  The set $\Act = \{i_1, i_2\}$ is kept from the previous iterations, so the first call to the SAT solver is made with the assumptions  $\assumps = \{ \lnot i_3, \lnot i_4, \ove{\Act}{1},  \ov{\Obj_\dec}{3} \}$.
+  The result is satisfiable so the procedure returns, e.g., $b_\inc = 1$ and the solution $\sol^c_3 = \solcthree$. \\
+  In the next iteration of \algname{}, \msu{} is invoked with $b_\dec = 3$ and $b_\inc = 1$.
+  The set $\Act = \{i_1, i_2\}$ is kept from the previous iterations, so the first call to the SAT solver is made with the assumptions $\assumps = \{ \ov{\Obj_\dec}{3}, \allowbreak \ove{\Act}{1}, \allowbreak \lnot i_3, \allowbreak \lnot i_4 \}$.
   The result is unsatisfiable;
-  assume the core returned by the solver is $\core = \{i_3, i_4, \lnot \ove{\Act}{1}, \lnot \ov{\Obj_\dec}{3}\}$.
-  The totalizer outputs $\lnot \ove{\Act}{1}$ and $\lnot \ov{\Obj_\dec}{3}$ are discarded, $i_3$ and $i_4$ are added to the active literals, and the totalizer is extended to $\tot(\Act, 3)$.
-  The SAT solver is queried again with the assumptions $\assumps = \{\ove{\Act}{2}, \ov{\Obj_\dec}{2}\}$;
+  assume the core returned by the solver is $\core = \{ \lnot \ov{\Obj_\dec}{3}, \allowbreak \lnot \ove{\Act}{1}, \allowbreak i_3, \allowbreak i_4 \}$.
+  The totalizer outputs $\lnot \ov{\Obj_\dec}{3}$ and $\lnot \ove{\Act}{1}$ are discarded, $i_3$ and $i_4$ are added to the active literals, and the totalizer is extended to $\tot(\Act, 3)$.
+  The SAT solver is queried again with the assumptions $\assumps = \{\ov{\Obj_\dec}{2}, \ove{\Act}{2}\}$;
   the result is \sat{} and the returned solution, e.g., $\sol^o_2 = \solotwo$.
   \msu{} returns $b_\inc = 2$ and $\sol^o_2$. \\
-  In the last iteration, \msu{} is invoked with $b_\dec = 2$ and $\Obj_\inc(\sol^o_3) = 3$.
-  The SAT solver is queried with the assumptions $\assumps = \{\ove{\Act}{2}, \ov{\Obj_\dec}{2}\}$.
+  In the last iteration, \msu{} is invoked with $b_\dec = 2$ and $b_\inc = 2$.
+  The SAT solver is queried with the assumptions $\assumps = \{\ov{\Obj_\dec}{2}, \ove{\Act}{2}\}$.
   The result is \unsat{};
-  assume the core is $\core = \{ \lnot \ove{\Act}{2}, \lnot \ov{\Obj_\dec}{2} \}$.
+  assume the core is $\core = \{ \lnot \ov{\Obj_\dec}{2}, \lnot \ove{\Act}{2} \}$.
   Both totalizer outputs are discarded, and the totalizer is extended to $\tot(\Act, 4)$.
-  The solver is queried again with the assumptions $\assumps = \{\ove{\Act}{3}, \ov{\Obj_\dec}{2}\}$.
+  The solver is queried again with the assumptions $\assumps = \{\ov{\Obj_\dec}{2}, \ove{\Act}{3}\}$.
   The result is \sat{};
   assume the returned solution is $\sol^o_3 = \solothree$.
   \msu{} returns $b_\inc = 3$ and $\sol^o_3$.
