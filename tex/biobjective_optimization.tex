@@ -166,9 +166,9 @@ We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal
   The added clause blocks $\sol^c_1$ and all solutions dominated by $\sol^c_1$ from the search space.
   Assume the next solution obtained is $\sol^c_5 = \solmcstrap$. 
   Again, a clause $(\ov{\Obj_\inc}{3} \lor \ov{\Obj_\dec}{3})$ is added, and the SAT solver is queried with assumptions $\{ \ove{\Obj_\inc}{3}, \ove{\Obj_\dec}{3} \}$.
-  The result is SAT, assume the solution obtained is $\sol^o_2 = \soloone$. 
+  The result is \sat{}, assume the solution obtained is $\sol^o_2 = \soloone$. 
   $P$-minimal then adds the clause $(\ov{\Obj_\inc}{2} \lor \ov{\Obj_\dec}{2})$ and invokes the solver again under the assumptions $\{ \ove{\Obj_\inc}{2}, \ove{\Obj_\dec}{2} \}$.
-  The result is UNSAT which proves that $\sol^o_2$ is Pareto-optimal. 
+  The result is \unsat{} which proves that $\sol^o_2$ is Pareto-optimal. 
   To find a next Pareto-optimal solution, the solver is queried without any assumptions for a new solution to start the minimization process from.
 \end{example}
 
@@ -182,7 +182,7 @@ As presented in~\cite{DBLP:conf/cp/SohBTB17}, the $P$-minimal approach will only
 In our implementation we extended $P$-minimal to the task of enumerating all solutions on the Pareto front.
 Specifically, we add a new relaxation variable $r$ to the clause added each iteration for use as an assumption to enumerate all solutions at that Pareto point:
 the next SAT solver query is done including the assumption $\lnot r$, if a dominating solution is found, the clause is hardened by adding $\lnot r$ as a unit clause.
-If no dominating solution is found, all solutions corresponding to the just discovered Pareto point can be enumerated when removing the assumption $\lnot r$ by blocking every found solution and querying the solver again until it returns UNSAT.
+If no dominating solution is found, all solutions corresponding to the just discovered Pareto point can be enumerated when removing the assumption $\lnot r$ by blocking every found solution and querying the solver again until it returns \unsat{}.
 If the next solution found dominates the previous one, we harden the clause added at the previous iteration by adding $\lnot r$ as a unit clause.
 Once all solutions for that Pareto point are enumerated, the clause is hardened.
 \TODO{Rewrite second halve of paragraph to be ``less papery''}

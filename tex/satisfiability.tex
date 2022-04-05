@@ -29,8 +29,8 @@ A formula $\formula$ is satisfiable if it has solutions, otherwise it is unsatis
 
 % SAT solvers
 A SAT solver is an algorithm that determines the satisfiability of a given formula $\formula$.
-If the formula is satisfiable, the solver returns ``satisfiable'' (SAT) and a solution $\sol$ with $\sol(\formula)=1$;
-if $\formula$ is unsatisfiable, the return value is ``unsatisfiable'' (UNSAT).
+If the formula is satisfiable, the solver returns ``satisfiable'' (\sat{}) and a solution $\sol$ with $\sol(\formula)=1$;
+if $\formula$ is unsatisfiable, the return value is ``unsatisfiable'' (\unsat{}).
 
 % SAT as a declarative modelling language
 The SAT problem was proved to be \NP-complete by~\textcite{DBLP:conf/stoc/Cook71}.
@@ -44,10 +44,10 @@ The advantage of using SAT as a declarative programming language for solving oth
   you want to plan a meal for a guest coming over, and you do not know whether to include an appetizer, a main course and a dessert.
   However, you know the following constraints:
   (i)~there must be a main course in every meal, (ii)~having three courses is too much effort, (iii)~your guest would like to have dessert, and (iv)~you have a new appetizer recipe that you would like to try making.
-  To model this problem as SAT, you can introduce three variables $v_\text{a}$, $v_\text{m}$, $v_\text{d}$ modelling whether appetizer, main course and dessert are included in the meal.
+  To model this situation as SAT, you can introduce three variables $v_\text{a}$, $v_\text{m}$, $v_\text{d}$ modelling whether appetizer, main course and dessert are included in the meal.
   With these, the four conditions form the following four clauses:
   $\clause_\text{(i)} = v_\text{m}$, $\clause_\text{(ii)} = \lnot v_\text{a} \lor \lnot v_\text{m} \lor \lnot v_\text{d}$, $\clause_\text{(iii)} = v_\text{d}$, and $\clause_\text{(iv)} = v_\text{a}$.
-  Next, you can solve the formula $\clause_\text{(i)} \land \clause_\text{(ii)} \land \clause_\text{(iii)} \land \clause_\text{(iv)}$ with the help of a SAT solver, which will return UNSAT.
+  Next, you can solve the formula $\clause_\text{(i)} \land \clause_\text{(ii)} \land \clause_\text{(iii)} \land \clause_\text{(iv)}$ with the help of a SAT solver, which will return \unsat{}.
   This tells you that there is no choice of the three courses that satisfies all conditions.
   As the host, you could now either put in more work for the meal (removing constraint~(i)) or decide to make the appetizer recipe some time else (removing constraint~(iv)).
   Assume you decide to remove constraint (iv), then the solution to $\clause_\text{(i)} \land \clause_\text{(ii)} \land \clause_\text{(iii)}$ found by the SAT solver is $\sol = \{ \lnot v_\text{a}, v_\text{m}, v_\text{d} \}$.
@@ -63,7 +63,7 @@ CDCL solvers learn information in the form of clauses that are logical implicati
 Retaining these learned clauses from previous calls allows the solver to determine satisfiability faster in subsequent calls.
 In order for these learned clauses from previous queries to still hold for subsequent calls, it is only possible to \emph{add} clauses to the solvers internal formula, not remove them.
 In addition, incremental SAT solvers support solving under assumptions.
-The assumptions $\assumps$ are a set of literals that are treated as unit clauses, i.e., a solver call with internal formula $\formula$ and assumptions $\assumps$ either returns SAT and a solution $\sol \supset \assumps$, or UNSAT and a subset $\core \subset \{\lnot l \mid l\in\assumps\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
+The assumptions $\assumps$ are a set of literals that are treated as unit clauses, i.e., a solver call with internal formula $\formula$ and assumptions $\assumps$ either returns \sat{} and a solution $\sol \supset \assumps$, or \unsat{} and a subset $\core \subset \{\lnot l \mid l\in\assumps\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
 The subset $\core$ is called an unsatisfiable \emph{core}~\autocite{handbook2-cdcl} and, intuitively, is an explanation for the unsatisfiability of the query.
 
 \section{Maximum Satisfiability\label{sec:max-sat}}

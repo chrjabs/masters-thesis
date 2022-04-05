@@ -14,7 +14,9 @@
     "\\TODO{}": "ignore",
     "\\newtheorem{}{}[]": "ignore",
     "\\aliascntresetthe{}": "ignore",
-    "\\newaliascnt{}{}": "ignore"
+    "\\newaliascnt{}{}": "ignore",
+    "\\sat{}": "dummy",
+    "\\unsat{}": "vowelDummy"
   },
   "ltex.latex.environments": {
     "algorithmic": "ignore"

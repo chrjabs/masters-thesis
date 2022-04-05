@@ -61,3 +61,4 @@ NSGA-II
 AMOSA
 leximax-optimal
 leximax
+MaxSAT-like

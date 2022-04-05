@@ -5,21 +5,21 @@ In this chapter, we detail \algname{}, the MaxSAT-based approach to bi-objective
 \Cref{sec:algorithm} gives an overview of the algorithmic framework, while \cref{sec:variants} presents five specific instantiations of one of the subroutines, based on established MaxSAT algorithms.
 To conclude the chapter, in \cref{sec:refinements} we discuss some refinements to \algname{}.
 
-% BiOptSat Pseudocode
+% BiOptSat pseudo-code
 \begin{algorithm}[t]
   \caption{\algname{}: MaxSAT-based  bi-objective optimization} %\TODO{Alternatively ``enumeration of'', but then it sounds like full enumeration again.}}
   \label{alg:base-algorithm}
   \textbf{Input}: A formula $\formula$, two objectives $\Obj_\inc$ and $\Obj_\dec$.\\
-  \textbf{Output}: Either one or all Pareto-optimal solution corresponding to each Pareto point of $\formula$.
+  \textbf{Output}: Either a single representative for each Pareto point of $\formula$ or the full Pareto front.
 
   \begin{algorithmic}[1]
     \STATE $\texttt{InitSATsolver}(F)$ \label{l:init-solv} 
     \STATE $(\res, \sol^r) \gets \satsolver(\emptyset)$ \quad\COMMENT{Invokes the SAT solver on the formula.}  \label{l:sols} 
-    \IF{$\res=\text{UNSAT}$}
+    \IF{$\res=\unsat$}
       \STATE \textbf{return} ``no solutions''
     \ENDIF
-    \STATE $b_\dec \gets \infty, b_\inc \gets 0$ \label{l:bounds}
-    \WHILE{$\res = \text{SAT}$} \label{l:loopstart}
+    \STATE $b_\dec \gets \infty, b_\inc \gets -1$ \label{l:bounds}
+    \WHILE{$\res = \sat$} \label{l:loopstart}
       \STATE $(b_\inc, \sol^r) \gets \Min(b_\dec , b_\inc, \Obj_\inc(\sol^r))$  \quad\COMMENT{Maintains $\tot(\Obj_\inc)$ (or similar)}\label{l:minim1}
       \STATE $(b_\dec, \sol^r) \gets  \Simpr(b_\inc , \Obj_\dec(\sol^r))$  \quad\COMMENT{Builds $\tot(\Obj_\dec)$}\label{l:minim2}
       \STATE \textbf{yield} $\sol^r$  \quad\COMMENT{Optionally:  \textbf{yield} $\E(b_\dec, b_\inc)$} \label{ln:stage3} 
@@ -48,20 +48,21 @@ This single solver instantiation is invoked incrementally and preserved (i.e., n
 In each iteration, the value of $b_\inc$ is set to the smallest value for which there is a still-undiscovered Pareto-optimal solution $\sol^o$ for which $\Obj_\inc(\sol^o) = b_\inc$ by the $\Min$ procedure.
 The value of $b_\dec$ is then set to $\Obj_\dec(\sol^o)$ by the $\Simpr$ procedure.
 In the default configuration shown in \cref{alg:base-algorithm}, \algname{} solves the task of finding a single representative per Pareto point.
-In case one wishes to enumerate all Pareto-optimal solutions, the \E{} procedure then enumerates all Pareto-optimal solutions $\sol^o$ for which $\Obj_\inc(\sol^o) = b_\inc$ and $\Obj_\dec(\sol^o) = b_\dec$
+In case one wishes to enumerate all Pareto-optimal solutions, the \E{} procedure then enumerates all Pareto-optimal solutions $\sol^o$ for which $\Obj_\inc(\sol^o) = b_\inc$ and $\Obj_\dec(\sol^o) = b_\dec$.
 We note that finding a single Pareto-optimal solution can simply be done by terminating the algorithm as soon as the first Pareto-optimal solution is returned.
 
 % Initializing the algorithm
 In detail, given a formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$, the search of \algname{} in \cref{alg:base-algorithm} starts by initializing a SAT solver with all clauses in $\formula$ on \cref{l:init-solv}.
 Satisfiability (i.e., the existence of any Pareto-optimal solutions) is checked by invoking the SAT solver on its internal formula without assumptions via the $\satsolver(\emptyset)$ function (\cref{l:sols}).
 Here, $\satsolver(\assumps)$ denotes an incremental invocation of the SAT solver initialized on \cref{l:init-solv}, with the set of assumptions $\assumps$.
-It has three return parameters, $\res,\sol,\core$ where the first is either SAT or UNSAT, indicating if the internal formula is satisfiable with the given assumptions.
-If $\res=\text{SAT}$, $\sol$ is populated by a satisfying assignment and $\core$ is not modified;
-if $\res=\text{UNSAT}$, $\core$ is populated with an unsatisfiable core and $\sol$ is not modified.
+It has three return parameters, $\res,\sol,\core$ where the first is either \sat{} or \unsat{}, indicating if the internal formula is satisfiable with the given assumptions.
+If $\res=\sat$, $\sol$ is populated by a satisfying assignment and $\core$ is not modified;
+if $\res=\unsat$, $\core$ is populated with an unsatisfiable core and $\sol$ is not modified.
 In case the returned core of a specific call is not used, we will omit it as a return parameter.
-On \cref{l:sols}, if $\res$ is UNSAT, the formula has no Pareto-optimal solutions and the algorithm terminates.
+On \cref{l:sols}, if $\res$ is \unsat{}, the formula has no Pareto-optimal solutions and the algorithm terminates.
 Otherwise, $\sol$ is an assignment that satisfies the formula.
-Before the main enumeration procedure starts, the bounds $b_\inc$ and $b_\dec$ on $\Obj_\inc$ and $\Obj_\dec$ are set to $0$ and $\infty$, respectively.
+Before the main enumeration procedure starts, the bounds $b_\inc$ and $b_\dec$ on $\Obj_\inc$ and $\Obj_\dec$ are set to $-1$ and $\infty$, respectively.
+This is because those values are known to be smaller, respectively greater, than they will take in the first iteration.
 
 % Main loop: minimization of increasing objective
 The main search loop (\crefrange{l:loopstart}{l:endL}) iterates as long as there are Pareto-optimal solutions of $\formula$ that have not been enumerated yet. 
@@ -75,7 +76,7 @@ Details of different instantiations of the \Min{} subroutine are discussed in \c
 Next, the algorithm employs \emph{solution-improving search}~\autocites{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} to minimize the decreasing objective, i.e., to compute the smallest $b_\dec$ for which there is a solution $\sol$ for which $\Obj_\dec(\sol) = b_\dec$ and $\Obj_\inc(\sol) = b_\inc$ (\cref{l:minim2}).
 The totalizer $\tot(\Obj_\dec, \Obj_\dec(\sol^r))$ is built the first time this subroutine is invoked.
 Building the totalizer at this point allows for only building it up to bound $\Obj_\dec(\sol^r)$, since all Pareto-optimal solutions are known to have at most that value for $\Obj_\dec$.
-Solution-improving search works by---starting from the known upper bound $k=\Obj_\dec(\sol^r)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{k}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $k$ until the solver reports UNSAT.
+Solution-improving search works by---starting from the known upper bound $k=\Obj_\dec(\sol^r)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{k}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $k$ until the solver reports \unsat{}.
 As soon as unsatisfiability is reached, $\Simpr$ returns $b_\dec=k+1$ and the last satisfying solution $\sol^r$ for which $\Obj_\dec(\sol^r) = b_\dec$ and $\Obj_\inc(\sol^r) = b_\inc$.
 At this point, we know that there is no solution of $\formula$ that dominates $\sol^r$, so $\sol^r$ is returned as Pareto-optimal on \cref{ln:stage3}.
 If one wants to enumerate all solutions $\sol^o$ that correspond to the Pareto point $(b_\inc,b_\dec)$, the \E{} procedure repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{b_\inc}\}$ and blocks each found solution until no more solutions are found.
@@ -95,12 +96,12 @@ If one wants to enumerate all solutions $\sol^o$ that correspond to the Pareto p
   The result is unsatisfiable, so the procedure returns the Pareto-optimal $\sol^o_1$ and $b_\dec = \Obj_\dec(\sol^o_1) = 3$.
   Now optionally, the procedure \E{} can be used to enumerate all other solutions corresponding to the Pareto point $(\Obj_\inc(\sol^o_1),\Obj_\dec(\sol^o_1))$.
   At the end of the iteration, the SAT solver is queried with the assumption $\{ \ov{\Obj_\dec}{2} \}$.
-  As the result is SAT and the solver returns, e.g., the solution $\sol^c_4 = \solcfour$,
+  As the result is \sat{} and the solver returns, e.g., the solution $\sol^c_4 = \solcfour$,
   the algorithm starts a new iteration. \\
   The next iteration of \algname{} proceeds similarly to the first.
   The procedure \Min{} returns $b_\inc = 2$ and, e.g., the solution $\sol^o_2 = \solotwo$.
   \Simpr{} cannot improve on the decreasing objective, so the solution $\sol^o_2$ is proven to be Pareto-optimal.
-  At the end of the iteration, on \cref{l:endL} the SAT solver is invoked with the assumption $\{\ov{\Obj_\dec}{2}\}$ which returns SAT and, e.g., the solution $\sol^o_3 = \solothree$. \\
+  At the end of the iteration, on \cref{l:endL} the SAT solver is invoked with the assumption $\{\ov{\Obj_\dec}{2}\}$ which returns \sat{} and, e.g., the solution $\sol^o_3 = \solothree$. \\
   The last iteration starts by calling \Min{} which returns $b_\inc = 3$ and, e.g., again the solution $\sol^o_3$.
   \Simpr{} again cannot improve on the decreasing objective, so $\sol^o_3$ is also Pareto-optimal.
   Lastly, the SAT solver is queried with the assumption $\{\ov{\Obj_\dec}{1}\}$.
@@ -109,100 +110,115 @@ If one wants to enumerate all solutions $\sol^o$ that correspond to the Pareto p
 
 \section{Approaches to Minimizing the Increasing Objective\label{sec:variants}}
 
-We consider five different instantiations of the $\Min$ procedure for minimizing the increasing objective, inspired by MaxSAT algorithms. 
+% Signposting
+We consider five different instantiations of the \Min{} procedure for minimizing the increasing objective.
+The first four (\satunsat{}, \unsatsat{}, \msu{} and \oll{}) are inspired by existing MaxSAT algorithms while the last (\msh{}) switches between two MaxSAT-like algorithms to combine their advantages.
+
+\TODO{Point out which of the \Min{} parameters the instatiations are using.}
 
 \subsection{\satunsat{}\label{sec:sat-unsat}}
 
+% SAT-UNSAT pseudo-code
 \begin{algorithm}[t]
   \caption{\satunsat{} instantiation of \Min{}}\label{alg:sat-unsat}
-  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and known satisfiable starting bound $k$ on $\Obj_\inc$ \\
-  \textbf{Output}: The minimum value for $\Obj_\inc$ that can be achieved while the value for $\Obj_\dec$ is lower than $b_\dec$ and a solution fulfilling these conditions
-  \TODO{Point out that returned $\sol^r$ is from last SAT call}
+  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and known satisfiable starting bound $k$ on $\Obj_\inc$. \\
+  \textbf{Output}: Solution $\sol^r$ and smallest $k=\Obj_\inc(\sol^r)$ so that $\Obj_\dec(\sol^r)<b_\dec$.
 
   \begin{algorithmic}[1]
-    \STATE build or extend $\tot(\Obj_\inc,k)$ if necessary
+    \STATE build or extend $\tot(\Obj_\inc,k)$ if necessary \label{ln:su-tot}
     \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ov{\Obj_\inc}{k}\})$
-    \WHILE{$\res = \text{SAT}$}
+    \WHILE{$\res = \sat$}
       \STATE $k \gets \Obj_\inc(\sol^r)$
-      \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ov{\Obj_\inc}{k}\})$
+      \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ov{\Obj_\inc}{k}\})$ \label{ln:su-query}
     \ENDWHILE
-    \STATE \textbf{return} $k,\sol^r$
+    \STATE \textbf{return} $(k,\sol^r)$ \label{ln:su-ret}
   \end{algorithmic}
 \end{algorithm}
 
-\satunsat{} is a variant of solution-improving search that is also used for minimizing $\Obj_\dec$. 
-The procedure gets as input the current bound $b_\dec$ on $\Obj_\dec$ and the value $\Obj_\inc(\sol)$ obtained by the solution $\sol$ computed during the last SAT solver call. 
-Since the last call is made on \cref{l:endL} with the assumption $\ov{\Obj_\dec}{b_\dec}$, the solution $\sol$ will have $\Obj_\dec(\sol) < b_\dec$. 
+% Solution-improving search and input parameters
+\satunsat{} is a variant of solution-improving search~\autocites{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} that is also used for minimizing $\Obj_\dec$. 
+As inputs, the procedure only gets the last bound $b_\dec$ on $\Obj_\dec$ and the upper bound $k=\Obj_\inc(\sol^r)$ on the minimum of the increasing objective known from the last SAT solver call.
+The known lower bound is not needed for this variant.
+Since the last call is made on \cref{l:endL} with the assumption $\ov{\Obj_\dec}{b_\dec}$, the solution $\sol^r$ will have $\Obj_\dec(\sol^r) < b_\dec$. 
 
-As such, the value $\Obj_\inc(\sol)$ is an upper bound for the smallest value of $\Obj_\inc$ obtained by any solution $\sol'$ having $\Obj_\dec(\sol') < b_\dec$.
-The procedure \satunsat{} maintains the totalizer $\tot(\Obj_\inc)$ and begins by checking, if the current upper bound on that totalizer is at least $\Obj_\inc(\sol)$, extending it if not. 
-Then the SAT solver is iteratively invoked with the assumptions $\{\ov{\Obj_\dec}{b_\dec}, \ov{\Obj_\inc}{k}\}$ for decreasing values of $k$ starting from $\Obj_\inc(\sol)$.
-The procedure terminates when the result is UNSAT, after which the value of $k$ and the solution obtained during the final satisfiable call are returned as $b_\inc$ and $\sol$.  
+% Details of SAT-UNSAT
+How \satunsat{} progresses is outlined in~\cref{alg:sat-unsat}.
+The procedure maintains the totalizer $\tot(\Obj_\inc)$ and begins on \cref{ln:su-tot} by checking, if the current upper bound on that totalizer is at least $k$, extending it if not. 
+Then the SAT solver is iteratively invoked with the assumptions $\{\ov{\Obj_\dec}{b_\dec}, \ov{\Obj_\inc}{k}\}$ for decreasing values of $k$ (\cref{ln:su-query}).
+The procedure terminates when the result is \unsat{}, after which on \cref{ln:su-ret}, the value of $k$ and the solution obtained during the final satisfiable call are returned as $b_\inc$ and $\sol^r$.  
 
+% Example: SAT-UNSAT
 \begin{example}\label{ex:satunsat}
   Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}. 
   We detail the invocation of \Min{} instantiated as \satunsat{}. 
   The full progression of the search of \algname{} with \Min{} instantiated as \satunsat{} is illustrated in \cref{fig:search-trace}.
-  In the first iteration, \satunsat{} is invoked with $b_\dec =\infty$ and $\Obj_\inc(\sol^c_1) = 4$.
+  In the first iteration, \satunsat{} is invoked with $b_\dec = \infty$ and $\Obj_\inc(\sol^c_1) = 4$.
   At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by adding $\tot(\Obj_\inc, 3)$ to the solver.
-  The first call to the SAT solver is made with the assumptions $\{\ov{\Obj_\inc}{4}\}$, since $b_\dec  = \infty$ and therefore no assumption constraining $\Obj_\dec$ is needed.
+  The first call to the SAT solver is made with the assumptions $\{\ov{\Obj_\inc}{4}\}$, since $b_\dec = \infty$ and therefore no assumption constraining $\Obj_\dec$ is needed.
   The result is satisfiable, the solver returns, e.g., the solution $\sol^c_2 = \solctwo$. 
   In the next iteration, the set of assumptions is $\{\ov{\Obj_\inc}{2}\}$.
   The result is again satisfiable, returning, e.g., the solution $\sol^c_3 = \solcthree$.
-  The SAT solver is then invoked with the assumptions  $\{\ov{\Obj_\inc}{1}\}$.
-  Now the result is UNSAT so the procedure terminates and returns $\sol^c_3$ and $b_\inc = 1$. \\
+  The SAT solver is then invoked with the assumptions $\{\ov{\Obj_\inc}{1}\}$.
+  Now the result is \unsat{} so the procedure terminates and returns $b_\inc = 1$ and $\sol^c_3$. \\
   In the second iteration of \algname{}, \satunsat{} is invoked with $b_\dec = 3$ and $\Obj_\inc(\sol^c_4) = 3$.
-  The first call to the SAT solver is made with the assumptions $\{ \ov{\Obj_\dec}{3}, \ov{\Obj_\inc}{3}\}$.
-  The result is SAT and the solver returns, e.g., the solution $\sol^o_2 = \solotwo$.
+  The first call to the SAT solver is made with the assumptions $\{ \ov{\Obj_\dec}{3}, \ov{\Obj_\inc}{3} \}$.
+  The result is \sat{} and the solver returns, e.g., the solution $\sol^o_2 = \solotwo$.
   \satunsat{} invokes the SAT solver again with the assumptions $\{ \ov{\Obj_\dec}{3}, \ov{\Obj_\inc}{2} \}$.
-  The result is UNSAT, so the procedure returns $b_\inc = 2$ and $\sol^o_2$. \\
-  In the thrid (and last) iteration of \algname{}, \satunsat{} is invoked with $b_\dec = 2$ and $\Obj_\inc(\sol^o_3) = 3$.
-  The SAT solver is queried with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{3} \}$ and returns UNSAT.
-  \satunsat{} therefore returns $\sol^o_3$ and $b_\inc = 3$.
+  The result is \unsat{}, so the procedure returns $b_\inc = 2$ and $\sol^o_2$. \\
+  In the third (and last) iteration of \algname{}, \satunsat{} is invoked with $b_\dec = 2$ and $\Obj_\inc(\sol^o_3) = 3$.
+  The SAT solver is queried with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{3} \}$ and returns \unsat{}.
+  \satunsat{} therefore returns $b_\inc = 3$ and $\sol^o_3$.
 \end{example}
 
 \subsection{\unsatsat{}\label{sec:unsat-sat}}
 
-\TODO{Define parameters of \Min{} (here $b_\inc$ for \satunsat{} $\Obj_\inc(\sol^r)$)}
-
+% UNSAT-SAT pseudo-code
 \begin{algorithm}[t]
   \caption{\unsatsat{} instantiation of \Min{}}\label{alg:unsat-sat}
-  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and last bound $b_\inc$ on $\Obj_\inc$ \\
-  \textbf{Output}: The minimum value for $\Obj_\inc$ that can be achieved while the value for $\Obj_\dec$ is lower than $b_\dec$ and a solution fulfilling these conditions
+  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and last bound $b_\inc$ on $\Obj_\inc$. \\
+  \textbf{Output}: Solution $\sol^r$ and smallest $k=\Obj_\inc(\sol^r)$ so that $\Obj_\dec(\sol^r)<b_\dec$.
 
   \begin{algorithmic}[1]
-    \STATE $k \gets b_\inc$
-    \STATE build/extend $\tot(\Act,k+1)$
+    \STATE $k \gets b_\inc$ \label{ln:us-boundinit}
+    \STATE build or extend $\tot(\Act,k+1)$
     \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\})$
-    \WHILE{$\res = \text{UNSAT}$}
+    \WHILE{$\res = \unsat$}
       \STATE $k \gets k+1$
-      \STATE extend $\tot(\Obj_\inc,k+1)$
-      \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\})$
+      \STATE extend $\tot(\Obj_\inc,k+1)$ \label{ln:us-tot}
+      \STATE $(\res,\sol^r) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\})$ \label{ln:us-query}
     \ENDWHILE
-    \STATE \textbf{return} $k+1,\sol^r$
+    \STATE \textbf{return} $(k+1,\sol^r)$ \label{ln:us-ret}
   \end{algorithmic}
 \end{algorithm}
 
-\unsatsat{} takes a similar approach to \satunsat{} search but searches for the smallest value by lower-bounding instead of upper-bounding.
-It also maintains a totalizer $\tot(\Obj_\inc)$.
-For finding the next solution, the bound $k$ is set to the last known value of $b_\inc$ and the solver is then iteratively queried for a new solution under the assumptions $\{ \ove{\Obj_\inc}{k+1}, \ov{\Obj_\dec}{b_\dec} \}$.
+% UNSAT-SAT and input parameters
+\unsatsat{} takes a similar approach to \satunsat{} search but searches for the smallest value by lower-bounding instead of upper-bounding~\autocite{}.
+As input parameters it receives the last bound $b_\dec$ on $\Obj_\dec$ and the last bound $b_\inc$ on $\Obj_\inc$ as a lower bound on the sought-after smallest value.
+The upper bound on the smallest value is not needed for this variant.
+\unsatsat{} also maintains a totalizer $\tot(\Obj_\inc)$.
+
+% Details of UNSAT-SAT
+The \unsatsat{} instantiation of \Min{} proceeds as illustrated in \cref{alg:unsat-sat}.
+On \cref{ln:us-boundinit}, the bound $k$ is set to the known lower bound $b_\inc$ and the solver is then iteratively queried on \cref{ln:us-query} under the assumptions $\{ \ove{\Obj_\inc}{k+1}, \ov{\Obj_\dec}{b_\dec} \}$.
 If the solver returns unsatisfiable, the bound $k$ is increased by $1$ and the solver is queried again.
-The search ends once the solver returns satisfiable and in this case, the solution, and the bound are returned.
-Since the bound of this lower bounding search procedure will only monotonically increase, it is enough if the totalizer $\tot(\Obj_\inc)$ is at every step built up to the bound $k+1$ and extended to the next bound in the next iteration.
+The search ends once the solver returns satisfiable and in this case, the solution, and the bound are returned on \cref{ln:us-ret}.
+Since the bound of this lower bounding search procedure will only monotonically increase, it is enough if the totalizer $\tot(\Obj_\inc)$ is at every step built up to the bound $k+1$ (\cref{ln:us-tot}) and extended to the next bound in the next iteration.
 This way, the SAT solver is always loaded with a minimum number of clauses.
 
+% Example: UNSAT-SAT
 \begin{example}
   Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}. 
   Here we detail the invocation of \Min{} instantiated as \unsatsat{}.
-  In the first iteration, \unsatsat{} is invoked with $b_\dec =\infty$ and $\Obj_\inc(\sol^c_1) = 4$.
-  At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by initializing $\tot(\Obj_\inc, 1)$ and invokes the SAT solver with the assumptions $\{\ove{\Obj_\inc}{0}\}$.
-  The result is UNSAT, so the totalizer is extended to $\tot(\Obj_\inc, 2)$ and the SAT solver invoked with the assumptions $\{ \ove{\Obj_\inc}{1}\}$.
-  The result is SAT and the procedure returns, e.g., $\sol^c_3 = \solcthree$ and $b_\inc = 1$. \\
-  In the second iteration of \algname{}, \unsatsat{} is invoked with $b_\dec = 3$ and $\Obj_\inc(\sol^c_4) = 3$.
-  The totalizer is extended to $\tot(\Obj_\inc, 3)$ and the solver is invoked with the assumptions $\{\ove{\Obj_\inc}{2}, \ov{\Obj_\dec}{3}\}$, starting from the previous bound $b_\inc$.
-  The result is SAT, and the solver returns, e.g., $\sol^o_2 = \solotwo$ and $b_\inc = 2$. \\
-  In the last iteration of \algname{}, \unsatsat{} is invoked with $b_\dec = 2$ and $\Obj_\inc(\sol^o_3) = 3$.
-  Since $\Obj_\inc(\sol^o_3)$ is already only 1 larger than the previous bound, the solver doesn't need to be queried and \unsatsat{} can directly return $b_\inc = 3$ and $\sol^o_3$.
+  In the first iteration, \unsatsat{} is invoked with $b_\dec = \infty$ and $b_\inc=-1$.
+  At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by initializing $\tot(\Obj_\inc, 0)$ and invokes the SAT solver with the assumptions $\{\ove{\Obj_\inc}{0}\}$.
+  The result is \unsat{}, so the totalizer is extended to $\tot(\Obj_\inc, 1)$ and the SAT solver invoked with the assumptions $\{ \ove{\Obj_\inc}{1}\}$.
+  The result is \sat{} and the procedure returns, e.g., $b_\inc = 1$ and $\sol^c_3 = \solcthree$. \\
+  In the second iteration of \algname{}, \unsatsat{} is invoked with $b_\dec = 3$ and $b_\inc = 1$.
+  The totalizer is extended to $\tot(\Obj_\inc, 2)$ and the solver is invoked with the assumptions $\{\ove{\Obj_\inc}{2}, \ov{\Obj_\dec}{3}\}$.
+  The result is \sat{}, and the routine returns, e.g., $b_\inc = 2$ and $\sol^o_2 = \solotwo$. \\
+  In the last iteration of \algname{}, \unsatsat{} is invoked with $b_\dec = 2$ and $b_\inc = 2$.
+  The totalizer is extended to $\tot(\Obj_\inc, 3)$ and the solver is invoked with the assumptions $\{\ove{\Obj_\inc}{3}, \ov{\Obj_\dec}{2}\}$.
+  The result is \sat{}, and \unsatsat{} returns, e.g., $b_\inc = 3$ and $\sol^o_3 = \solothree$.
 \end{example}
 
 \subsection{\msu{}\label{sec:msu3}}
@@ -215,7 +231,7 @@ This way, the SAT solver is always loaded with a minimum number of clauses.
   \begin{algorithmic}[1]
     \STATE $k \gets b_\inc$
     \STATE $(\res,\sol^r,\core) \gets \satsolver(\{\ov{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{k+1}\} \cup \{\lnot l \mid l \in \Obj_\inc \setminus \Act\})$
-    \WHILE{$\res = \text{UNSAT}$}
+    \WHILE{$\res = \unsat$}
       \STATE $k \gets k+1$
       \STATE $\core \gets \core \setminus \{\lnot\ov{\Obj_\dec}{b_\dec}, \lnot\ove{\Obj_\inc}{k+1}\}$
       \STATE $\Act \gets \Act \cup \core$
@@ -268,15 +284,15 @@ The following observation proves that doing so can be done without removing any 
   assume the core returned by the solver is $\core = \{i_3, i_4, \lnot \ove{\Act}{1}, \lnot \ov{\Obj_\dec}{3}\}$.
   The totalizer outputs $\lnot \ove{\Act}{1}$ and $\lnot \ov{\Obj_\dec}{3}$ are discarded, $i_3$ and $i_4$ are added to the active literals, and the totalizer is extended to $\tot(\Act, 3)$.
   The SAT solver is queried again with the assumptions $\assumps = \{\ove{\Act}{2}, \ov{\Obj_\dec}{2}\}$;
-  the result is SAT and the returned solution, e.g., $\sol^o_2 = \solotwo$.
+  the result is \sat{} and the returned solution, e.g., $\sol^o_2 = \solotwo$.
   \msu{} returns $b_\inc = 2$ and $\sol^o_2$. \\
   In the last iteration, \msu{} is invoked with $b_\dec = 2$ and $\Obj_\inc(\sol^o_3) = 3$.
   The SAT solver is queried with the assumptions $\assumps = \{\ove{\Act}{2}, \ov{\Obj_\dec}{2}\}$.
-  The result is UNSAT;
+  The result is \unsat{};
   assume the core is $\core = \{ \lnot \ove{\Act}{2}, \lnot \ov{\Obj_\dec}{2} \}$.
   Both totalizer outputs are discarded, and the totalizer is extended to $\tot(\Act, 4)$.
   The solver is queried again with the assumptions $\assumps = \{\ove{\Act}{3}, \ov{\Obj_\dec}{2}\}$.
-  The result is SAT;
+  The result is \sat{};
   assume the returned solution is $\sol^o_3 = \solothree$.
   \msu{} returns $b_\inc = 3$ and $\sol^o_3$.
 \end{example}
