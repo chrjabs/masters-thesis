@@ -74,7 +74,7 @@ Maximum satisfiability (MaxSAT) is the optimization variant of the SAT decision 
 In it, the goal is to find a solution that satisfies as many of the given clauses as possible.
 Most commonly and in this work, MaxSAT refers to the extension of \emph{weighted partial} MaxSAT, in which a set of \emph{hard} clauses $\formula$ and another set of \emph{soft} clauses $\softs$ are given.
 Each clause $\clause \in \softs$ is assigned a weight $w_\clause$ and a solution $\sol$ that satisfies $\formula$ while achieving minimal weight of falsified soft clauses $\sum_{\clause\in\softs \mid \tau(\clause)=0} w_\clause$ is optimal for the problem.
-Since the \NP-complete (recall \cref{sec:sat}) SAT decision problem can be reduced to MaxSAT, its optimization extension, MaxSAT is \NP-complete.
+Since the \NP-complete (recall \cref{sec:sat}) SAT decision problem can be reduced to MaxSAT, its optimization extension, MaxSAT is \NP-hard.
 \TODO{(soundness?).}
 
 % MaxSAT as a modelling language
