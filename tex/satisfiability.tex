@@ -112,6 +112,7 @@ The algorithmic approach presented in this paper only uses upper bounding cardin
 The \emph{incremental} totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula:
 we have that $\tot(L, k) \subset \tot(L, k')$ and $\tot(L, k) \subset  \tot(L \cup L', k)$ hold for any bound $k' > k$ and set $L'$ of literals for which $L \cap L' =  \emptyset$. 
 This is desirable when making incremental SAT calls where the bound or the set of input literals changes between calls, since it allows for making earlier calls to the SAT solver on a formula with fewer clauses and retaining information from these calls since extending the totalizer means adding clauses while reusing the ones that were previously added.
-We use $\ove{L}{k}$ as a shorthand for the literal $\ov{L}{k+1}$.
+We use $\ove{L}{k}$ as a shorthand for the literal $\ov{L}{k+1}$;
+furthermore, if the maximal bound $k$ of a totalizer $\tot(L,k)$ is clear from context or the bound is $k=|L|$, we omit it and simply write $\tot(L)$.
 Note that the assignments of the auxiliary variables of the totalizer encoding are functionally defined by the assignment of the input and output variables.
 As such we will leave them out from the solutions we describe in favour of brevity and clarity of examples. 
