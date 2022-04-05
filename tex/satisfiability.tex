@@ -93,12 +93,18 @@ Many algorithms for solving MaxSAT have been proposed over the recent years.
 Best scalability to large instances is achieved by algorithms that solve MaxSAT by solving a number of SAT instances with the help of an underlying SAT solver, implicit hitting set approaches or solving MaxSAT via integer programming~\autocite{handbook2-maxsat}.
 This thesis builds on the MaxSAT algorithms that solve a sequence of SAT problems;
 these algorithms can be divided into two categories: solution-improving and core-guided~\autocite{DBLP:conf/sat/FuM06} algorithms.
-The specific works that this thesis builds on are the solution-improving \satunsat{}~\autocite{DBLP:journals/jsat/BerreP10}, the lower-bounding \unsatsat{}~\autocite{}, and the core-guided \msu{}~\autocite{DBLP:journals/corr/abs-0712-1097} and \oll{}~\autocite{DBLP:conf/cp/MorgadoDM14} algorithms.
+The specific works that this thesis builds on are the solution-improving SAT-UNSAT search~\autocite{DBLP:journals/jsat/BerreP10}, the lower-bounding UNSAT-SAT search~\autocite{}, and the core-guided MSU3~\autocite{DBLP:journals/corr/abs-0712-1097} and OLL~\autocite{DBLP:conf/cp/MorgadoDM14} algorithms.
+
+\TODO{Give intuition for each algorithm (attention: no totalizers yet!)}
+OLL, as another core-guided procedure (originally proposed in the context of ASP~\autocite{DBLP:conf/iclp/AndresKMS12} and also successfully applied in MaxSAT~\autocites{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}), handles the cardinality constraint over the active literals differently to MSU3.
+Instead of a single cardinality constraint over all literals in $\Act$, a separate totalizer is built for every core returned after the unsatisfiable SAT solver calls.
+The outputs of these many totalizers are then treated as additional soft clauses.
 
 \section{Encoding Cardinality Constraints as Totalizers\label{sec:card-const}}
 
 % Cardinality constraints
-The algorithmic approach presented in this thesis makes heavy use of cardinality constraints.
+As seen in \cref{sec:max-sat}, many MaxSAT algorithms make heavy use of cardinality constraints.
+The same holds for the algorithmic approach presented in this thesis.
 Informally speaking, cardinality constraints enforce a bound on how many literals in a set can be assigned to true.
 Formally, for a set $L$ of literals and a bound $b \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \circ b\right)$ denotes a CNF formula that encodes the linear inequality $\sum_{l \in L} l \circ b$, where $\circ \in \{< ,> ,\geq, \leq, =\}$.
 Numerous methods of forming such CNF formulas are known (e.g.,~\autocites{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/Sinz05,DBLP:journals/jsat/EenS06}).

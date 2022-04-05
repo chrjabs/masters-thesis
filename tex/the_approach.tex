@@ -108,7 +108,7 @@ If one wants to enumerate all solutions $\sol^o$ that correspond to the Pareto p
   The solver returns unsatisfiable, terminating the algorithm. 
 \end{example}
 
-\section{Approaches to Minimizing the Increasing Objective\label{sec:variants}}
+\section{Variants for Minimizing the Increasing Objective\label{sec:variants}}
 
 % Signposting
 We consider five different instantiations of the \Min{} procedure for minimizing the increasing objective.
@@ -121,7 +121,7 @@ The first four (\satunsat{}, \unsatsat{}, \msu{} and \oll{}) are inspired by exi
 % SAT-UNSAT pseudo-code
 \begin{algorithm}[t]
   \caption{\satunsat{} instantiation of \Min{}}\label{alg:sat-unsat}
-  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and known satisfiable starting bound $k$ on $\Obj_\inc$. \\
+  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$ and known upper bound $k$ on minimum of $\Obj_\inc$. \\
   \textbf{Output}: Solution $\sol^r$ and smallest $k=\Obj_\inc(\sol^r)$ so that $\Obj_\dec(\sol^r)<b_\dec$.
 
   \begin{algorithmic}[1]
@@ -307,48 +307,60 @@ The following observation proves that doing so can be done without removing any 
 
 \subsection{\oll{}\label{sec:oll}}
 
-\oll{}, as another core-guided procedure (originally proposed in the context of ASP~\autocite{DBLP:conf/iclp/AndresKMS12} and also successfully applied in MaxSAT~\autocites{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}), handles the cardinality constraint over the literals in $\Obj_\inc$ differently to \msu{}.
-Instead of a single totalizer over all literals in $\Act$, a separate totalizer is built for every core returned after the unsatisfiable SAT solver calls.
+% High-level OLL
+As briefly mentioned in \cref{sec:max-sat}, the OLL MaxSAT algorithm~\autocite{DBLP:conf/cp/MorgadoDM14} builds a cardinality constraint for each core extracted from the formula, treating the totalizer output as new soft clauses.
+The same holds true for the \oll{} instantiation of \Min{}.
 In each iteration, the assumptions given to the SAT solver consist of (i)~the inactive literals of $\Obj_\inc$, (ii)~the outputs of previously built totalizers corresponding to the lowest number of input literals that should be assigned to $1$ in any possible satisfying assignment and (iii)~the bound $\ov{\Obj_\dec}{b_\dec}$.
 The procedure terminates when the SAT solver returns a solution $\sol$.
-Similarly to $\msu$, the assumptions for enforcing a bound on $\Obj_\inc$ in the other subroutines of \cref{alg:base-algorithm} need to be adapted when using $\oll$.
-%by assuming the inactive literals of $l \in \Obj_{\inc} \setminus \Act$ to $0$. \TODO{Even more adaption is needed since the outputs of all the totalizers need to be assumed.}
+Similarly to \msu{}, the assumptions for enforcing a bound on $\Obj_\inc$ in the other subroutines of \cref{alg:base-algorithm} need to be adapted when using \oll{} by assuming the inactive literals of $l \in \Obj_{\inc} \setminus \Act$ to $0$.
+Additionally, a set of assumptions over the totalizer outputs needs to be included.
+
+\TODO{Probably extend}
 
 \subsection{\msh{}\label{sec:hybrid}}
 
+% MSHyrbid pseudo-code
 \begin{algorithm}[t]
   \caption{\msh{} instantiation of \Min{}}\label{alg:msh}
-  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$, known satisfiable starting bound $k$ on $\Obj_\inc$, last bound $b_\inc$ on $\Obj_\inc$ and threshold value $0<\thr\le 1$ for when to switch to \satunsat{} \\
-  \textbf{Output}: The minimum value for $\Obj_\inc$ that can be achieved while the value for $\Obj_\dec$ is lower than $b_\dec$ and a solution fulfilling these conditions
+  \textbf{Input}: Last bound $b_\dec$ on $\Obj_\dec$, known upper and lower bounds $k$ and $b_\inc$ on min.\ of $\Obj_\inc$. \\
+  \textbf{Output}: Solution $\sol^r$ and smallest $k=\Obj_\inc(\sol^r)$ so that $\Obj_\dec(\sol^r)<b_\dec$.
 
   \begin{algorithmic}[1]
     \IF{$|\Act| < \thr \cdot |\Obj_\inc|$}
-      \STATE $b_\inc,\sol^r \gets \msu{}(b_\dec, b_\inc)$ \COMMENT{Immediately terminates once $|\Act| < \thr \cdot |\Obj_\inc|$ is reached}
+      \STATE $(b_\inc,\sol^r) \gets \msu{}(b_\dec, b_\inc)$ \COMMENT{Immediately terminates once $|\Act| < \thr \cdot |\Obj_\inc|$ is reached} \label{ln:msh-msu}
     \ENDIF
     \IF{$|\Act| \ge \thr \cdot |\Obj_\inc|$}
-      \STATE $b_\inc,\sol^r \gets \satunsat{}(b_\dec, k)$
+      \STATE fully build or extend $\tot(\Obj_\inc, k)$ if necessary \label{ln:msh-tot}
+      \STATE $(b_\inc,\sol^r) \gets \satunsat{}(b_\dec, k)$ \label{ln:msh-su}
     \ENDIF
-    \STATE \textbf{return} $b_\inc,\sol^r$
+    \STATE \textbf{return} $(b_\inc,\sol^r)$ \label{ln:msh-ret}
   \end{algorithmic}
 \end{algorithm}
 
+% MSHybrid intuition
 The final variant proposed in this work, \msh{}, is a hybrid between \msu{} and \satunsat{} with the following intuition:
-if \msu{}  reaches the stage where all literals of the objective are active, its search will become equivalent to \unsatsat{}.
-%, meaning it is a lower bounding search where the bound on the totalizer $\tot(\Obj_\inc)$ is increased by one every iteration until the SAT query is satisfiable.
+if \msu{}  reaches the stage where all literals of the objective are active, its search will become equivalent to \unsatsat{}, meaning it is a lower bounding search where the bound on the totalizer $\tot(\Obj_\inc)$ is increased by one every iteration until the SAT query is satisfiable.
 However, \satunsat{} search may be a significantly better approach compared to \unsatsat{}.
 If this is the case, \msu{} might have an advantage over \satunsat{} as long as not all literals are active, but as soon as all literals are active, it looses its advantage.
 Furthermore, if a problem instance has literals in $\Obj_\inc$ that are not constrained by $\formula$, these literals will never appear in any core making \msu{} behave like \unsatsat{} even before the totalizer is fully built.
 
+% Details and parameters
 With this intuition, we propose \msh{} as a hybrid variant that starts with \msu{} search and switches over to \satunsat{} as soon as a certain percentage of the literals in $\Obj_\inc$ have been added to the totalizer $\tot(\Act)$.
-Before switching over to \satunsat{}, the remaining literals are added to the totalizer to build $\tot(\Obj_\inc)$, which is needed for \satunsat{}.
+The subroutine that takes the last bound $b_\dec$ on $\Obj_\dec$, the known upper $k=\Obj_\inc(\sol^r)$ and lower bounds $b_\inc$ on the minimum of $\Obj_\inc$ as parameters is outlined in \cref{alg:msh}.
+Additionally, \msh{} has a configuration $\thr$ that defines at what percentage of the literals in $\Obj_\inc$ being active it switches from \msu{} to \satunsat{}.
+Initially, \msh{} will execute \msu{} on \cref{ln:msh-msu}.
+If \msu{} finds the minimum without the condition $|\Act| < \thr \cdot |\Obj_\inc|$ being met, the found minimum $b_\inc$ and corresponding solution $\sol^r$ will be returned on \cref{ln:msh-ret}.
+In case during the execution of \msu{} $|\Act| < \thr \cdot |\Obj_\inc|$ is met, \msu{} will immediately be terminated.
+On \cref{ln:msh-tot}, $\tot(\Obj_\inc,k)$ will then be fully built from the existing $\tot(\Act)$ and \satunsat{} invoked on \cref{ln:msh-su}.
+From now on, every call to \msh{} will call \satunsat{} on \cref{ln:msh-su}.
 With this, the advantages of both \msu{} and \satunsat{} can in the best case be combined.
-\TODO{Expand.}
 
+% Example: MSHybrid
 \begin{example}
   Consider the invocation of \algname{} detailed in \cref{ex:main-iteration}.
   We detail the invocations of \Min{} instantiated as \msh{}.
   Since \msh{} starts out as \msu{}, the first invocation follows the description in \cref{ex:msu}. \\
-  Assume \msh{} is configured to switch as soon as 70\% of the literals in $\Obj_\inc$ are active.
+  Assume \msh{} is configured to switch as soon as 70\% of the literals in $\Obj_\inc$ are active ($\thr = 0.7$).
   Since after the first iteration of \algname{} we have $\Act = \{i_1, i_2\}$, the second invocation of \msh{} also starts as \msu{} since less than 70\% of the literals in $\Obj_\inc$ are active.
   As soon as $i_3$ and $i_4$ become active, with the first core in the second invocation of \msu{}, the \msu{} subroutine is terminated since the threshold for switching to \satunsat{} is reached.
   Because all literals in $\Obj_\inc$ are already active in this example and therefore included in $\tot(\Act)$, the totalizer does not need to be extended but \satunsat{} can directly be invoked as in the second iteration outlined in \cref{ex:satunsat}. \\
@@ -359,38 +371,53 @@ With this, the advantages of both \msu{} and \satunsat{} can in the best case be
 
 \subsection{Lazily Building $\tot(\Obj_\dec)$}
 
-Assume \algname{} is invoked on a formula $\formula$ and a pair of overlapping objectives $\Obj_\inc$ and $\Obj_\dec$ for which $\Obj_\inc \cap \Obj_\dec \neq \emptyset$ with $\Min$ instantiated as $\msu$ or $\oll$. Let $\Act$ be the set of active literals of $\Obj_\inc$ as maintained by $\Min$.
-Lazy building of $\tot(\Obj_\dec)$ refers to only having $(\Obj_\dec \setminus \Obj_\inc) \cup  (\Act \cap \Obj_\dec)$ as input to the totalizer (incrementally extending the totalizer as the set $\Act$ grows), and assuming the value of each literal $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$ to $0$ in each SAT call made during invocations of $\Simpr$.
+% Lazily building totalizer for decreasing objective
+Assume \algname{} is invoked on a formula $\formula$ and a pair of overlapping objectives $\Obj_\inc$ and $\Obj_\dec$ for which $\Obj_\inc \cap \Obj_\dec \neq \emptyset$ with \Min{} instantiated as \msu{} or \oll{}.
+Let $\Act$ be the set of active literals of $\Obj_\inc$ as maintained by \Min{}.
+Lazy building of $\tot(\Obj_\dec)$ refers to only having $(\Obj_\dec \setminus \Obj_\inc) \cup  (\Act \cap \Obj_\dec)$ as input to the totalizer (incrementally extending the totalizer as the set $\Act$ grows), and assuming the value of each literal $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$ to $0$ in each SAT call made during invocations of \Simpr{}.
 The soundness of doing so follows by an argument very similar to the one we made in \cref{obs:sound}.
-\TODO{elaborate}
-%Essentially, the properties of cores imply that the Pareto optimal solutions $\sol$ of $\formula$ for which $\Obj_{\inc}(\sol) = b_\inc$ assign $\sol(l) = 0$ for all  $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$ to $1$. 
+Essentially, the properties of cores imply that the Pareto-optimal solutions $\sol^o$ of $\formula$ for which $\Obj_\inc(\sol^o) = b_\inc$ assign $\sol^o(l) = 0$ for all  $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$. 
 
+% Why are we doing this?
+The idea behind this refinement is to build the totalizer only over literals that can be assigned to 1.
+In this, unnecessary clauses are removed from the working formula of the SAT solver.
+
+% Adapting assumptions
 Lazy building of $\tot(\Obj_\dec)$ requires a minor adaption to the termination criterion of \cref{alg:base-algorithm}.
-More specifically, as the totalizer maintained by $\Simpr$ might not have all literals of $\Obj_\dec$ as inputs, the algorithm does not have a (straight-forward) way of checking if there exists a solution $\sol$ for which $\Obj_\dec(\sol) < b_\dec$.
-However, the lack of further Pareto-optimal solutions is instead detected in the next call to $\Min$ by the SAT solver returning an empty core, or more precisely, a subset of assumptions that doesn't contain any inactive literals nor outputs of $\tot(\Obj_\inc)$.
+More specifically, as the totalizer maintained by \Simpr{} might not have all literals of $\Obj_\dec$ as inputs, the algorithm does not have a (straight-forward) way of checking if there exists a solution $\sol$ for which $\Obj_\dec(\sol) < b_\dec$.
+However, the lack of further Pareto-optimal solutions is instead detected in the next call to \Min{} by the SAT solver returning an empty core, or more precisely, a subset of assumptions that does not contain any inactive literals nor outputs of $\tot(\Obj_\inc)$.
 
 \subsection{Blocking of Dominated Solutions}
 
-Every time in the search procedure that a candidate solution $\sol$ with objective values $b_\inc = \Obj_\inc(\sol)$ and $b_\dec = \Obj_\dec(\sol)$ is found, the definition of a Pareto-optimal point leads to the conclusion that all solutions $\sol$ with $\Obj_\inc(\sol) > b_\inc$ and $\Obj_\dec(\sol) > b_\dec$ cannot be Pareto-optimal.
+% Blocking solutions dominated by candidates
+Every time in the search procedure that a candidate solution $\sol$ with objective values $b_\inc = \Obj_\inc(\sol)$ and $b_\dec = \Obj_\dec(\sol)$ is found, the definition of a Pareto-optimal point leads to the conclusion that all solutions $\sol^d$ with $\Obj_\inc(\sol^d) > b_\inc$ and $\Obj_\dec(\sol^d) > b_\dec$ cannot be Pareto-optimal.
 These points can all be blocked by adding the clause $\{ \ove{\Obj_\inc}{b_\inc}, \ove{\Obj_\dec}{b_\dec} \}$ to the solver.
-\TODO{elaborate}
+Adding this refinement might help prune the search space quicker and therefore speed up finding Pareto-optimal solutions.
 
 \subsection{Domain-Specific Solution Blocking}
 
-If multiple representatives of the same Pareto point are of interest, the procedure $\E$ needs to block all obtained solutions. 
-While this can be done in a straight-forward manner on the CNF-level, we will in later sections give examples of how domain-specific knowledge can be used in order to derive stronger clauses that block not only a specific solution obtained, but also other, symmetric solutions.
+% Naive and domain-secific blocking
+If multiple representatives of the same Pareto point are of interest, the procedure \E{} needs to block all obtained solutions in order to enumerate all solutions corresponding to the same Pareto point. 
+Naively, a found solution $\sol$ can be blocked with the clause $\{ \lnot v \mid v \in \sol(v) \cap \formula^\text{orig} \}$, where $\formula^\text{orig}$ is the original formula of the instance without any clauses added by the algorithm.
+An improved by still generic way of blocking a solution is to build a blocking clause over all variables that the SAT solver decisions for. \TODO{is this correct and enough?}
+In later sections we also give examples of how domain-specific knowledge can be used in order to derive stronger clauses that block not only a specific solution obtained, but also other, symmetric solutions.
 
 \subsection{Bound Hardening}
 
-\TODO{write}
+% Hardening bounds for O_D and why we don't do it for O_I
+Because the values for $\Obj_\dec(\sol^r)$ monotonically decrease while the algorithm progresses, this information can be passed on to the SAT solver for it to be able to draw logical conclusions from it.
+This is done by the literal $\ove{\Obj_\dec}{k}$ as a unit clause, as soon as the algorithm has verified that all remaining Pareto-optimal solutions $\sol^o$ have $\Obj_\dec(\sol^o)\le k$.
+Something similar could be done for $\Obj_\inc$, since it is known that the corresponding objective values will monotonically increase.
+However, as mentioned in \cref{sec:card-const}, the way \algname{} uses totalizers, only upper bounds can be enforced with them.
+For this reason, bound hardening is only done for the decreasing objective.
 
 \subsection{Refinements to Core-Guided Variants}
 
-Our implementation of the variants $\algname$ with $\msu$ or $\oll$ make use of refinements commonly used in core-guided MaxSAT solving.
+Our implementation of the variants \algname{} with \msu{} or \oll{} make use of refinements commonly used in core-guided MaxSAT solving.
 More specifically, we employ core minimization~\autocite{DBLP:journals/jsat/IgnatievMM19} (either exact or heuristic) and core-exhaustion~\autocites{DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/AnsoteguiBGL13}.
-%(We also considered and implemented a disjoint core phase~\cite{DBLP:conf/cp/DaviesB11} but did not observe noticeable impact on runtime performance in practice.)
+Additionally, we consider a disjoint core extraction phase~\autocite{DBLP:conf/cp/DaviesB11}.
 Given a core $\core$ returned by the SAT solver, heuristic core minimization refers to reinvoking the SAT solver with $\{\lnot l \mid l \in \core\}$ as the assumptions hoping that the solver returns a smaller set of assumptions.
 Exact core minimization refers to iteratively finding a minimal unsatisfiable subset by attempting to remove each assumption separately.
 Core exhaustion is an OLL-specific technique that seeks to improve the lower bound of each totalizer being added.
-%A disjoint core phase 
-%refers to iteratively invoking the SAT solver in order to extract several disjoint sets of objective literals to add to the totalizer (when using $\msu$) or build new totalizers over (when using $\oll$).
+A disjoint core phase refers to iteratively invoking the SAT solver in order to extract several disjoint sets of objective literals to add to the totalizer (when using \msu{}) or build new totalizers over (when using \oll{}).
+\TODO{expand}
