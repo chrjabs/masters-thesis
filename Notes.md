@@ -117,17 +117,17 @@
 
 # 04.04.2022 - Meeting Matti
 
-- _The_ declarative approach with different paradigms
 - Signposting can be list-like
+- Rework reference style
+- Conclusions past tense
+
+- Mention what we're focusing on once it comes up
+- _The_ declarative approach with different paradigms
+
+- Millions of vars and clauses: only _some_
 - Example 2.2: Change from instance to problem (with real-world representation)
 - Expand on CDCL
   - Intuitively, what is learned clause
 - CP 21 branch-and-bound MaxSAT paper
+
 - Other notions: We have those enumerated, they are presumably easier
-- Rework reference style
-- Conclusions past tense
-
-## Intro Rewrite
-
-- Mention what we're focusing on once it comes up
-- Millions of vars and clauses: only _some_

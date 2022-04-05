@@ -35,10 +35,11 @@ if $\formula$ is unsatisfiable, the return value is ``unsatisfiable'' (\unsat{})
 % SAT as a declarative modelling language
 The SAT problem was proved to be \NP-complete by~\textcite{DBLP:conf/stoc/Cook71}.
 This result is central to the modern day use of SAT as a declarative programming approach to solving other \NP-complete problems by encoding them as a propositional formula first, solving them with a SAT solver and then decoding the solution to the original problem context.
-The advantage of using SAT as a declarative programming language for solving other problems comes from the fact that conflict-driven clause learning (CDCL) solvers for SAT are efficient in practice and can solve instances with millions of variables and clauses~\autocite{handbook2-cdcl}.
+The advantage of using SAT as a declarative programming language for solving other problems comes from the fact that conflict-driven clause learning (CDCL) solvers for SAT are efficient in practice and can solve real-world instances with up to millions of variables and clauses~\autocite{handbook2-cdcl}.
 
 % Example: SAT modelling
 \begin{example}\label{ex:sat-modelling}
+  \TODO{Try to come up with an example for a \emph{problem} rather than an \emph{instance}.}
   We give an example of a real-world problem, modelling and solving it with the help of SAT.
   Assume you have the following situation:
   you want to plan a meal for a guest coming over, and you do not know whether to include an appetizer, a main course and a dessert.
