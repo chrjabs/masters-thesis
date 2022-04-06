@@ -26,10 +26,10 @@ These two problems, learning interpretable decision rules from data and the bi-o
 % What is MLIC
 Recently, a variety of SAT and MaxSAT-based approaches have been developed for learning interpretable classifiers from data~\autocites{DBLP:conf/ijcai/Ignatiev0NS21,DBLP:conf/cp/MaliotovM18,DBLP:conf/ijcai/NarodytskaIPM18,DBLP:conf/ijcai/Hu0HH20,DBLP:journals/corr/abs-2010-09919,DBLP:conf/cp/YuISB20,DBLP:conf/cade/IgnatievPNM18}.
 The two objectives of minimizing size (the smaller, the more interpretable) and classification error (when there is no perfect classifier, as typical for real-world data) are conflicting, hence giving naturally rise to bi-objective optimization problems.
-Here we consider learning of interpretable decision rules as a representative benchmark domain from this line of work, building on the encoding presented in~\textcite{DBLP:conf/cp/MaliotovM18}.
+Here we consider learning of interpretable decision rules as a representative benchmark domain from this line of work, building on the encoding presented by~\textcite{DBLP:conf/cp/MaliotovM18}.
 In short, here a decision rule is a binary classifier in the form of a CNF formula over Boolean features.
 The result of the formula evaluated on the features of a data sample is the classification assigned by the classifier to this sample.
-In~\textcite{DBLP:conf/cp/MaliotovM18} a linear combination of the two objectives, using a parameter $\lambda\geq 0$, was proposed in order to directly apply a MaxSAT solver to find decision rules under a pre-fixed value for $\lambda$.
+Originally, when using the encoding a linear combination of the two objectives, using a parameter $\lambda\geq 0$, was proposed in order to directly apply a MaxSAT solver to find decision rules under a pre-fixed value for $\lambda$~\autocite{DBLP:conf/cp/MaliotovM18}.
 This is equivalent to the weighted sum method~\autocite{Ehrgott2005-3}.
 While this allows for finding a Pareto-optimal decision rule under a specific value of $\lambda$, MaxSAT solving multiple times under different choices of $\lambda$ does not guarantee finding a representative Pareto-optimal decision rule for each Pareto point~\autocites{Ehrgott2005-3,survey}.
 In contrast, here we address directly the problem of computing all Pareto-optimal solutions w.r.t.\ the two objectives.
@@ -87,11 +87,11 @@ The lexicographic ordering is then enforced by adding the constraints $\lnot \eq
 \end{example}
 
 % Benchmark datasets
-As the basis of our benchmark instances, we used 24 standard UCI~\autocite{UciMlr} and Kaggle ({\small\url{https://www.kaggle.com}}) benchmark datasets, including ones used in~\textcite{DBLP:conf/cp/MaliotovM18}; see \cref{appendix:datasets} for details.
+As the basis of our benchmark instances, we used 24 standard UCI~\autocite{UciMlr} and Kaggle ({\small\url{https://www.kaggle.com}}) benchmark datasets, including ones used in the original evaluation of the encodinng~\autocite{DBLP:conf/cp/MaliotovM18}; see \cref{appendix:datasets} for details.
 We randomly and independently sampled subsets of $\nsamp\in\{50,100,1000,5000,10000\}$ data samples from the datasets, four of each size (when applicable), resulting in a total of 372 datasets.
-The datasets were discretized as in~\textcite{DBLP:conf/cp/MaliotovM18}:
+The datasets were discretized as in~\autocite{DBLP:conf/cp/MaliotovM18}:
 categorical features are one-hot encoded, continuous features discretized by comparing to a collection of thresholds.
-All experiments on these datasets were run with the encoding from~\textcite{DBLP:conf/cp/MaliotovM18} configured to learn CNF decision rules consisting of two clauses.
+All experiments on these datasets were run with the encoding configured to learn CNF decision rules consisting of two clauses.
 
 % domain-specific blocking
 When enumerating multiple solutions corresponding to the same Pareto point, the blocking clauses for \algname{} (as well as the $P$-minimal approach compared to in the experiments) can be strengthened to find solutions mapping to distinct rules:
@@ -102,7 +102,7 @@ Further, making use of the algorithm-specific fact that \algname{} is guaranteed
 We instantiated Seesaw for learning interpretable decision rules by using misclassifications as the objective over which cores are extracted and a hitting set $\hs$ is found over these cores.
 In the second step, the number of literals in the smallest rule misclassifying the samples in $\hs$ or a subset of it is found.
 This function is implemented as a solution-improving search with a SAT solver.
-This instantiation was chosen because finding the smallest rule misclassifying $\hs$ is an anti-monotone function and the refined version of core extraction presented in~\textcite{DBLP:conf/cp/JanotaMSM21} can therefore be used, making Seesaw feasible in the first place.
+This instantiation was chosen because finding the smallest rule misclassifying $\hs$ is an anti-monotone function and the refined version of core extraction presented in the original paper~\autocite{DBLP:conf/cp/JanotaMSM21} can therefore be used, making Seesaw feasible in the first place.
 
 \subsection{Bi-Objective Set Covering}
 
@@ -132,7 +132,7 @@ The blocking clauses used in \algname{} for enumerating all Pareto-optimal solut
 due to the fact that \algname{} is guaranteed to enumerate the Pareto-optimal solutions so that one of the objectives will monotonically decrease, it is enough to block in \algname{} the solution over all $l_e$ that are assigned to true.
 
 % Seesaw not feasible
-Since both objectives in the bi-objective set covering problem are monotone over the chosen cover, the refined core extraction strategy for Seesaw from~\textcite{DBLP:conf/cp/JanotaMSM21} cannot be used.
+Since both objectives in the bi-objective set covering problem are monotone over the chosen cover, the refined core extraction strategy for Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21} cannot be used.
 Seesaw is therefore infeasible for this problem since it would enumerate every possible solution.
 
 \section{Results\label{sec:results}}

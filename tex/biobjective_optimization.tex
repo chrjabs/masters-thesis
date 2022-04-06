@@ -154,7 +154,7 @@ The approach perhaps closest to ours is solving multi-objective constraint optim
 Since this approach is arguably the most similar among existing to the approach developed in this thesis, we are using it as one of the two approaches we empirically compare \algname{} to in \cref{chap:experiments}.
 The $P$-minimal approach  corresponds to enumerating the solutions of $\formula^\text{W} = \formula \land \tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$ that are subset-minimal w.r.t.\ the set of outputs of the totalizers.
 More precisely, if $P$ is the set of output literals of $\tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$, then the goal is to enumerate solutions $\sol^m$ such that no other solution $\sol$ has $\{ l \mid l \in P \land \sol(l) = 0\} \subsetneq \{ l \mid l \in P \land \sol^m(l) = 0\}$.
-The procedure for enumerating such solutions (detailed in~\textcite{DBLP:conf/ftp/KoshimuraNFH09}) works by (i)~using a solver to obtain any solution $\sol$ of $\formula^\text{W}$, (ii)~iteratively minimizing the subset of variables of $P$ set to true by the solution, and, once a minimal solution $\sol_m$ has been found, (iii)~adding the clause $(\ov{\Obj_{\inc}}{k_1} \lor \ov{\Obj_{\dec}}{k_2})$ containing the output variables corresponding to the lowest index set to true by $\sol_m$.
+The procedure for enumerating such solutions~\autocite{DBLP:conf/ftp/KoshimuraNFH09} works by (i)~using a solver to obtain any solution $\sol$ of $\formula^\text{W}$, (ii)~iteratively minimizing the subset of variables of $P$ set to true by the solution, and, once a minimal solution $\sol_m$ has been found, (iii)~adding the clause $(\ov{\Obj_{\inc}}{k_1} \lor \ov{\Obj_{\dec}}{k_2})$ containing the output variables corresponding to the lowest index set to true by $\sol_m$.
 We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal'' for short.
 
 % Example: P-minimal
@@ -200,9 +200,10 @@ Once all solutions for that Pareto point are enumerated, the clause is hardened.
 \subsubsection{Enumeration of Pareto-Minimal Correction Sets\label{sec:pareto-mcs}}
 
 % Pareto MSCes
-\Textcites{DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18} proposed an approach for computing Pareto-optimal solutions via so-called Pareto-minimal correction sets (ParetoMCSes).
+
+An approach for computing Pareto-optimal solutions via so-called Pareto-minimal correction sets (ParetoMCSes) has been proposed in the past~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18}.
 A ParetoMCS (w.r.t.\ two objectives $\Obj_1$ and $\Obj_2$) consists of two sets of literals $(M_1, M_2)$ such that (i)~$M_1 \subset \Obj_1$ and $M_2 \subset \Obj_2$, and (ii)~there is a Pareto-optimal solution $\sol$ that sets $\sol(l) = 1$ for all $l \in M_1 \cup M_2$ and $\sol(l) = 0$ for all other $l \in (\Obj_1 \cup \Obj_2) \setminus (M_1 \cup M_2)$.
-\Textcite{DBLP:conf/ijcai/Terra-NevesLM18a} reduced the computation of Pareto-optimal solutions to the computation of ParetoMCSes.
+Computing Pareto-optimal solutions can be reduced to the computations of ParetoMCSes~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}.
 The task of computing ParetoMCSes is accomplished by enumerating all subsets $S \subset  (\Obj_1 \cup \Obj_2)$ for which (i)~$\formula \land \bigwedge_{l \in  (\Obj_1 \cup \Obj_2) \setminus S} (\lnot l)$ is satisfiable, and (ii)~$\formula \land \bigwedge_{l \in  (\Obj_1 \cup \Obj_2) \setminus S'} (\lnot l)$ is unsatisfiable for all $S' \subsetneq S$.
 Let $\mathcal{S}$ be the collection of all such sets.
 The Pareto-optimal solutions are obtained by extracting the solutions satisfying $\formula \land \bigwedge_{l \in  (\Obj_{\inc} \cup \Obj_\dec) \setminus S} (\lnot l)$ for all $S \in \mathcal{S}$ and removing the dominated ones~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}.
@@ -226,7 +227,7 @@ Since ParetoMCS enumeration is approximative in this sense, we are not comparing
 \TODO{First two paragraphs different in style than previous text.}
 
 % Implicit hitting set approach
-Implicit hitting set approaches for solving combinatorial optimization problems were first proposed in \textcite{DBLP:journals/ior/Moreno-CentenoK13}.
+Implicit hitting set approaches for solving combinatorial optimization problems were first proposed in~\textcite{DBLP:journals/ior/Moreno-CentenoK13}.
 The overarching idea is that an optimization problem is modelled as a set $\cores$ of so-called \emph{cores} which represent an undesirable or conflicting substructure of the problem.
 (Note that these cores are not necessarily equal to a core in SAT solving as described in \cref{sec:inc-sat}.)
 All cores in $\cores$ need to be resolved by selecting a smallest hitting set $\hs$ that contains at least one element from each core.
@@ -235,8 +236,8 @@ instead, it is defined implicitly through a separation oracle that, for decision
 If the hitting set does not intersect with all cores, the oracle returns a core that is not hit.
 
 % MaxHS and Seesaw
-In~\textcites{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20}, an implicit hitting set algorithm for solving MaxSAT was proposed and refined;
-other successful applications can be found in~\textcites{DBLP:conf/cp/IgnatievPLM15,DBLP:conf/kr/SaikkoWJ16,DBLP:conf/cade/FazekasBB18,DBLP:conf/kr/SaikkoDAJ18}.
+The implicit hitting set approach has been successfully applied to and refined for MaxSAT~\autocite{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20};
+other successful applications can be found~\autocites{DBLP:conf/cp/IgnatievPLM15,DBLP:conf/kr/SaikkoWJ16,DBLP:conf/cade/FazekasBB18,DBLP:conf/kr/SaikkoDAJ18}.
 Recently, Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21} was proposed as a generalized implicit hitting set framework for bi-objective optimization.
 In contrast to our work, in Seesaw one of the objectives is treated as a block box.
 This allows for---but also requires---problem-specific instantiations of the black box.
@@ -277,9 +278,9 @@ More precisely, if the hitting set is found to increase from size $|\hs|$ to siz
 \end{example}
 
 % Refined core extraction strategy
-Note that the core-extraction strategy that only computes $\Obj_\inc \setminus \hs$ as the new core detailed in the example corresponds to what is called the weakest possible strategy in~\textcite{DBLP:conf/cp/JanotaMSM21}.
+Note that the core-extraction strategy that only computes $\Obj_\inc \setminus \hs$ as the new core detailed in the example corresponds to what is called the weakest possible strategy by~\textcite{DBLP:conf/cp/JanotaMSM21}.
 Seesaw is only feasible in practice when using a stronger core-extraction strategy---like the improved version detailed in the original Seesaw paper---since Seesaw otherwise reduces to enumerating all subsets of $\Obj_\inc$ as hitting sets~\autocite{DBLP:conf/cp/JanotaMSM21}.
-Also note that, in contrast to \algname{} and $P$-minimal, extending Seesaw as it is presented in~\textcite{DBLP:conf/cp/JanotaMSM21} to support the enumeration of all Pareto-optimal solutions seems non-trivial.
+Also note that, in contrast to \algname{} and $P$-minimal, extending Seesaw as it was originally presented~\autocite{DBLP:conf/cp/JanotaMSM21} to support the enumeration of all Pareto-optimal solutions seems non-trivial.
 For a non-formal intuition note that, while Seesaw is guaranteed to find at least one solution obtaining the objective values of each Pareto-optimal point, the non-deterministic hitting set computation might steer the algorithm past other solutions that obtain the same values.
 
 \subsubsection{SAT-Based Lexicographic Optimization\label{sec:lex-opt}}
@@ -295,15 +296,15 @@ In fact, many modern MaxSAT solvers exploit multilevel properties of input insta
 
 % CP-based approaches
 Beyond SAT-based approaches, multi-objective optimization has been studied in other declarative optimization paradigms.
-An early algorithm that can be used in constraint programming is a lexicographic method first presented in~\textcite{Wassenhove1980}.
-\Textcite{DBLP:conf/ecai/Gavanelli02} proposed a branch-and-bound-based algorithm that outperforms that presented in~\textcite{Wassenhove1980}.
-This filtering algorithm was improved by the Pareto constraint presented in~\textcite{DBLP:conf/cp/SchausH13,DBLP:conf/aaai/HartertS14}
+An early algorithm that can be used in constraint programming is a lexicographic method~\autocite{Wassenhove1980}.
+A branch-and-bound-based algorithm that outperforms the algorithm by \citeauthor{Wassenhove1980} was presented later~\autocite{DBLP:conf/ecai/Gavanelli02}.
+This improved filtering algorithm was improved again by the Pareto constraint~\autocite{DBLP:conf/cp/SchausH13,DBLP:conf/aaai/HartertS14}.
 The resulting search algorithm is similar to ParetoMCSes in that it maintains a set $\mathcal{T}$ of solutions that do not dominate each other.
 When a new solution is found, any solution it dominates is removed from $\mathcal{T}$.
 
 % CP-based leximax optimization
 Other than approaches for finding all Pareto-optimal solutions, there have also been constraint programming algorithms proposed for finding leximax-optimal solutions.
-In~\textcite{DBLP:journals/ai/BouveretL09}, five algorithms for this problem are given.
+\Textcite{DBLP:journals/ai/BouveretL09} gives five algorithms for this problem.
 There is one branch-and-bound-based algorithm and another algorithm based on adding constraints to encode the sorted objective value vector, minimizing multiple times over that.
 \TODO{Extend.}
 
@@ -323,14 +324,14 @@ Comparing exact with approximative approaches does not necessarily give much ins
 % Simulated annealing
 The first category of approximative algorithms is the family of simulated annealing algorithms~\autocite{Saini2021}.
 These probabilistic and meta-heuristic algorithms model the annealing process that is used to increase the quality of crystalline structure in metals.
-It was first proposed in~\textcite{DBLP:journals/science/KirkpatrickGV83} and extended to multiple objectives in~\textcite{DBLP:journals/tec/BandyopadhyaySMD08}.
+It was first proposed for a single objective~\autocite{DBLP:journals/science/KirkpatrickGV83} and extended to multiple later~\autocite{DBLP:journals/tec/BandyopadhyaySMD08}.
 An example of an algorithm building on multi-objective simulated annealing can be found in~\textcite{DBLP:journals/isci/SenguptaS18}.
 
 % Evolutionary algorithms
 A second big group of algorithms are evolutionary algorithms~\autocites{Saini2021,Dasgupta2013}.
 These meta-heuristic algorithms hold a set of candidate solutions referred to as \emph{population}, which is then developed over multiple iterations to approximate the Pareto front;
 this process simulates evolution in nature, hence the name.
-Algorithms for this category were presented for example in~\textcites{DBLP:journals/jgo/StornP97,DBLP:journals/tec/DebAPM02}.
+Algorithms for this category were presented in many places (e.g.,~\autocites{DBLP:journals/jgo/StornP97,DBLP:journals/tec/DebAPM02}).
 
 % Why we don't compare to these approaches
 Our focus in this work is to develop a MaxSAT-based exact approach for solving bi-objective optimization problems, especially suited for problems naturally represented in propositional logic.
