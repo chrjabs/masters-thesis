@@ -131,3 +131,23 @@
 - CP 21 branch-and-bound MaxSAT paper
 
 - Other notions: We have those enumerated, they are presumably easier
+
+# 06.04.2022 - Intro Outline
+
+- Being upfront: What is this thesis about?
+- What are optimization problems and where do they occur
+- Applications of optimization in literature
+- Hardness of optimization problems
+- Approaches to solving optimization
+- Solving pipeline for declarative approaches
+- Advantages of declarative approaches
+- Runtimes in declarative approaches
+- Reveal conflicting second objective
+- Conflicting objectives and why there might be no single optimal solution
+- Pareto optimality
+- Bi-objective vs multi-objective
+- Applications of bi-objective optimization in literature
+- MaxSAT (and SAT)
+- SAT-based bi-/multi-objective optimization not very active in last years
+- Contributions
+- Signposting for chapters

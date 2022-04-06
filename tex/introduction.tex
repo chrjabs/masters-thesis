@@ -1,24 +1,69 @@
 \chapter{Introduction\label{chap:intro}}
 
-% 1. What are optimization problems and where do they occur
+% Being upfront: What is this thesis about?
+In this thesis, we propose an algorithmic approach for exactly solving \NP-hard optimization problems with two conflicting objectives.
+The algorithm proposed is based on declarative programming and is generally applicable to problems that can easily represented in propositional logic because it works in the declarative paradigm of propositional satisfiability.
+
+% What are optimization problems and where do they occur
 % Start by telling a story (running example throughout intro)
 When one is looking for a new flat to buy, most people will be comparing prices with the aim to find the cheapest flat possible that fulfils their requirements.
 This is an example of what are called optimization problems.
 Optimization problems can be summarized as the task of finding a ``best'' solution out of a collection of possible solutions available.
-The notion of ``best'' that is used there is commonly that a ``cost'' associated with each solution shall be smallest.
+Commonly, the notion of ``best'' that is used in optimization is that a solution of minimum associated ``cost'' is considered optimal.
 Speaking in the example from above, the task is to find the flat from all flats that fulfils the requirements for the cheapest price.
 If the collection of possible solutions is discrete (as in the flat example), we speak of \emph{combinatorial} optimization.
 
-% 2. Applications of optimization in literature
+% Applications of optimization in literature
 Combinatorial optimization problems naturally arise in many areas, ranging from industrial applications over research to everyday tasks.
 Examples in literature include scheduling~\autocites{DBLP:conf/cp/Stojadinovic14,DBLP:conf/cpaior/BofillGSV15,DBLP:journals/ior/Solomon87,DBLP:journals/candie/AkyolB07}, supply chain optimization~\autocite{}, minimizing the loss of a neural network~\autocite{}, air traffic management~\autocites{DBLP:journals/ior/BertsimasLO11,RichardsHow2002Aircrafttrajectoryplanning}, clustering~\autocite{DBLP:journals/ai/DaoDV17,DBLP:conf/sdm/DavidsonRS10}, learning optimal classifiers~\autocites{DBLP:conf/cp/MaliotovM18,DBLP:conf/ijcai/NarodytskaIPM18,DBLP:conf/ijcai/Hu0HH20,DBLP:conf/cp/YuISB20,DBLP:conf/aaai/DemirovicS21,DBLP:conf/cp/ShatiCM21} and many more.
-Since there is such a variety of applications for combinatorial optimization, there is a plethora of work on developing algorithmic approaches that allow for solving these optimization problems~\autocite{}.
 
-\TODO{Maybe move approaches and declarative stuff here.}
-\TODO{Transition by saying that we focus on bi-objecitve.}
-\TODO{Mention hardness.}
+% Hardness of optimization problems
+In the same way that there are different complexity classes for decision problems, these complexity classes can be extended to optimization problems as well.
+Probably the two most important complexity classes are $\mathcal{P}$ and \NP.
+$\mathcal{P}$ contains all problems for which an algorithm that solves the problem in polynomial time is known.
+For problems in \NP, on the other hand, to our current knowledge, no such algorithm exists.
+This means that the worst case runtime for \NP-complete (i.e., exactly as hard as the hardest problems in \NP) and \NP-hard (i.e., at least as hard as problems in \NP) problems is exponential.
+Consider the \NP-complete~\autocite{} set covering decision problem~\autocite{DBLP:conf/coco/Karp72} where for a collection $\sets$ of sets, the task is to determine whether a cover $\cover$ with cardinality smaller than a threshold $k$ exists so that the cover intersects all sets, i.e., $S \cap \cover \neq \emptyset$ for all $S\in\sets$.
+The corresponding optimization problem, where the task is to find the \emph{smallest} such cover is \NP-hard.
+Several well known \NP-complete decision problems have corresponding \NP-hard optimization problems~\autocite{KorteVygen2018-15}.
 
-% 3. Reveal conflicting second objective
+% Approaches to solving optimization
+Since there is such a variety of applications for combinatorial optimization, a plethora of algorithmic approaches to solving optimization problems have been proposed.
+These approaches range from stochastic local search~\autocite{}, over evolutionary~\autocites{Dasgupta2013,DBLP:journals/jgo/StornP97} to algorithms based on declarative programming~\autocite{}.
+In addition to these generally applicable approaches, there are problem specific algorithms, e.g., based on dynamic programming~\autocite{DBLP:conf/aaai/DemirovicS21}\TODO{more examples}.
+One other attribute on which the optimization approaches differ is whether they are exact or approximative, meaning if they are guaranteed to find \emph{the best} or \emph{a good} solution to any instance (given enough resources).
+Even though some others are also briefly surveyed in a later chapter, this work mainly focuses on declarative (and therefore general) and exact approaches.
+
+% Solving pipeline for declarative approaches
+In the declarative approach to solving optimization problems, the problem of interest is first \emph{encoded} into a declarative programming language of choice.
+Examples of declarative languages are maximum satisfiability~\autocite{handbook2-maxsat}, constraint programming~\autocite{} and mixed integer linear programming~\autocites{ChenEtAl2010-intro,KorteVygen2018-5}.
+An encoding is hereby a mapping of the original problem to a problem in the declarative language, where each optimal solution to the encoded instance corresponds to an optimal solution of the original problem.
+The choice of declarative language should be based on what the problem of interested can be naturally encoded in.
+Next, a general optimization solver for the chosen declarative language is used to solve the encoded problem to obtain on optimal solution for it.
+A solver for a declarative programming language is an algorithm that finds an optimal solution to an optimization instance in a declarative programming language.
+The last step is to map this solution back to the original problem space.
+This solving pipeline of the declarative approach to optimization is illustrated in \cref{fig:solving-pipeline}.
+
+\begin{figure}
+  \centering
+  \includegraphics{solving-pipeline.pdf}
+  \caption{The solving pipeline of the declarative approach to optimization.}\label{fig:solving-pipeline}
+\end{figure}
+
+% Advantages of declarative approaches
+The advantage of declarative approaches is that the solving algorithm itself is general and can be used for different problems, as long as \TODO{a polynomial size encoding (rephrase as ``an encoding of size that doesn't influence runtime'')} exists.
+The task of applying a given declarative method to a new problem consists therefore in finding an encoding and not in coming up with a new algorithm.
+Furthermore, improvement that is made in developing solvers for the declarative language immediately maps to better solving performance for \emph{all} problems that can be encoded into this declarative language.
+
+% Runtimes in declarative approaches
+In the scope of this work, we focus on using declarative approaches for solving \NP-hard optimization problems.
+For this application, \NP-hard declarative languages are used, meaning the generic solving step is the only computationally hard step in the solving pipeline.
+Both the encoding and the reconstruction of the solution are typically done in polynomial time.
+Since the declarative language is \NP-hard (assuming $\mathcal{P}\neq\mathcal{NP}$), the worst-case runtime of the solving algorithm cannot be better than exponential.
+However, in practice one can observe significantly better performance from many solving algorithms for ``interesting'' instances, i.e., instances that appear for real-world problems.
+Examples for solving algorithms for \NP-hard declarative languages that achieve good performance on real-world instances are conflict driven clause learning solvers for propositional satisfiability~\autocite{handbook2-cdcl} and state-of-the-art branch-and-cut algorithms for mixed integer linear programming~\autocite{ChenEtAl2010-branch-and-cut}.
+
+% Reveal conflicting second objective
 Taking a closer look at the flat search example from the beginning, we can notice a problem emerging:
 what does ``fulfilling'' the requirements mean?
 Some requirements, like the number of rooms, might be easy to specify, but consider the distance of ones daily commute.
@@ -26,7 +71,7 @@ Rather than setting a fixed threshold as ``maximum $x$ kilometres distance'', wh
 Now there are multiple objectives to take into account regarding what constitutes a ``best'' solution.
 Multiple objectives give rise to \emph{multi-objective} optimization.
 
-% 4. Conflicting objectives and why there might be no single optimal solution
+% Conflicting objectives and why there might be no single optimal solution
 A crucial difference between single-objective and multi-objective optimization is that there is no single notion of optimality for the multi-objective setting.
 Whereas for a single objective function, there is a clear minimum (or maximum) and objective values can be unambiguously compared, this becomes less defined for the multi-objective case:
 consider a flat with a cost of 300\,000 \texteuro{} and 4-kilometre daily commute and compare it to another flat that costs 240\,000 \texteuro{} and has a 3-kilometre daily commute.
@@ -36,7 +81,7 @@ Now, it is not any more immediately clear which one of these options is better, 
 This becomes especially difficult if there is no clear preference over the objectives.
 Typically, a situation like that occurs when two of the objectives considered are in conflict, as the price of a flat and the corresponding daily commute might be if the commute is towards the city centre and flats in the city centre are more expensive.
 
-% 5. Pareto optimality
+% Pareto optimality
 % Point out different nomenclature
 In the context of our work, the notion of optimality for multi-objective optimization is that of Pareto optimality (also called efficiency in other contexts)~\autocite{Ehrgott2005-2}.
 Intuitively, Pareto optimality considers a solution optimal if there are no other solutions with better objective values for one objective and not worse for all the others. 
@@ -49,9 +94,7 @@ This gives a human decision maker the ability to look at the results and choose 
 The last task goes one step further and enumerates the full Pareto front (i.e., all Pareto-optimal solutions), even if multiple of the solutions might lead to the same objective values.
 In this work we focus on the latter two tasks.
 
-\TODO{Do I mention other notions of optimality here?}
-
-% 6. Bi-objective vs multi-objective
+% Bi-objective vs multi-objective
 % Why bi-objective is interesting/enough
 The handle on multiple objectives and what the objective values of an optimal solution actually mean can quickly become hard to grasp.
 As humans, we can only visualize three dimensions meaning a Pareto front over four objectives is already an entirely abstract object while even a three-dimensional one is hard to visualize.
@@ -62,7 +105,7 @@ Additionally, objectives that are considered ``less important'' but should still
 e.g., requiring that the living space is more than 60 $\text{m}^2$ rather than treating it as a separate objective.
 In this work we focus on \emph{bi-objective} optimization and develop an algorithm for finding either a single representative per Pareto point or all Pareto-optimal solutions.
 
-% 7. Applications of bi-objective optimization in iterature
+% Applications of bi-objective optimization in literature
 Bi-objective optimization problems also arise naturally in many fields of application.
 In machine learning, a regularization term---expressing how complex a certain model is---is often combined with the loss based on the classification error~\autocite{}.
 Typically, this is done by forming a linear combination of the two components, but there is also research in treating the two objectives separately~\autocite{DBLP:journals/tsmc/JinS08}.
@@ -72,55 +115,19 @@ A bi-objective optimization problem also arises when wanting to create a portfol
 There are also bi-objective optimization problems in network routing with the objectives load balancing and latency~\autocite{SilverioEtAl2022biobjectiveoptimization}.
 In supply chain optimization, in addition to the economic objective, environmental aspects can be taken into consideration as a second objective~\autocite{DBLP:journals/cce/Pinto-VarelaBN11}.
 
-% 8. Hardness of optimization problems
-In the same way that there are different complexity classes for decision problems, these complexity classes can be extended to optimization problems as well.
-Consider the \NP-complete~\autocite{} set covering decision problem~\autocite{DBLP:conf/coco/Karp72} where for a collection $\sets$ of sets, the task is to determine whether a cover $\cover$ with cardinality smaller than a threshold $k$ exists so that the cover intersects all sets, i.e., $S \cap \cover \neq \emptyset$ for all $S\in\sets$.
-The corresponding optimization problem, where the task is to find the \emph{smallest} such cover is \NP-hard.
-Several well known \NP-complete decision problems have corresponding \NP-hard optimization problems~\autocite{KorteVygen2018-15}.
-\TODO{Add intuition on \NP-completeness/-hardness}
-
-% 9. Transition to approaches to solving optimization problems
-A plethora of algorithmic approaches to solving optimization problems have been proposed, ranging from stochastic local search~\autocite{}, over evolutionary~\autocites{Dasgupta2013,DBLP:journals/jgo/StornP97} to declarative algorithms~\autocite{}.
-\TODO{Mention specialized algs.}
-Two main attributes in which the different approaches differ is whether they are exact or approximative, meaning if they are guaranteed to find \emph{the best} or \emph{a good} solution to any instance (given enough resources), and whether they are general or problem specific.
-Even though some others are also briefly surveyed in a later chapter, this work mainly focuses on declarative (and therefore general) and exact approaches.
-
-% 10. Solving pipeline for declarative approaches
-The declarative approach to solving optimization problems, the problem of interest is first \emph{encoded} into a declarative language of choice.
-Examples of declarative languages are maximum satisfiability~\autocite{handbook2-maxsat} and mixed integer linear programming~\autocites{ChenEtAl2010AppliedIntegerProgramming,KorteVygen2018-5}.
-An encoding is hereby a mapping of the original problem to a problem in the declarative language, where each optimal solution to the encoded instance corresponds to an optimal solution of the original problem.
-Next, a general optimization solver \TODO{(what is a solver)} for the chosen declarative language is used to solve the encoded problem to obtain on optimal solution for it.
-The last step is to map this solution back to the original problem space.
-\TODO{Decide if I want an illustration for that. Mention that different languages fit different problems.}
-
-% 11. Advantages of declarative approaches
-The advantage of declarative approaches is that the solving algorithm itself is general and can be used for different problems, as long as \TODO{a polynomial size encoding (rephrase as ``an encoding of size that doesn't influence runtime'')} exists.
-The task of applying a given declarative method to a new problem consists therefore in finding an encoding and not in coming up with a new algorithm.
-Furthermore, improvement that is made in developing solvers for the declarative language immediately maps to better solving performance for \emph{all} problems that can be encoded into this declarative language.
-
-% 12. Runtimes in declarative approaches
-\TODO{Move to earlier.}
-In the scope of this work, we focus on using declarative approaches for solving \NP-hard optimization problems.
-For this application, \NP-hard declarative languages are used, meaning the generic solving step is the only computationally hard step in the solving pipeline.
-Both the encoding and the reconstruction of the solution are typically done in polynomial time.
-Since the declarative language is \NP-hard (assuming $\mathcal{P}\neq\mathcal{NP}$), the worst-case runtime of the solving algorithm cannot be better than exponential.
-However, in practice one can observe significantly better performance from many solving algorithms for ``interesting'' instances, i.e., instances that appear for real-world problems.
-
-\TODO{Focus more on solving rather than languages and modelling.}
-
-% 13. MaxSAT (and SAT)
+% MaxSAT (and SAT)
 In this work, we focus on maximum satisfiability (MaxSAT) as the declarative approach for solving optimization problems.
 MaxSAT is the optimization variant of the propositional satisfiability (SAT) problem and in it, as many clauses from a given propositional formula need to be satisfied by an assignment.
 MaxSAT solvers have made significant progress over the recent years and are by now very efficient for solving many practical optimization problems.
 This progress is mainly due to development on the underlying SAT solvers used in MaxSAT solving~\autocite{}, but also due to improved algorithms for how to apply those SAT solvers in MaxSAT solving.
 
-% 14. SAT-based bi-/multi-objective optimization not very active in last years
+% SAT-based bi-/multi-objective optimization not very active in last years
 % Motivation for researching that direction
 Approaches for SAT- and MaxSAT-based bi- or multi-objective optimization have been proposed in the past~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18}, but it is not a very active field of research.
 Most recently, in~\textcite{DBLP:conf/cp/JanotaMSM21} an algorithm that \emph{can} be MaxSAT-based but does not need to, has been proposed, but other than that, there seems to be a lack of work on extend the progress in MaxSAT solving to multiple objectives.
 In this work we study MaxSAT-based Boolean bi-objective optimization, developing a new algorithm for the problem.
 
-% 15. Contributions
+% Contributions
 % Algorithm: single SAT solver; builds on MaxSAT; single vs all
 % Evaluation: study efficiency of different MaxSAT algorithms
 The main contributions of this work is the \algname{} algorithm, a MaxSAT-based bi-objective optimization approach.
@@ -131,7 +138,7 @@ The used benchmark domains are learning of interpretable classifiers~\autocite{D
 As a result of this evaluation, we also determine which variant of \algname{} is the best-performing overall.
 \TODO{Expand to balance lengthy intro.}
 
-% 16. Signposting for chapters
+% Signposting for chapters
 This thesis is structured as follows:
 After this introduction, the next chapter gives an overview of propositional satisfiability and maximum satisfiability, highlighting the important preliminaries needed to understand the proposed algorithm.
 \Cref{chap:biobjective-optimization} gives an overview of bi-objective optimization, defining the problem and surveying some existing approaches, based on SAT, other declarative paradigms, and probabilistic and meta-heuristic approaches.

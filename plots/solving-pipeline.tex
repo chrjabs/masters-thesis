@@ -1,0 +1,22 @@
+\documentclass{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[a-3b,mathxmp]{pdfx}
+\usepackage{tikz}
+\usepackage{amsmath}
+
+\input{../macros.tex}
+
+\begin{document}
+\begin{tikzpicture}
+
+\node (p) [draw,rounded corners] at (0,0) {Original Problem Instance};
+\node (fp) [draw,rounded corners] at (7,0) {Encoded Problem Instance};
+\node (fs) [draw,rounded corners] at (7,-1.5) {Encoded Solution};
+\node (s) [draw,rounded corners] at (0,-1.5) {Solution};
+
+\draw [->,shorten >=2pt,shorten <=2pt] (p) -- (fp) node [midway,above] {Encoding};
+\draw [->,shorten >=2pt,shorten <=2pt] (fp) -- (fs) node [midway,right] {Solving};
+\draw [->,shorten >=2pt,shorten <=2pt] (fs) -- (s) node [midway,below] {Reconstruction};
+
+\end{tikzpicture}
+\end{document}

@@ -16,7 +16,8 @@
     "\\aliascntresetthe{}": "ignore",
     "\\newaliascnt{}{}": "ignore",
     "\\sat{}": "dummy",
-    "\\unsat{}": "vowelDummy"
+    "\\unsat{}": "vowelDummy",
+    "\\NP": "dummy"
   },
   "ltex.latex.environments": {
     "algorithmic": "ignore"

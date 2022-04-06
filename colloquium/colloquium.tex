@@ -297,20 +297,20 @@ Constraint Reasoning and Optimization Research Group
     \begin{column}{.65\textwidth}
       \begin{centering}
         \begin{tikzpicture}
-          \node (p) [draw] at (0,0) {Problem};
+          \node (p) [draw] at (0,0) {Problem Instance};
           \onslide<3->{
-            \node (fp) [draw] at (5,0) {Encoded Problem};
+            \node (fp) [draw] at (5,0) {Encoded Instance};
             \node (fs) [draw] at (5,-1.5) {Encoded Solution};
           }
           \node (s) [draw] at (0,-1.5) {Solution};
 
           \onslide<3->{
-            \draw [->] (p) -- (fp) node [midway,above] {Encode};
-            \draw [->] (fp) -- (fs) node [midway,right] {Solve (\alert<4>{\algname{}})};
-            \draw [->] (fs) -- (s) node [midway,below] {Reconstruct};
+            \draw [->,shorten >=2pt,shorten <=2pt] (p) -- (fp) node [midway,above] {Encode};
+            \draw [->,shorten >=2pt,shorten <=2pt] (fp) -- (fs) node [midway,right] {Solve (\alert<4>{\algname{}})};
+            \draw [->,shorten >=2pt,shorten <=2pt] (fs) -- (s) node [midway,below] {Reconstruct};
           }
           \onslide<2|handout:0>{
-            \draw [->] (p) -- (s) node [midway,right] {Problem specific solving};
+            \draw [->,shorten >=2pt,shorten <=2pt] (p) -- (s) node [midway,right] {Problem specific solving};
           }
         \end{tikzpicture}
       \end{centering}
