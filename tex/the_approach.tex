@@ -354,6 +354,7 @@ In case during the execution of \msu{} $|\Act| < \thr \cdot |\Obj_\inc|$ is met,
 On \cref{ln:msh-tot}, $\tot(\Obj_\inc,k)$ will then be fully built from the existing $\tot(\Act)$ and \satunsat{} invoked on \cref{ln:msh-su}.
 From now on, every call to \msh{} will call \satunsat{} on \cref{ln:msh-su}.
 With this, the advantages of both \msu{} and \satunsat{} can in the best case be combined.
+A similar approach of combining core-guided search is known in incomplete MaxSAT solving as core-boosted linear search~\autocite{DBLP:conf/cpaior/BergDS19}.
 
 % Example: MSHybrid
 \begin{example}

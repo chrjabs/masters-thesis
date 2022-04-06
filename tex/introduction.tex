@@ -123,25 +123,31 @@ This progress is mainly due to development on the underlying SAT solvers used in
 
 % SAT-based bi-/multi-objective optimization not very active in last years
 % Motivation for researching that direction
-Approaches for SAT- and MaxSAT-based bi- or multi-objective optimization have been proposed in the past~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18}, but it is not a very active field of research.
-Most recently, in~\textcite{DBLP:conf/cp/JanotaMSM21} an algorithm that \emph{can} be MaxSAT-based but does not need to, has been proposed, but other than that, there seems to be a lack of work on extend the progress in MaxSAT solving to multiple objectives.
-In this work we study MaxSAT-based Boolean bi-objective optimization, developing a new algorithm for the problem.
+Approaches for SAT- and MaxSAT-based bi- or multi-objective optimization have been proposed in the past~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18,DBLP:conf/cp/JanotaMSM21}, but it is not a very active field of research.
+For this reason, this thesis proposes extending the progress and success in MaxSAT solving to multiple objectives.
 
 % Contributions
 % Algorithm: single SAT solver; builds on MaxSAT; single vs all
-% Evaluation: study efficiency of different MaxSAT algorithms
 The main contributions of this work is the \algname{} algorithm, a MaxSAT-based bi-objective optimization approach.
 \algname{} builds on advances in MaxSAT solving, allowing for variants based on different solution-improving~\autocites{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} and core-guided~\autocites{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09,DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19} algorithms.
-Furthermore, \algname{} allows for solving two possible tasks for bi-objective optimization: finding one representative solution for each Pareto point or enumerating all Pareto-optimal solutions.
-In experiments on two benchmark domains, we empirically evaluate the performance of different \algname{} variants and compare them to two previously proposed SAT-based approaches to bi-objective optimization: enumeration of $P$-minimal solutions~\autocite{DBLP:conf/cp/SohBTB17} and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
-The used benchmark domains are learning of interpretable classifiers~\autocite{DBLP:conf/cp/MaliotovM18} and the bi-objective set covering problem.
+We propose five different variants of \algname{}, the first four building on SAT-UNSAT~\autocite{DBLP:journals/jsat/BerreP10}, UNSAT-SAT search~\autocite{} for MaxSAT, the MSU3~\autocite{DBLP:journals/corr/abs-0712-1097} and the OLL~\autocite{DBLP:conf/cp/MorgadoDM14} MaxSAT algorithms.
+The fifth variant is a hybrid between SAT-UNSAT search and MSU3, aiming to combine the advantages of the two approaches.
+In addition to \algname{} in five variants, we also propose multiple refinements for improving the performance of \algname{}:
+lazily building the cardinality constraint for both objectives, blocking dominated solutions, domain-specific blocking, bound hardening and other refinements known from core-guided MaxSAT solving.
+\algname{} allows for solving two possible tasks for bi-objective optimization:
+finding one representative solution for each Pareto point or enumerating all Pareto-optimal solutions.
+
+% Evaluation: study efficiency of different MaxSAT algorithms
+After proposing \algname{}, this thesis empirically evaluates the performance of it on two benchmark domains:
+learning interpretable decision rules from binary data~\autocite{DBLP:conf/cp/MaliotovM18} and bi-objective set covering.
+In the experiments, we compare all five variants of \algname{} to two SAT-based competitors:
+enumeration of $P$-minimal solutions~\autocite{DBLP:conf/cp/SohBTB17} and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
 As a result of this evaluation, we also determine which variant of \algname{} is the best-performing overall.
-\TODO{Expand to balance lengthy intro.}
+Furthermore, for the best-performing variant, we study the effects of the proposed refinements to determine their effectiveness.
 
 % Signposting for chapters
 This thesis is structured as follows:
-After this introduction, the next chapter gives an overview of propositional satisfiability and maximum satisfiability, highlighting the important preliminaries needed to understand the proposed algorithm.
-\Cref{chap:biobjective-optimization} gives an overview of bi-objective optimization, defining the problem and surveying some existing approaches, based on SAT, other declarative paradigms, and probabilistic and meta-heuristic approaches.
-After that, in \cref{chap:approach}, \algname{} is proposed, including four variants based on established MaxSAT algorithms while the fifth variant is a hybrid between two other variants.
-Finally, \cref{chap:experiments} outlines the experiments and results, and \cref{chap:conclusion} concludes the thesis.
-\TODO{Absolute chapter references.}
+On overview of propositional satisfiability and maximum satisfiability, highlighting the impartant preliminaries needed to understand the proposed algorithm, is given in \cref{chap:satisfiability}.
+In \cref{chap:biobjective-optimization}, an overview of bi-objective optimization is given, defining the problem and surveying some existing approaches, based on SAT, other declarative paradigms, and probabilistic and meta-heuristic approaches.
+After that, in \cref{chap:approach}, \algname{} including five variants and some refinements is proposed.
+Finally, in \cref{chap:experiments} we outline the experiments and results, and conclude the thesis in \cref{chap:conclusion}.
