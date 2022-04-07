@@ -125,7 +125,7 @@ In this thesis, we seek to extend the progress and success in MaxSAT solving to 
 % Algorithm: single SAT solver; builds on MaxSAT; single vs all
 The main contributions of this work is the \algname{} algorithm, a MaxSAT-based bi-objective optimization approach.
 \algname{} builds on advances in MaxSAT solving, allowing for variants based on different solution-improving~\autocites{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} and core-guided~\autocites{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09,DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19} algorithms.
-We propose five different variants of \algname{}, the first four building on the SAT-UNSAT~\autocite{DBLP:journals/jsat/BerreP10}, UNSAT-SAT~\autocite{}, MSU3~\autocite{DBLP:journals/corr/abs-0712-1097} and OLL~\autocite{DBLP:conf/cp/MorgadoDM14} MaxSAT algorithms.
+We propose five different variants of \algname{}, the first four building on the SAT-UNSAT~\autocite{DBLP:journals/jsat/BerreP10}, UNSAT-SAT~\autocite{DBLP:conf/sat/FuM06}, MSU3~\autocite{DBLP:journals/corr/abs-0712-1097} and OLL~\autocite{DBLP:conf/cp/MorgadoDM14} MaxSAT algorithms.
 The fifth variant is a hybrid between SAT-UNSAT search and MSU3, aiming to combine the advantages of the two approaches.
 In addition to five variants of \algname{}, we also propose multiple refinements for improving the performance of \algname{}:
 lazily building the cardinality constraints for both objectives, blocking dominated solutions, domain-specific blocking, bound hardening and other refinements known from core-guided MaxSAT solving.
