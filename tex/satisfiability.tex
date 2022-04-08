@@ -3,7 +3,7 @@
 % Signposting
 In this chapter, an overview of propositional satisfiability (SAT) is provided.
 We start by defining the SAT decision problem.
-\Cref{sec:inc-sat} gives an overview of incremental SAT solving, a technique that the algorithmic approch proposed in this thesis makes heavy use of.
+\Cref{sec:inc-sat} gives an overview of incremental SAT solving, a technique that the algorithmic approach proposed in this thesis makes heavy use of.
 Next, we briefly discuss maximum satisfiability, the optimization variant of propositional satisfiability.
 The chapter concludes with a section on encoding cardinality constraints in propositional logic.
 
@@ -109,6 +109,10 @@ The specific works that this thesis builds on are the solution-improving SAT-UNS
 OLL, as another core-guided procedure (originally proposed in the context of ASP~\autocite{DBLP:conf/iclp/AndresKMS12} and also successfully applied in MaxSAT~\autocites{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}), handles the cardinality constraint over the active literals differently to MSU3.
 Instead of a single cardinality constraint over all literals in $\Act$, a separate totalizer is built for every core returned after the unsatisfiable SAT solver calls.
 The outputs of these many totalizers are then treated as additional soft clauses.
+
+\TODO{UNSAT-SAT}
+Idea present in~\autocite{DBLP:journals/tcad/XuRS03}, but not phrased as algorithm.
+\Autocite{DBLP:conf/sat/FuM06} first to phrase it as an algorithm.
 
 \section{Encoding Cardinality Constraints as Totalizers\label{sec:card-const}}
 
