@@ -39,20 +39,26 @@ The advantage of using SAT as a declarative programming language for solving oth
 
 % Example: SAT modelling
 \begin{example}\label{ex:sat-modelling}
-  \TODO{Try to come up with an example for a \emph{problem} rather than an \emph{instance}.}
   We give an example of a real-world problem, modelling and solving it with the help of SAT.
-  Assume you have the following situation:
-  you want to plan a meal for a guest coming over, and you do not know whether to include an appetizer, a main course and a dessert.
-  However, you know the following constraints:
-  (i)~there must be a main course in every meal, (ii)~having three courses is too much effort, (iii)~your guest would like to have dessert, and (iv)~you have a new appetizer recipe that you would like to try making.
-  To model this situation as SAT, you can introduce three variables $v_\text{a}$, $v_\text{m}$, $v_\text{d}$ modelling whether appetizer, main course and dessert are included in the meal.
-  With these, the four conditions form the following four clauses:
-  $\clause_\text{(i)} = v_\text{m}$, $\clause_\text{(ii)} = \lnot v_\text{a} \lor \lnot v_\text{m} \lor \lnot v_\text{d}$, $\clause_\text{(iii)} = v_\text{d}$, and $\clause_\text{(iv)} = v_\text{a}$.
-  Next, you can solve the formula $\clause_\text{(i)} \land \clause_\text{(ii)} \land \clause_\text{(iii)} \land \clause_\text{(iv)}$ with the help of a SAT solver, which will return \unsat{}.
-  This tells you that there is no choice of the three courses that satisfies all conditions.
-  As the host, you could now either put in more work for the meal (removing constraint~(i)) or decide to make the appetizer recipe some time else (removing constraint~(iv)).
-  Assume you decide to remove constraint (iv), then the solution to $\clause_\text{(i)} \land \clause_\text{(ii)} \land \clause_\text{(iii)}$ found by the SAT solver is $\sol = \{ \lnot v_\text{a}, v_\text{m}, v_\text{d} \}$.
-  Interpreting this solution, you know that making a main course and a dessert, but leaving out the appetizer, satisfies all constraints.
+  Assume the following situation:
+  you have three guests coming over and want to cook a meal that contains something that each person likes.
+  Guest A tells you they like tomato, courgette, and bell pepper;
+  Guest B likes spinach, eggs, and peas;
+  Guest C likes mushrooms and chilli.
+  However, you only have enough money to get two ingredients from the store.
+  This is actually an instantiation of the set covering decision problem~\autocite{DBLP:conf/coco/Karp72} that can be encoded into SAT.
+  The groups of ingredients the guests like form three \emph{sets}, and you want to know if a \emph{cover} (another set of ingredients) of at most size two exists so that this cover intersects all three of the sets.
+  The set covering problem can be encoded into SAT by introducing a variable for each element and encoding each set as a clause.
+  For this example, this yields the following three clauses: $\clause_\text{A} = (v_\text{tomato} \lor v_\text{courgette} \lor v_\text{bell pepper})$, $\clause_\text{B} = (v_\text{spinache} \lor v_\text{egg} \lor v_\text{peas})$, $\clause_\text{C} = (v_\text{mushroom} \lor v_\text{chilli})$.
+  The semantics of these variables are that iff an assignment $\sol$ assigns $\sol(v)=1$, then the element that this variable is included in the cover the assignment encodes.
+  In addition to the sets, we need to encode the constraint that the cover can be at most of size two.
+  For now, assume that $\texttt{As-CNF}\left(\sum_{v \in V)} v \le 2\right)$ (where $V$ is the set of all variables, i.e., $V = \var(\clause_\text{A}) \cup \var(\clause_\text{B}) \cup \var(\clause_\text{C})$) is a set of clauses that encodes exactly that.
+  A set of clauses like this is known as a cardinality constraint and will be discussed in \cref{sec:card-const}.\\
+  We can now build the formula $\clause_\text{A} \allowbreak \land \clause_\text{B} \allowbreak \land \clause_\text{C} \allowbreak \land \texttt{As-CNF}\left(\sum_{v \in V} v \le 2\right)$ and query a SAT solver for a solution to it.
+  The solver will return \unsat{}, telling us that there is no solution to the given problem instance, i.e., that there is no two ingredients so that every guest likes at least one of them.
+  Now if Guest C says that they also like peas, $\clause_\text{C}$ changes to $\clause_\text{C} = (v_\text{mushrooms} \lor v_\text{chilli} \lor v_\text{peas})$ and the formula becomes satisfiable.
+  In this case, the SAT solver might return the solution $\sol$ with $\sol(v_\text{bell pepper}) = \sol(v_\text{peas}) = 1$ and $\sol(v) = 0$ for all other $v$.
+  This tells us that in a dish containing bell pepper and peas, every guest will find something they like.
 \end{example}
 
 \section{Incremental SAT Solving under Assumptions\label{sec:inc-sat}}
@@ -82,11 +88,14 @@ In the same way that SAT can be used as a declarative language to solve other de
 
 % Example: MaxSAT modelling
 \begin{example}\label{ex:maxsat-modelling}
-  Recall \cref{ex:sat-modelling} and assume the initial situation from that example situation.
-  We can remove constraint (ii)---that three courses are too much effort---and change the task so that we want to minimize the number of courses.
-  To formulate this task as a MaxSAT instance, we use clauses $\clause_\text{(i)}, \clause_\text{(iii)}, \clause_\text{(iv)}$ as the hard clauses of the instance.
-  Encoding the objective (minimizing the number of courses in the meal) is done by defining $\{\lnot v_\text{a}, \lnot v_\text{m}, \lnot v_\text{d}\}$ as the set of soft clauses.
-  Solving this MaxSAT instance with a MaxSAT solver will return the objective value 3 and solution $\sol=\{v_\text{a}, v_\text{m}, v_\text{d}\}$ encoding that the smallest (in terms of number of courses) meal still needs to contain all three courses.
+  Recall \cref{ex:sat-modelling}.
+  We can change the problem from the set covering decision problem to the optimization variant by asking for find the \emph{smallest} cover rather than giving an upper bound on the size of the cover.
+  This is done by removing the cardinality constraint from the encoding and using the encoded sets as hard clauses for a partial MaxSAT instances.
+  In addition to that, for every variable $v\in V$, a soft clause $\lnot v$ is added.
+  Solving this MaxSAT instance for the initial situation, the MaxSAT solver will return that at least three of the soft clauses need to be falsified, i.e., that at least three ingredients must be chosen so that every guest likes something.
+  An optimal solution $\sol$ that the solver might return for this has $\sol(v_\text{tomato}) = \sol(v_\text{spinach}) = \sol(v_\text{mushroom}) = 1$ and $\sol(v) = 0$ for all other $v$.
+  After we modify the instance to account for guest C not liking peas, the MaxSAT solver might give us the optimal solution $\sol$ with $\sol(v_\text{bell pepper}) = \sol(v_\text{peas}) = 1$ and $\sol(v) = 0$ for all other $v$.
+  There is no valid cover with size smaller than two.
 \end{example}
 
 % MaxSAT solving algorithms
