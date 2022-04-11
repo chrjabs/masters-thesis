@@ -73,6 +73,29 @@ In addition, incremental SAT solvers support solving under assumptions.
 The assumptions $\assumps$ are a set of literals that are treated as unit clauses, i.e., a solver call with internal formula $\formula$ and assumptions $\assumps$ either returns \sat{} and a solution $\sol \supset \assumps$, or \unsat{} and a subset $\core \subset \{\lnot l \mid l\in\assumps\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
 The subset $\core$ is called an unsatisfiable \emph{core}~\autocite{handbook2-cdcl} and, intuitively, is an explanation for the unsatisfiability of the query.
 
+\section{Encoding Cardinality Constraints as Totalizers\label{sec:card-const}}
+
+% Cardinality constraints
+As we will see in \cref{sec:max-sat}, many MaxSAT algorithms make heavy use of cardinality constraints.
+The same holds for the algorithmic approach presented in this thesis.
+Informally speaking, cardinality constraints enforce a bound on how many literals in a set can be assigned to true.
+Formally, for a set $L$ of literals and a bound $b \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \circ b\right)$ denotes a CNF formula that encodes the linear inequality $\sum_{l \in L} l \circ b$, where $\circ \in \{< ,> ,\geq, \leq, =\}$.
+Numerous methods of forming such CNF formulas are known (e.g.,~\autocites{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/Sinz05,DBLP:journals/jsat/EenS06}).
+
+% Totalizer encoding
+In this work we make use of the totalizer encoding.
+Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocites{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$:
+if $\sol$ is an assignment that satisfies $\tot(L)$, then $\sol(\ov{L}{b}) = 1$ iff $\sum_{l \in L} \sol(l) < b$.
+For applications where only either upper or lower bounding on the number of true literals is needed, the size of the encoded totalizer can be reduced by encoding implications in only one direction instead of in both (i.e., $\ov{L}{b} \leftarrow (\sum_{l \in L} l < b)$ or $\ov{L}{b} \rightarrow \sum_{l \in L} l < b$ but not both, depending on if upper or lower bounding is needed).
+The algorithmic approach presented in this paper only uses upper bounding cardinality constraints, we therefore use the size-reduced version of the totalizer encoding.
+The \emph{incremental} totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula:
+we have that $\tot(L, k) \subset \tot(L, k')$ and $\tot(L, k) \subset  \tot(L \cup L', k)$ hold for any bound $k' > k$ and set $L'$ of literals for which $L \cap L' =  \emptyset$. 
+This is desirable when making incremental SAT calls where the bound or the set of input literals changes between calls, since it allows for making earlier calls to the SAT solver on a formula with fewer clauses and retaining information from these calls since extending the totalizer means adding clauses while reusing the ones that were previously added.
+We use $\ove{L}{k}$ as a shorthand for the literal $\ov{L}{k+1}$;
+furthermore, if the maximal bound $k$ of a totalizer $\tot(L,k)$ is clear from context or the bound is $k=|L|$, we omit it and simply write $\tot(L)$.
+Note that the assignments of the auxiliary variables of the totalizer encoding are functionally defined by the assignment of the input and output variables.
+As such we will leave them out from the solutions we describe in favour of brevity and clarity of examples. 
+
 \section{Maximum Satisfiability\label{sec:max-sat}}
 
 % MaxSAT
@@ -100,41 +123,37 @@ In the same way that SAT can be used as a declarative language to solve other de
 
 % MaxSAT solving algorithms
 Many algorithms for solving MaxSAT have been proposed over the recent years.
-Best scalability to large instances is achieved by algorithms that solve MaxSAT by solving a number of SAT instances with the help of an underlying SAT solver, implicit hitting set approaches or solving MaxSAT via integer programming~\autocite{handbook2-maxsat}.
+Best scalability to large instances is achieved by algorithms that solve MaxSAT by solving a number of SAT instances with the help of an underlying SAT solver, implicit hitting set approaches, or solving MaxSAT via integer programming~\autocite{handbook2-maxsat}.
 This thesis builds on the MaxSAT algorithms that solve a sequence of SAT problems;
-these algorithms can be divided into two categories: solution-improving and core-guided~\autocite{DBLP:conf/sat/FuM06} algorithms.
-The specific works that this thesis builds on are the solution-improving SAT-UNSAT search~\autocite{DBLP:journals/jsat/BerreP10}, the lower-bounding UNSAT-SAT search~\autocite{}, and the core-guided MSU3~\autocite{DBLP:journals/corr/abs-0712-1097} and OLL~\autocite{DBLP:conf/cp/MorgadoDM14} algorithms.
+these algorithms can be categorized as either solution-improving, bound-improving or core-guided algorithms.
+Detailed descriptions for most of these algorithms can be found in~\autocite{handbook2-maxsat}.
 
-\TODO{Give intuition for each algorithm (attention: no totalizers yet!)}
-OLL, as another core-guided procedure (originally proposed in the context of ASP~\autocite{DBLP:conf/iclp/AndresKMS12} and also successfully applied in MaxSAT~\autocites{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}), handles the cardinality constraint over the active literals differently to MSU3.
-Instead of a single cardinality constraint over all literals in $\Act$, a separate totalizer is built for every core returned after the unsatisfiable SAT solver calls.
-The outputs of these many totalizers are then treated as additional soft clauses.
+% SAT-UNSAT and UNSAT-SAT
+The two simplest algorithms we build on are solution-improving SAT-UNSAT search~\autocite{DBLP:journals/jsat/BerreP10} and bound-improving UNSAT-SAT search~\autocite{DBLP:conf/sat/FuM06}.
+SAT-UNSAT (also known as Linear SAT-UNSAT (LSU)) search solves MaxSAT by starting from a known satisfiable model for the hard clauses.
+From this, a cardinality constraint is added to the SAT solver, enforcing that the next found model achieves a better objective value than the last.
+If such a model is found, the cardinality constraint is tightened to the objective value of this new model.
+As soon as the SAT solver return \unsat{} for a call, the last found model is known to be optimal.
+Because this search procedure goes through a series of satisfiable calls first, terminating at the first unsatisfiable call, it is known as SAT-UNSAT search.
+UNSAT-SAT search is similar, however the optimal value is found by lower-bounding instead of upper-bounding.
+It starts by adding a tight cardinality constraint to the SAT solver, getting unsatisfiable calls and slowly loosening the constraint until a first satisfiable query is reached.
+The idea of UNSAT-SAT search was first proposed not as an algorithm, but as a formulation for subset satisfiable boolean formulas~\autocite{DBLP:journals/tcad/XuRS03}.
+Later it was lifted to be used as a MaxSAT algorithm~\autocite{DBLP:conf/sat/FuM06}.
 
-\TODO{UNSAT-SAT}
-Idea present in~\autocite{DBLP:journals/tcad/XuRS03}, but not phrased as algorithm.
-\Autocite{DBLP:conf/sat/FuM06} first to phrase it as an algorithm.
+% MSU3 and OLL
+The other two algorithms we are building on in this thesis are MSU3~\autocite{DBLP:journals/corr/abs-0712-1097} and OLL~\autocite{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}.
+Both of these search procedures are core-guided, meaning they make use of unsatisfiable cores returned by the SAT solver to more efficiently steer the search.
+Core-guided MaxSAT was first proposed by the algorithm now known as Fu-Malik~\autocite{DBLP:conf/sat/FuM06}.
+The central insight behind core-guided MaxSAT is that an optimal solution must falsify at least one of the soft clauses in every core.
+In the MSU3 algorithm, a new relaxation variable is added to each soft clause.
+These relaxation variables are assumed to false and cores are extracted over them.
+When a relaxation variable for a soft clause appears in a core, this relaxation variable is removed from the assumptions and the added to a cardinality constraint allowing some relaxation variables to be true.
+The bound on the cardinality constraint is increased by one every iteration.
+With this, MSU3 as also every other core-guided algorithm, makes a series of unsatisfiable SAT queries, terminating at the first satisfiable one, which yields the optimal solution.
+OLL, which was first proposed for the paradigm of answer set programming~\autocite{DBLP:conf/iclp/AndresKMS12} and later applied to MaxSAT~\autocite{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}, differs from MSU3 in how the extracted cores are relaxed.
+Instead of building one large cardinality constraint over all cores, it builds an individual cardinality constraint for each core.
+Furthermore, these cardinality constraints are not treated as hard but as additional \emph{soft} clauses, meaning they can be relaxed in future iterations of the algorithm.
 
-\section{Encoding Cardinality Constraints as Totalizers\label{sec:card-const}}
-
-\TODO{Maybe move before MaxSAT so that cardinality constraints are known for MaxSAT algorithms}
-
-% Cardinality constraints
-As seen in \cref{sec:max-sat}, many MaxSAT algorithms make heavy use of cardinality constraints.
-The same holds for the algorithmic approach presented in this thesis.
-Informally speaking, cardinality constraints enforce a bound on how many literals in a set can be assigned to true.
-Formally, for a set $L$ of literals and a bound $b \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \circ b\right)$ denotes a CNF formula that encodes the linear inequality $\sum_{l \in L} l \circ b$, where $\circ \in \{< ,> ,\geq, \leq, =\}$.
-Numerous methods of forming such CNF formulas are known (e.g.,~\autocites{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/Sinz05,DBLP:journals/jsat/EenS06}).
-
-% Totalizer encoding
-In this work we make use of the totalizer encoding.
-Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocites{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$:
-if $\sol$ is an assignment that satisfies $\tot(L)$, then $\sol(\ov{L}{b}) = 1$ iff $\sum_{l \in L} \sol(l) < b$.
-For applications where only either upper or lower bounding on the number of true literals is needed, the size of the encoded totalizer can be reduced by encoding implications in only one direction instead of in both (i.e., $\ov{L}{b} \leftarrow (\sum_{l \in L} l < b)$ or $\ov{L}{b} \rightarrow \sum_{l \in L} l < b$ but not both, depending on if upper or lower bounding is needed).
-The algorithmic approach presented in this paper only uses upper bounding cardinality constraints, we therefore use the size-reduced version of the totalizer encoding.
-The \emph{incremental} totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula:
-we have that $\tot(L, k) \subset \tot(L, k')$ and $\tot(L, k) \subset  \tot(L \cup L', k)$ hold for any bound $k' > k$ and set $L'$ of literals for which $L \cap L' =  \emptyset$. 
-This is desirable when making incremental SAT calls where the bound or the set of input literals changes between calls, since it allows for making earlier calls to the SAT solver on a formula with fewer clauses and retaining information from these calls since extending the totalizer means adding clauses while reusing the ones that were previously added.
-We use $\ove{L}{k}$ as a shorthand for the literal $\ov{L}{k+1}$;
-furthermore, if the maximal bound $k$ of a totalizer $\tot(L,k)$ is clear from context or the bound is $k=|L|$, we omit it and simply write $\tot(L)$.
-Note that the assignments of the auxiliary variables of the totalizer encoding are functionally defined by the assignment of the input and output variables.
-As such we will leave them out from the solutions we describe in favour of brevity and clarity of examples. 
+% MaxSAT algorithms and cardinality constraints
+All MaxSAT algorithms that solve a series of SAT queries need to build cardinality constraints over the soft clauses of the MaxSAT instance and typically these only change slightly from query to query.
+For this reason, incremental cardinality constraints such as the incremental totalizer encoding are employed in modern MaxSAT solvers to allow for incrementally using the underlying SAT solver without resetting it.

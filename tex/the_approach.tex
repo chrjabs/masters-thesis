@@ -112,7 +112,7 @@ If one wants to enumerate all solutions $\sol^o$ that correspond to the Pareto p
 
 % Signposting
 We consider five different instantiations of the \Min{} procedure for minimizing the increasing objective.
-The first four (\satunsat{}, \unsatsat{}, \msu{} and \oll{}) are inspired by existing MaxSAT algorithms while the last (\msh{}) switches between two MaxSAT-like algorithms to combine their advantages.
+The first four (\satunsat{}, \unsatsat{}, \msu{} and \oll{}) are inspired by existing MaxSAT algorithms already described in \cref{sec:max-sat} while the last (\msh{}) switches between two MaxSAT-like algorithms to combine their advantages.
 
 \TODO{Point out which of the \Min{} parameters the instatiations are using.}
 
@@ -192,7 +192,7 @@ The procedure terminates when the result is \unsat{}, after which on \cref{ln:su
 \end{algorithm}
 
 % UNSAT-SAT and input parameters
-\unsatsat{} takes a similar approach to \satunsat{} search but searches for the smallest value by lower-bounding instead of upper-bounding~\autocite{}.
+\unsatsat{} takes a similar approach to \satunsat{} search but searches for the smallest value by lower-bounding instead of upper-bounding~\autocite{DBLP:conf/sat/FuM06}.
 As input parameters it receives the last bound $b_\dec$ on $\Obj_\dec$ and the last bound $b_\inc$ on $\Obj_\inc$ as a lower bound on the sought-after smallest value.
 The upper bound on the smallest value is not needed for this variant.
 \unsatsat{} also maintains a totalizer $\tot(\Obj_\inc)$.
@@ -308,7 +308,7 @@ The following observation proves that doing so can be done without removing any 
 \subsection{\oll{}\label{sec:oll}}
 
 % High-level OLL
-As briefly mentioned in \cref{sec:max-sat}, the OLL MaxSAT algorithm~\autocite{DBLP:conf/cp/MorgadoDM14} builds a cardinality constraint for each core extracted from the formula, treating the totalizer output as new soft clauses.
+As mentioned in \cref{sec:max-sat}, the OLL MaxSAT algorithm~\autocite{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19} builds a cardinality constraint for each core extracted from the formula, treating the totalizer output as new soft clauses.
 The same holds true for the \oll{} instantiation of \Min{}.
 In each iteration, the assumptions given to the SAT solver consist of (i)~the inactive literals of $\Obj_\inc$, (ii)~the outputs of previously built totalizers corresponding to the lowest number of input literals that should be assigned to $1$ in any possible satisfying assignment and (iii)~the bound $\ov{\Obj_\dec}{b_\dec}$.
 The procedure terminates when the SAT solver returns a solution $\sol$.
