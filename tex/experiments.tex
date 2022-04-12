@@ -1,19 +1,17 @@
 \chapter{Experiments\label{chap:experiments}}
 
-\TODO{Rewrite when all included experiments are known.}
 % Experiment setup and some signposting
 We implemented  all variants and refinements of \algname{} described in \cref{chap:approach} in C++.
 Our implementations of MSU3 and OLL were inspired by their implementations in Open-WBO~\autocite{DBLP:conf/sat/MartinsML14}, the other variants were implemented from scratch.
 We used CaDiCaL~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers} as the internal SAT solver.
 Additionally, we implemented $P$-minimal solution enumeration and Seesaw (see \cref{sec:sat-based}) as competing approaches, since no reference implementations were available.
 As the hitting set solver for Seesaw, CPLEX 20.10 was used.
-We evaluate the relative runtime performance of the \algname{} variants against the two competing approaches, as well as the impact of the specific refinements (recall \cref{sec:refinements}; employed as applicable, by default with heuristic core minimization and without blocking of dominated solutions\TODO{elaborate}) to \algname{} on their runtime performance.
+ParetoMCS with the implementation from \url{https://gitlab.ow2.org/sat4j/moco} was used as a third competing approach.
+We evaluate the relative runtime performance of the \algname{} variants against the three competing approaches, as well as the impact of the specific refinements (recall \cref{sec:refinements}; core-guided variants by default with heuristic core minimization and without blocking of dominated solutions) to \algname{} on their runtime performance.
+Additionally, we compare performance for the two tasks of either finding a single representative per Pareto point and enumerating all Pareto-optimal solutions.
+We also investigate how much time \algname{} spends in the \Min{} and \Simpr{} procedures.
 As a parametric detail, in its default \msh{} is configured to switch between \msu{} and \satunsat{} once 70\% of the literals in $\Obj_\inc$ have been added to $\tot(\Act)$.
 All experiments were run on 2.60-GHz Intel Xeon E5-2670 machines with 64-GB RAM in RHEL under a 1.5-hour per-instance time and 16-GB memory limit.
-
-\section{Competing Approaches\label{sec:competing}}
-
-\TODO{Move arguments for what we compare to from \cref{sec:approaches} here.}
 
 \section{Benchmarks\label{sec:benchmarks}}
 
@@ -28,7 +26,7 @@ Recently, a variety of SAT and MaxSAT-based approaches have been developed for l
 The two objectives of minimizing size (the smaller, the more interpretable) and classification error (when there is no perfect classifier, as typical for real-world data) are conflicting, hence giving naturally rise to bi-objective optimization problems.
 Here we consider learning of interpretable decision rules as a representative benchmark domain from this line of work, building on the encoding presented by~\textcite{DBLP:conf/cp/MaliotovM18}.
 In short, here a decision rule is a binary classifier in the form of a CNF formula over Boolean features.
-The result of the formula evaluated on the features of a data sample is the classification assigned by the classifier to this sample.
+The result of the formula evaluated on the features of a data sample is the binary classification assigned by the classifier to this sample.
 Originally, when using the encoding a linear combination of the two objectives, using a parameter $\lambda\geq 0$, was proposed in order to directly apply a MaxSAT solver to find decision rules under a pre-fixed value for $\lambda$~\autocite{DBLP:conf/cp/MaliotovM18}.
 This is equivalent to the weighted sum method~\autocite{Ehrgott2005-3}.
 While this allows for finding a Pareto-optimal decision rule under a specific value of $\lambda$, MaxSAT solving multiple times under different choices of $\lambda$ does not guarantee finding a representative Pareto-optimal decision rule for each Pareto point~\autocites{Ehrgott2005-3,survey}.
@@ -39,7 +37,7 @@ In contrast, here we address directly the problem of computing all Pareto-optima
 \begin{minipage}{.75\textwidth}
   \begin{example}\label{ex:dr}
     Consider the sample dataset shown on the right with features $x_1$ and $x_2$, class $y$ and three samples.
-    Two exemplary decision rules are the following: $r_1 = x_1$, $r_2 = x_1 \land x_2$.
+    Two exemplary decision rules are the following: $r_1 = (x_1)$, $r_2 = (x_1 \land x_2)$.
     $r_1$ has size 1 and classification error 1 while $r_2$ has size 2 and classification error 0.
     Both $r_1$ and $r_2$ are Pareto-optimal w.r.t\ size and classification error.
   \end{example}
@@ -61,7 +59,7 @@ In contrast, here we address directly the problem of computing all Pareto-optima
 \bigskip
 
 % The MLIC encoding and how we use it
-For a gives set of $\nsamp$ data samples over $\nfeat$ features, the encoding uses two sets of variables:
+For a given set of $\nsamp$ data samples over $\nfeat$ features, the encoding uses two sets of variables:
 $\selector_l^j$ for $l=1,\dots,\nclauses$, $j=1,\dots,\nfeat$ and $\noise_i$ for $i=1,\dots,\nsamp$ for a specific number $\nclauses$ of clauses in the decision rules to be learned, with the interpretation that $\selector_l^j=1$ iff the $j$th feature is included in the $l$th clause of the decision rule, and $\noise_i=1$ if the $i$th data sample is misclassified.
 We represent the sample with index $i$ with a Boolean class $y_i$ and the Boolean features $x_i^j$ where $j=1,\dots,\nfeat$.
 With this, the encoding is $\lnot \noise_i \rightarrow (y_i \leftrightarrow \bigwedge_{l=1}^\nclauses \bigvee_{j=1}^\nfeat (x_i^j \land \selector_l^j))$.
@@ -79,30 +77,24 @@ The lexicographic ordering is then enforced by adding the constraints $\lnot \eq
 
 % Example: Symmetric decision rules
 \begin{example}
-  Consider the rule $r_2 = f_1 \land f_2$ for the data in \cref{ex:dr}.
-  It consists of two clauses, $C_1 = f_1$ and $C_2 = f_2$.
+  Consider the rule $r_2 = (x_1 \land x_2)$ for the data in \cref{ex:dr}.
+  It consists of two clauses, $C_1 = x_1$ and $C_2 = x_2$.
   In a solution $\sol$ to the encoding, $C_1$ will be represented as the bit-string $\sol(\selector_l^1)\sol(\selector_l^2)=10$ and $C_2$ as $\sol(\selector_l^1)\sol(\selector_l^2)=01$.
   Without symmetry breaking, either $\sol_1 = \{\selector_1^1, \lnot\selector_1^2, \lnot\selector_2^1, \selector_2^2\}$ or $\sol_2 = \{\lnot\selector_1^1, \selector_1^2, \selector_2^1, \lnot\selector_2^2\}$ would be valid solutions, even though they both map to $r_2$.
   The symmetry breaking clauses enforce that the bit-string representing $C_1$ precedes the bit-string representing $C_2$, therefore only $\sol_1$ is a feasible solution.
 \end{example}
 
 % Benchmark datasets
-As the basis of our benchmark instances, we used 24 standard UCI~\autocite{UciMlr} and Kaggle ({\small\url{https://www.kaggle.com}}) benchmark datasets, including ones used in the original evaluation of the encodinng~\autocite{DBLP:conf/cp/MaliotovM18}; see \cref{appendix:datasets} for details.
+As the basis of our benchmark instances, we used 24 standard UCI~\autocite{UciMlr} and Kaggle ({\small\url{https://www.kaggle.com}}) benchmark datasets, including ones used in the original evaluation of the encoding~\autocite{DBLP:conf/cp/MaliotovM18}; see \cref{appendix:datasets} for details.
 We randomly and independently sampled subsets of $\nsamp\in\{50,100,1000,5000,10000\}$ data samples from the datasets, four of each size (when applicable), resulting in a total of 372 datasets.
 The datasets were discretized as in~\autocite{DBLP:conf/cp/MaliotovM18}:
 categorical features are one-hot encoded, continuous features discretized by comparing to a collection of thresholds.
 All experiments on these datasets were run with the encoding configured to learn CNF decision rules consisting of two clauses.
 
-% domain-specific blocking
+% Domain-specific blocking
 When enumerating multiple solutions corresponding to the same Pareto point, the blocking clauses for \algname{} (as well as the $P$-minimal approach compared to in the experiments) can be strengthened to find solutions mapping to distinct rules:
 blocking over the variables $s_l^j$ is sufficient and blocks multiple symmetric solutions that only differ in the assignment to auxiliary variables.
 Further, making use of the algorithm-specific fact that \algname{} is guaranteed to enumerate Pareto-optimal solutions in order of increasing size, for \algname{} it is sufficient to block a solution over all $s_l^j$ that are assigned to false.
-
-% Seesaw instantiation for MLIC
-We instantiated Seesaw for learning interpretable decision rules by using misclassifications as the objective over which cores are extracted and a hitting set $\hs$ is found over these cores.
-In the second step, the number of literals in the smallest rule misclassifying the samples in $\hs$ or a subset of it is found.
-This function is implemented as a solution-improving search with a SAT solver.
-This instantiation was chosen because finding the smallest rule misclassifying $\hs$ is an anti-monotone function and the refined version of core extraction presented in the original paper~\autocite{DBLP:conf/cp/JanotaMSM21} can therefore be used, making Seesaw feasible in the first place.
 
 \subsection{Bi-Objective Set Covering}
 
@@ -131,9 +123,35 @@ The integer cost values $\cost$ for the two objectives were chosen uniformly at 
 The blocking clauses used in \algname{} for enumerating all Pareto-optimal solutions can be strengthened also for set covering:
 due to the fact that \algname{} is guaranteed to enumerate the Pareto-optimal solutions so that one of the objectives will monotonically decrease, it is enough to block in \algname{} the solution over all $l_e$ that are assigned to true.
 
-% Seesaw not feasible
-Since both objectives in the bi-objective set covering problem are monotone over the chosen cover, the refined core extraction strategy for Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21} cannot be used.
-Seesaw is therefore infeasible for this problem since it would enumerate every possible solution.
+\section{Competing Approaches\label{sec:competing}}
+
+% Competitors and their implementations
+We are comparing \algname{} to the three SAT-based algorithms $P$-minimal, Seesaw and ParetoMCS, presented in \cref{sec:sat-based}.
+These algorithms were chosen because they are similar in that they are (or can be) also SAT-based, and they solve the same task of enumerating Pareto-optimal solutions.
+Of $P$-minimal and Seesaw, no general implementation is publicly available, for this reason we implemented these approaches in C++ in a similar framework as our \algname{} algorithm.
+The SAT solver used in all algorithms implemented by us is CaDiCaL~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers} and hitting set extraction in Seesaw is done in CPLEX 20.10.
+For ParetoMCS, we are using the Sat4j-based~\autocite{DBLP:journals/jsat/BerreP10} implementation publicly available at \url{https://gitlab.ow2.org/sat4j/moco}.
+
+% Tasks solved
+\algname{} is able to either enumerate a representative solution for each Pareto point or the full Pareto front.
+With the extension to $P$-minimal presented in \cref{sec:sat-based}, it can solve these same two tasks.
+For Seesaw, we noted that extending it to enumerating the full Pareto front seems non-trivial and for ParetoMCS, the given implementation only returns a single solution per Pareto point.
+We are therefore only comparing to Seesaw and ParetoMCS on the task of enumerating a single representative solution per Pareto point.
+
+% ParetoMCS variants
+The implementation of ParetoMCS allows for optionally enabling stratification~\autocite{DBLP:conf/ijcai/Terra-NevesLM18}.
+We use stratification for a second variant of ParetoMCS, which we refer to as ParetoMCS-strat.
+
+% Seesaw instantiation for MLIC
+Since Seesaw needs to be instantiated for each task separately, we instantiated Seesaw for learning interpretable decision rules by using misclassifications as the objective over which optimization cores are extracted and a hitting set $\hs$ is found over these optimization cores.
+In the second step, the number of literals in the smallest rule misclassifying the samples in $\hs$ or a subset of it is found.
+This function is implemented as a solution-improving search with a SAT solver.
+This instantiation was chosen because finding the smallest rule misclassifying $\hs$ is an anti-monotone function and the refined version of core extraction presented in the original paper~\autocite{DBLP:conf/cp/JanotaMSM21} can therefore be used, making Seesaw feasible in the first place.
+Furthermore, we instantiate two more variants of Seesaw where optimization cores are extracted in the solution-improving search procedure by the SAT solver.
+The last SAT query of solution-improving search will always be \unsat{}, the core returned by the solver for this call can be used as an optimization core for Seesaw.
+Optionally we apply exact core-minimization to these cores before using them in Seesaw.
+(We found that heuristic core-minimization leads to not significant improvement over no minimization at all.)
+We refer to these two variants as Seesaw-SAT and Seesaw-SAT-min.
 
 \section{Results\label{sec:results}}
 
@@ -146,11 +164,13 @@ In the last subsection, we look at how the different refinements presented in \c
 \subsection{Finding a Single Representative Solution per Pareto Point}
 
 % mlic-cactus-single
-For comparing the performance of the variants of \algname{} presented in \cref{sec:variants}, $P$-minimal and Seesaw, we first look at the results for learning a single decision rule per Pareto point.
+For comparing the performance of the variants of \algname{} presented in \cref{sec:variants}, $P$-minimal, ParetoMCS and Seesaw, we first look at the results for learning a single decision rule per Pareto point.
 \Cref{fig:mlic-cactus-single} shows the number of instances solved ($x$-axis) for different per-instance time limits ($y$-axis) for this task.
 The best-performing approaches are the \algname{} variants \msh{}, \satunsat{}, \unsatsat{} and \msu{}, solving 223 instances, while $P$-minimal solved 219 instances.
 All variants of \algname{} outperform $P$-minimal to some extent.
-Seesaw is very clearly outperformed by all other approaches, solving only 123 instances within the resource constraints.
+Seesaw and ParetoMCS are very clearly outperformed by all other approaches.
+Even the best variant of Seesaw (Seesaw-SAT-min) only solves 139 instances within the resource constraints.
+ParetoMCS performs even worse, solving only 34 instances.
 
 % mlic-cactus-single
 \begin{figure}
@@ -165,6 +185,7 @@ Seesaw is very clearly outperformed by all other approaches, solving only 123 in
 % setcover-cactus-single
 Next we look at a similar comparison for the bi-objective set covering benchmarks.
 In this comparison, Seesaw is not included since it cannot be feasibly instantiated for this task.
+ParetoMCS did not manage to solve any of the set covering instances, with and without stratification.
 \Cref{fig:setcover-cactus-single} shows the number of solved instances per individual time limit for the two generated sets of bi-objective set covering instances.
 Here again \msh{} is the best-performing variant of \algname{}, considerably outperforming $P$-minimal:
 $P$-minimal solved 71 (respectively 38) fixed element probability (respectively set cardinality) instances, whereas \msh{} solved 83 (respectively 40) instances.
@@ -181,40 +202,57 @@ For this application, not all variants of \algname{} outperformed $P$-minimal:
 \end{figure}
 
 % Overall solved instances and best-performaning
-The numbers of solved instances for all approaches (except Seesaw) are summarized in \cref{tab:nsolved-single}.
+The numbers of solved instances for all approaches are summarized in \cref{tab:nsolved}.
 The best-performing approach for each benchmark is highlighted in bold font.
 \msh{} is the best-performing \algname{} variant overall, outperforming $P$-minimal in all cases.
-For more details, \cref{fig:msh-scatter-single} shows a per-instance runtime comparison between \msh{} and $P$-minimal.
+For more details, \cref{fig:combined-msh-single-obj-time} (left) shows a per-instance runtime comparison between \msh{} and $P$-minimal.
 We note that $P$-minimal did not uniquely solve any instance.
 In general, \msh{} was outperformed by $P$-minimal on only 31 instances while \msh{} solved 297 instances in less time.
 
 % nsolved-single
 \begin{table}
   \centering
-  \caption{Solved instances by approach and benchmark family;
-    enumeration of a single representative per Pareto point.
-  }\label{tab:nsolved-single}
-  \begin{tabular}{@{}lrrrrrr@{}}
+  \caption{Solved instances by approach and benchmark family.
+    Results are for both tasks, finding a single solution per Pareto point (single) and enumerating all Pareto-optimal solutions (all).
+  }\label{tab:nsolved}
+  \begin{tabular}{@{}l@{\hspace{2em}}rrrrrr@{}}
     \toprule
-    Instance Type & \satunsat{} & \unsatsat{} & \msu{} & \oll{} & \msh{} & $P$-minimal \\
+    & \multicolumn{2}{c}{Decision Rules} & \multicolumn{2}{c}{\scep{}} & \multicolumn{2}{c}{\scsc{}} \\
+    Algorithm & single & all & single & all & single & all \\
     \midrule
-    Decision Rules & \textbf{223} & \textbf{223} & \textbf{223} & 222 & \textbf{223} & 219 \\
-    \scep{} & 77 & 71 & 71 & 58 & \textbf{83} & 71 \\
-    \scsc{} & 35 & 29 & 36 & 34 & \textbf{40} & 38 \\
+    \satunsat{} & \textbf{223} & \textbf{215} & 77 & 75 & 35 & 35 \\
+    \unsatsat{} & \textbf{223} & \textbf{215} & 71 & 71 & 29 & 29 \\
+    \msu{} & \textbf{223} & \textbf{215} & 71 & 70 & 36 & 36 \\
+    \oll{} & 222 & 213 & 58 & 58 & 34 & 34 \\
+    \msh{} & \textbf{223} & \textbf{215} & \textbf{83} & \textbf{81} & \textbf{40} & \textbf{40} \\\addlinespace
+    $P$-minimal & 219 & 213 & 71 & 68 & 38 & 26 \\\addlinespace
+    Seesaw & 123 & -- & -- & -- & -- & -- \\
+    Seesaw-SAT & 42 & -- & \TODO{tbd} & -- & \TODO{tbd} & -- \\
+    Seesaw-SAT-min & 139 & -- & \TODO{tbd} & -- & \TODO{tbd} & -- \\\addlinespace
+    ParetoMCS & 34 & -- & 0 & -- & 0 & -- \\
+    ParetoMCS-strat & 32 & -- & 0 & -- & 0 & -- \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-% msh-scatter-single
+% combined-msh-single-obj-time
 \begin{figure}
   \centering
-  \includegraphics{all-datasets-msh-scatter-log-single.pdf}
-  \caption{Runtime comparison between $P$-minimal and \algname{} in the \msh{} variant;
+  \includegraphics{all-datasets-combined-msh-single-obj-time.pdf}
+  \caption{Left: Runtime comparison between $P$-minimal and \algname{} in the \msh{} variant;
     enumeration of a single representative per Pareto point.
-  }\label{fig:msh-scatter-single}
+    Right: Time spent in the \Min{} and \Simpr{} subroutines for \algname{} in the \msh{} variant.
+  }\label{fig:combined-msh-single-obj-time}
 \end{figure}
 
-\TODO{Include time per objective.}
+% Time spent per objective
+\Cref{fig:combined-msh-single-obj-time} (right) shows how much time is spent in the \Min{} compared to the \Simpr{} subroutine for the \msh{} variant of \algname{}.
+The arc that forms in this plot is the timeout border, which is where the sum of both axes is the 5\,400 second timeout.
+It can be seen that for the decision rule instances, more time is spent in the \Simpr{} subroutine, while for the set covering instances, more time is spent in the \Min{} subroutine.
+This indicates that there is no easy answer to the question of which step of the lexicographic minimization is harder, it depends on the instance.
+We furthermore note that the two objectives for the set covering instances are both generated randomly with the same procedure, therefore switching the objectives does not change the instances.
+For the decision rule instances however, the objectives are structurally different, so the results will look different when switching the objectives.
+\TODO{Can or should I say this if we don't have experiments for it?}
 
 \subsection{Enumerating All Pareto-Optimal Solutions}
 
@@ -224,8 +262,7 @@ Next we compare the performance for learning all Pareto-optimal interpretable de
 For this task, the \algname{} variants \satunsat{}, \unsatsat{}, \msu{} and \msh{} all performed the best, solving 215 instances each.
 With this, they outperform $P$-minimal, which only solved 213 instances.
 For this task, the \oll{} variant of \algname{} solves the same number of instances as $P$-minimal.
-Note that the Seesaw configuration included in \cref{fig:mlic-cactus-multi} does not strictly solve the same task as the other.
-As mentioned previously, Seesaw cannot be easily extended to enumerate all Pareto-optimal solutions, we still include it here to show that even when solving the potentially more complex task of enumerating all Pareto-optimal solutions, the other approaches clearly outperform Seesaw.
+Note that Seesaw and ParetoMCS cannot enumerate all Pareto-optimal solutions and are therefore excluded for these experiments.
 
 % mlic-cactus-multi
 \begin{figure}
@@ -259,25 +296,8 @@ A per-instance runtime comparison between \msh{} and $P$-minimal for the task of
 $P$-minimal did also not uniquely solve any instance for enumerating all Pareto-optimal solutions.
 Furthermore, \msh{} was outperformed by $P$-minimal on 71 instances while \msh{} solved 257 instances faster.
 
-% nsolved-multi
-\begin{table}
-  \centering
-  \caption{Solved instances by approach and benchmark family;
-    enumeration of all Pareto-optimal solutions.
-  }\label{tab:nsolved-multi}
-  \begin{tabular}{@{}lrrrrrr@{}}
-    \toprule
-    Instance Type & \satunsat{} & \unsatsat{} & \msu{} & \oll{} & \msh{} & $P$-minimal \\
-    \midrule
-    Decision Rules & \textbf{215} & \textbf{215} & \textbf{215} & 213 & \textbf{215} & 213 \\
-    \scep{} & 75 & 71 & 70 & 58 & \textbf{81} & 68 \\
-    \scsc{} & 35 & 29 & 36 & 34 & \textbf{40} & 26 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
 % Single multi comparison
-Comparing the number of solved instances between \cref{tab:nsolved-single} and \cref{tab:nsolved-multi}, we can see that the performance difference between \algname{} and $P$-minimal is greater when enumerating all Pareto-optimal solutions.
+Comparing the number of solved instances in \cref{tab:nsolved}, we can see that the performance difference between \algname{} and $P$-minimal is greater when enumerating all Pareto-optimal solutions.
 Furthermore, \cref{fig:combined-msh-scatter-single-multi} (right) shows a runtime comparison between enumerating a single representative solution per Pareto point and enumerating all Pareto-optimal solutions with \msh{}.
 Overall, the approach scales well also for the latter task, although there understandable is an overhead when the number of solutions required to be enumerated grows significantly;
 this is the case for learning interpretable decision rules, where some instances have more than 10\,000 solutions per Pareto point.

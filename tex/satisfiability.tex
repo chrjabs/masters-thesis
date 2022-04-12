@@ -32,6 +32,19 @@ A SAT solver is an algorithm that determines the satisfiability of a given formu
 If the formula is satisfiable, the solver returns ``satisfiable'' (\sat{}) and a solution $\sol$ with $\sol(\formula)=1$;
 if $\formula$ is unsatisfiable, the return value is ``unsatisfiable'' (\unsat{}).
 
+% CDCL solvers
+So-called Conflict-Driven Clause Learning (CDCL) solvers are the state-of-the art in terms of SAT solving.
+They have been found to defy the theoretical exponential worst-case performance on many SAT instances appearing for real-world problems.
+Two central techniques in model CDCL solvers that enable this success are clause learning and search restarts~\autocite{handbook2-cdcl}.
+SAT solving algorithms typically assign variables through either decisions or implications.
+A decision assignment is the solver ``choosing'' an assignment for a given variable based on some heuristics.
+On the other hand, an implication assignment is an assignment that is \emph{implied} from the assignments previously made, i.e., an assignment that logically follows, otherwise a clause would be falsified.
+During the search procedure, the decision assignments made at earlier stages might lead to conflicts, meaning that the formula becomes unsatisfiable with these assignments.
+In this case, the solver needs to backtrack and start over from an earlier point.
+CDCL solvers add conflict analysis to this process, where the solver finds the set of decisions that lead to the conflict and forms a clause of them that can be added to the formula.
+This clause contains information learned from the found conflict and retains it for coming iterations.
+In addition to that, the search of a CDCL solver is restarted based on heuristics to improve their performance.
+
 % SAT as a declarative modelling language
 The SAT problem was proved to be \NP-complete by~\textcite{DBLP:conf/stoc/Cook71}.
 This result is central to the modern day use of SAT as a declarative programming approach to solving other \NP-complete problems by encoding them as a propositional formula first, solving them with a SAT solver and then decoding the solution to the original problem context.
@@ -65,11 +78,10 @@ The advantage of using SAT as a declarative programming language for solving oth
 
 % Incremental SAT solving
 It is common that algorithms that solve problems with the help of SAT solvers produce a series of SAT problems that only differ slightly.
-To be able to solve these sub-problems more efficiently, most modern SAT solvers provide an incremental interface that allows for retaining information learned in previous solver calls~\autocites{DBLP:journals/entcs/EenS03,handbook2-cdcl}.
-CDCL solvers learn information in the form of clauses that are logical implications of the given clauses.
-Retaining these learned clauses from previous calls allows the solver to determine satisfiability faster in subsequent calls.
+To be able to solve these sub-problems more efficiently, most modern SAT solvers provide an incremental interface that allows for retaining information in form of clauses learned in previous solver calls~\autocites{DBLP:journals/entcs/EenS03,handbook2-cdcl}.
+Retaining these learned clauses from previous calls allows CDCL solvers to determine satisfiability faster in subsequent calls.
 In order for these learned clauses from previous queries to still hold for subsequent calls, it is only possible to \emph{add} clauses to the solvers internal formula, not remove them.
-In addition, incremental SAT solvers support solving under assumptions.
+Additionally, incremental SAT solvers support solving under assumptions.
 The assumptions $\assumps$ are a set of literals that are treated as unit clauses, i.e., a solver call with internal formula $\formula$ and assumptions $\assumps$ either returns \sat{} and a solution $\sol \supset \assumps$, or \unsat{} and a subset $\core \subset \{\lnot l \mid l\in\assumps\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
 The subset $\core$ is called an unsatisfiable \emph{core}~\autocite{handbook2-cdcl} and, intuitively, is an explanation for the unsatisfiability of the query.
 
