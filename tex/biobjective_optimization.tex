@@ -118,7 +118,7 @@ This is a common approach to solving lexicographic optimization, since solving a
 % Leximax optimization
 Lexicographic max-ordering (leximax) optimization~\autocite{Ehrgott2005-5} is closely related to lexicographic optimization.
 The only difference is that for leximax optimization, the objective values are sorted in descending order before comparing them lexicographically.
-This leads to the Pareto points with smalles maximum objective value being considered optimal.
+This leads to the Pareto points with smallest maximum objective value being considered optimal.
 Let $\generalobj_\text{max}(x) = \max\{\generalobj_1(x), \generalobj_2(x)\}$ and $\generalobj_\text{min}(x) = \min\{\generalobj_1(x), \generalobj_2(x)\}$.
 Formally, a solution $x$ dominates another solution $x^d$ in the leximax sense if (a)~$\generalobj_\text{max}(x) < \generalobj_\text{max}(x^d)$, or (b)~$\generalobj_\text{max}(x) = \generalobj_\text{max}(x^d)$ and $\generalobj_\text{min}(x) < \generalobj_\text{min}(x^d)$.
 Informally speaking, this notion of optimality seeks to keep all objective values low by minimizing the maximum value first.
@@ -200,7 +200,6 @@ Once all solutions for that Pareto point are enumerated, the clause is hardened.
 \subsubsection{Enumeration of Pareto-Minimal Correction Sets\label{sec:pareto-mcs}}
 
 % Pareto MSCes
-
 An approach for computing Pareto-optimal solutions via so-called Pareto-minimal correction sets (ParetoMCSes) has been proposed in the past~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a,DBLP:conf/aaai/Terra-NevesLM18,DBLP:conf/ijcai/Terra-NevesLM18}.
 A ParetoMCS (w.r.t.\ two objectives $\Obj_1$ and $\Obj_2$) consists of two sets of literals $(M_1, M_2)$ such that (i)~$M_1 \subset \Obj_1$ and $M_2 \subset \Obj_2$, and (ii)~there is a Pareto-optimal solution $\sol$ that sets $\sol(l) = 1$ for all $l \in M_1 \cup M_2$ and $\sol(l) = 0$ for all other $l \in (\Obj_1 \cup \Obj_2) \setminus (M_1 \cup M_2)$.
 Computing Pareto-optimal solutions can be reduced to the computations of ParetoMCSes~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}.
@@ -222,30 +221,20 @@ Since ParetoMCS enumeration is approximative in this sense, we are not comparing
 
 \subsubsection{Implicit Hitting Set Approach: Seesaw\label{sec:seesaw}}
 
-\TODO{Point out that Seesaw is not necessarily SAT-based.}
-
-\TODO{First two paragraphs different in style than previous text.}
-
 % Implicit hitting set approach
 Implicit hitting set approaches for solving combinatorial optimization problems were first proposed in~\textcite{DBLP:journals/ior/Moreno-CentenoK13}.
 The overarching idea is that an optimization problem is modelled as a set $\cores$ of so-called \emph{cores} which represent an undesirable or conflicting substructure of the problem.
-(Note that these cores are not necessarily equal to a core in SAT solving as described in \cref{sec:inc-sat}.)
-All cores in $\cores$ need to be resolved by selecting a smallest hitting set $\hs$ that contains at least one element from each core.
-However, the set $\cores$ is not explicitly know;
-instead, it is defined implicitly through a separation oracle that, for decision problems, can be used to test if a given hitting set $\hs$ intersects with all cores.
-If the hitting set does not intersect with all cores, the oracle returns a core that is not hit.
-
-% MaxHS and Seesaw
-The implicit hitting set approach has been successfully applied to and refined for MaxSAT~\autocite{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20};
-other successful applications can be found~\autocites{DBLP:conf/cp/IgnatievPLM15,DBLP:conf/kr/SaikkoWJ16,DBLP:conf/cade/FazekasBB18,DBLP:conf/kr/SaikkoDAJ18}.
+Note that these cores are not necessarily equal to a core in SAT solving as described in \cref{sec:inc-sat}, for this reason, we will be referring to them as \emph{optimization cores} from now on.
+The implicit hitting set approach has been successfully applied to MaxSAT~\autocite{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20} and other SAT-related applications~\autocite{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20}.
 Recently, Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21} was proposed as a generalized implicit hitting set framework for bi-objective optimization.
 In contrast to our work, in Seesaw one of the objectives is treated as a block box.
 This allows for---but also requires---problem-specific instantiations of the black box.
+SAT and MaxSAT solvers can be used in both, the hitting set extraction and the black box objective of Seesaw, but it is not necessarily SAT-based.
 
 % Seesaw in a SAT context
-While the original paper presents Seesaw in general terms, in our context the Seesaw algorithm computes Pareto-optimal solutions of a formula $\formula$ by maintaining a collection $\cores$ of cores that are subsets of $\Obj_\inc$.
+While the original paper presents Seesaw in general terms, in our context the Seesaw algorithm computes Pareto-optimal solutions of a formula $\formula$ by maintaining a collection $\cores$ of optimization cores that are subsets of $\Obj_\inc$.
 Informally speaking, in the bi-objective setting, every solution $\sol$ that improves on $\Obj_\dec$ needs to assign at least one literal from each core to 1.
-The algorithm works iteratively by computing a hitting set $\hs \subset \Obj_\inc$ (using an integer programming solver), i.e., a subset-minimal set of literals of $\Obj_\inc$ that intersects with each core in $\cores$, and then a solution $\sol$ that sets $\sol(l) = 1$ for each $l \in \hs$ and $\sol(l) = 0$ for each $l \in \Obj_\inc \setminus \hs$ and for which $\Obj_\dec(\sol)$ is the smallest possible value for all such solutions if one exists.
+The algorithm works iteratively by computing a hitting set $\hs \subset \Obj_\inc$ (using an integer programming solver), i.e., a subset-minimal set of literals of $\Obj_\inc$ that intersects with each optimization core in $\cores$, and then a solution $\sol$ that sets $\sol(l) = 1$ for each $l \in \hs$ and $\sol(l) = 0$ for each $l \in \Obj_\inc \setminus \hs$ and for which $\Obj_\dec(\sol)$ is the smallest possible value for all such solutions if one exists.
 The iteration then extracts a new core that $\hs$ does not intersect with.
 The Pareto-optimal solutions of $\formula$ are identified by the size of the hitting set increasing.
 More precisely, if the hitting set is found to increase from size $|\hs|$ to size $|\hs_2|$ with $|\hs_2|>|\hs|$, the solution $\sol$ found with a hitting set of size $|\hs|$ that has the smallest minimal value $\Obj_\dec(\sol)$ is Pareto-optimal~\autocite{DBLP:conf/cp/JanotaMSM21}.
@@ -253,33 +242,37 @@ More precisely, if the hitting set is found to increase from size $|\hs|$ to siz
 % Example: Seesaw
 \begin{example}
   Consider the formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:search-trace}. 
-  Initially there are no cores, so $\cores = \emptyset$ and $\hs = \emptyset$.
-  Since there is no $\sol$ that sets $\sol(l) = 0$ for each $l \in \Obj_\inc$, the iteration ends by extracting the core $\Obj_\inc$. 
+  Initially there are no optimization cores, so $\cores = \emptyset$ and $\hs = \emptyset$.
+  Since there is no $\sol$ that sets $\sol(l) = 0$ for each $l \in \Obj_\inc$, the iteration ends by extracting the optimization core $\Obj_\inc$. 
   The intuition is, that any solution $\sol$ of $\formula$ sets at least one variable in $\Obj_\inc$ to 1.
   In the next iteration, a hitting set over $\cores = \{ \Obj_\inc \}$ is computed.
   There are a number of alternatives;
   assume $\hs = \{ i_1 \}$.
-  Since there is no $\sol$ that set $\sol(i_2) = \sol(i_3) = \sol(i_4) = 0$, the iteration ends with extracting the core $\{ i_2, i_3, i_4\}$.
+  Since there is no $\sol$ that set $\sol(i_2) = \sol(i_3) = \sol(i_4) = 0$, the iteration ends with extracting the optimization core $\{ i_2, i_3, i_4\}$.
   The same intuition as earlier holds for this core.
   Assume the next hitting set computed is $\hs = \{i_2\}$.
   Now there is a $\sol$ that set $\sol(i_1) = \sol(i_3) = \sol(i_4) = 0$;
   one that minimizes $\Obj_\dec(\sol)$ is $\sol^o_1 = \soloone$.
-  The iteration ends with extracting the core $\core = \{i_1, i_3, i_4\}$.
+  The iteration ends with extracting the optimization core $\core = \{i_1, i_3, i_4\}$.
   Now the intuition is that, since $\sol^o_1$ minimizes $\Obj_\dec$ over solutions that assign $\sol(l) = 0$ for every $l \notin \hs$, every solution that obtains a lower value of $\Obj_\dec$ assigns at least one literal of $\core$ to 1 as well. 
   Assume next we get $\hs = \{i_3\}$ for which no corresponding solution exists;
-  the core $\{i_1, i_2, i_4\}$ is added to $\cores$.
+  the optimization core $\{i_1, i_2, i_4\}$ is added to $\cores$.
   Now we have $\cores = \{ \Obj_\inc, \{i_2, i_3, i_4\}, \{i_1, i_3, i_4\}, \{i_1, i_2, i_4\}\}$;
   the only minimal hitting set is $\hs = \{ i_4 \}$.
-  There is no $\sol$ that sets $\sol(i_1) = \sol(i_2) = \sol(i_3) = 0$ so a new core $\{i_1, i_2, i_3\}$ is extracted. 
+  There is no $\sol$ that sets $\sol(i_1) = \sol(i_2) = \sol(i_3) = 0$ so a new optimization core $\{i_1, i_2, i_3\}$ is extracted. 
   Next, one possible hitting set is $\hs = \{i_1, i_3\}$.
   Since the size of the hitting set grew from 1 to 2, the algorithm concludes that $\sol^o_1$ is Pareto-optimal. 
   The algorithm continues in this manner, finding the Pareto-optimal $\sol^o_2$ and $\sol^o_3$ in the process.
   After computing the hitting set consisting of all literals in $\Obj_\inc$, the core extracted is $\emptyset$ at which point the algorithm terminates. 
 \end{example}
 
-% Refined core extraction strategy
-Note that the core-extraction strategy that only computes $\Obj_\inc \setminus \hs$ as the new core detailed in the example corresponds to what is called the weakest possible strategy by~\textcite{DBLP:conf/cp/JanotaMSM21}.
-Seesaw is only feasible in practice when using a stronger core-extraction strategy---like the improved version detailed in the original Seesaw paper---since Seesaw otherwise reduces to enumerating all subsets of $\Obj_\inc$ as hitting sets~\autocite{DBLP:conf/cp/JanotaMSM21}.
+% Core extraction strategies for Seesaw
+Note that the optimization-core-extraction strategy that only computes $\Obj_\inc \setminus \hs$ as the new optimization core detailed in the example corresponds to what is called the weakest possible strategy by~\textcite{DBLP:conf/cp/JanotaMSM21}.
+Seesaw is only feasible in practice when using a stronger optimization-core-extraction strategy---like the improved version detailed in the original Seesaw paper---since Seesaw otherwise reduces to enumerating all subsets of $\Obj_\inc$ as hitting sets~\autocite{DBLP:conf/cp/JanotaMSM21}.
+When using a SAT-based instantiation of the black box objective in Seesaw, it is also possible to use cores extracted by the SAT solver as the optimization cores for Seesaw.
+Using cores extracted by a SAT solver in Seesaw is an example of a task-specific optimization-core-extraction method mentioned in the paper proposing Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
+
+% Extending Seesaw to full pareto front enumeration
 Also note that, in contrast to \algname{} and $P$-minimal, extending Seesaw as it was originally presented~\autocite{DBLP:conf/cp/JanotaMSM21} to support the enumeration of all Pareto-optimal solutions seems non-trivial.
 For a non-formal intuition note that, while Seesaw is guaranteed to find at least one solution obtaining the objective values of each Pareto-optimal point, the non-deterministic hitting set computation might steer the algorithm past other solutions that obtain the same values.
 
