@@ -64,3 +64,4 @@ leximax
 MaxSAT-like
 SAT-UNSAT
 UNSAT-SAT
+ParetoMCS-strat
