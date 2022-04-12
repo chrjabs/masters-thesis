@@ -164,11 +164,13 @@ In the last subsection, we look at how the different refinements presented in \c
 \subsection{Finding a Single Representative Solution per Pareto Point}
 
 % mlic-cactus-single
-For comparing the performance of the variants of \algname{} presented in \cref{sec:variants}, $P$-minimal and Seesaw, we first look at the results for learning a single decision rule per Pareto point.
+For comparing the performance of the variants of \algname{} presented in \cref{sec:variants}, $P$-minimal, ParetoMCS and Seesaw, we first look at the results for learning a single decision rule per Pareto point.
 \Cref{fig:mlic-cactus-single} shows the number of instances solved ($x$-axis) for different per-instance time limits ($y$-axis) for this task.
 The best-performing approaches are the \algname{} variants \msh{}, \satunsat{}, \unsatsat{} and \msu{}, solving 223 instances, while $P$-minimal solved 219 instances.
 All variants of \algname{} outperform $P$-minimal to some extent.
-Seesaw is very clearly outperformed by all other approaches, solving only 123 instances within the resource constraints.
+Seesaw and ParetoMCS are very clearly outperformed by all other approaches.
+Even the best variant of Seesaw (Seesaw-SAT-min) only solves 139 instances within the resource constraints.
+ParetoMCS performs even worse, solving only 34 instances.
 
 % mlic-cactus-single
 \begin{figure}
@@ -183,6 +185,7 @@ Seesaw is very clearly outperformed by all other approaches, solving only 123 in
 % setcover-cactus-single
 Next we look at a similar comparison for the bi-objective set covering benchmarks.
 In this comparison, Seesaw is not included since it cannot be feasibly instantiated for this task.
+ParetoMCS did not manage to solve any of the set covering instances, with and without stratification.
 \Cref{fig:setcover-cactus-single} shows the number of solved instances per individual time limit for the two generated sets of bi-objective set covering instances.
 Here again \msh{} is the best-performing variant of \algname{}, considerably outperforming $P$-minimal:
 $P$-minimal solved 71 (respectively 38) fixed element probability (respectively set cardinality) instances, whereas \msh{} solved 83 (respectively 40) instances.
@@ -199,40 +202,57 @@ For this application, not all variants of \algname{} outperformed $P$-minimal:
 \end{figure}
 
 % Overall solved instances and best-performaning
-The numbers of solved instances for all approaches (except Seesaw) are summarized in \cref{tab:nsolved-single}.
+The numbers of solved instances for all approaches are summarized in \cref{tab:nsolved}.
 The best-performing approach for each benchmark is highlighted in bold font.
 \msh{} is the best-performing \algname{} variant overall, outperforming $P$-minimal in all cases.
-For more details, \cref{fig:msh-scatter-single} shows a per-instance runtime comparison between \msh{} and $P$-minimal.
+For more details, \cref{fig:combined-msh-single-obj-time} (left) shows a per-instance runtime comparison between \msh{} and $P$-minimal.
 We note that $P$-minimal did not uniquely solve any instance.
 In general, \msh{} was outperformed by $P$-minimal on only 31 instances while \msh{} solved 297 instances in less time.
 
 % nsolved-single
 \begin{table}
   \centering
-  \caption{Solved instances by approach and benchmark family;
-    enumeration of a single representative per Pareto point.
-  }\label{tab:nsolved-single}
-  \begin{tabular}{@{}lrrrrrr@{}}
+  \caption{Solved instances by approach and benchmark family.
+    Results are for both tasks, finding a single solution per Pareto point (single) and enumerating all Pareto-optimal solutions (all).
+  }\label{tab:nsolved}
+  \begin{tabular}{@{}l@{\hspace{2em}}rrrrrr@{}}
     \toprule
-    Instance Type & \satunsat{} & \unsatsat{} & \msu{} & \oll{} & \msh{} & $P$-minimal \\
+    & \multicolumn{2}{c}{Decision Rules} & \multicolumn{2}{c}{\scep{}} & \multicolumn{2}{c}{\scsc{}} \\
+    Algorithm & single & all & single & all & single & all \\
     \midrule
-    Decision Rules & \textbf{223} & \textbf{223} & \textbf{223} & 222 & \textbf{223} & 219 \\
-    \scep{} & 77 & 71 & 71 & 58 & \textbf{83} & 71 \\
-    \scsc{} & 35 & 29 & 36 & 34 & \textbf{40} & 38 \\
+    \satunsat{} & \textbf{223} & \textbf{215} & 77 & 75 & 35 & 35 \\
+    \unsatsat{} & \textbf{223} & \textbf{215} & 71 & 71 & 29 & 29 \\
+    \msu{} & \textbf{223} & \textbf{215} & 71 & 70 & 36 & 36 \\
+    \oll{} & 222 & 213 & 58 & 58 & 34 & 34 \\
+    \msh{} & \textbf{223} & \textbf{215} & \textbf{83} & \textbf{81} & \textbf{40} & \textbf{40} \\\addlinespace
+    $P$-minimal & 219 & 213 & 71 & 68 & 38 & 26 \\\addlinespace
+    Seesaw & 123 & -- & -- & -- & -- & -- \\
+    Seesaw-SAT & 42 & -- & \TODO{tbd} & -- & \TODO{tbd} & -- \\
+    Seesaw-SAT-min & 139 & -- & \TODO{tbd} & -- & \TODO{tbd} & -- \\\addlinespace
+    ParetoMCS & 34 & -- & 0 & -- & 0 & -- \\
+    ParetoMCS-strat & 32 & -- & 0 & -- & 0 & -- \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-% msh-scatter-single
+% combined-msh-single-obj-time
 \begin{figure}
   \centering
-  \includegraphics{all-datasets-msh-scatter-log-single.pdf}
-  \caption{Runtime comparison between $P$-minimal and \algname{} in the \msh{} variant;
+  \includegraphics{all-datasets-combined-msh-single-obj-time.pdf}
+  \caption{Left: Runtime comparison between $P$-minimal and \algname{} in the \msh{} variant;
     enumeration of a single representative per Pareto point.
-  }\label{fig:msh-scatter-single}
+    Right: Time spent in the \Min{} and \Simpr{} subroutines for \algname{} in the \msh{} variant.
+  }\label{fig:combined-msh-single-obj-time}
 \end{figure}
 
-\TODO{Include time per objective.}
+% Time spent per objective
+\Cref{fig:combined-msh-single-obj-time} (right) shows how much time is spent in the \Min{} compared to the \Simpr{} subroutine for the \msh{} variant of \algname{}.
+The arc that forms in this plot is the timeout border, which is where the sum of both axes is the 5\,400 second timeout.
+It can be seen that for the decision rule instances, more time is spent in the \Simpr{} subroutine, while for the set covering instances, more time is spent in the \Min{} subroutine.
+This indicates that there is no easy answer to the question of which step of the lexicographic minimization is harder, it depends on the instance.
+We furthermore note that the two objectives for the set covering instances are both generated randomly with the same procedure, therefore switching the objectives does not change the instances.
+For the decision rule instances however, the objectives are structurally different, so the results will look different when switching the objectives.
+\TODO{Can or should I say this if we don't have experiments for it?}
 
 \subsection{Enumerating All Pareto-Optimal Solutions}
 
@@ -242,8 +262,7 @@ Next we compare the performance for learning all Pareto-optimal interpretable de
 For this task, the \algname{} variants \satunsat{}, \unsatsat{}, \msu{} and \msh{} all performed the best, solving 215 instances each.
 With this, they outperform $P$-minimal, which only solved 213 instances.
 For this task, the \oll{} variant of \algname{} solves the same number of instances as $P$-minimal.
-Note that the Seesaw configuration included in \cref{fig:mlic-cactus-multi} does not strictly solve the same task as the other.
-As mentioned previously, Seesaw cannot be easily extended to enumerate all Pareto-optimal solutions, we still include it here to show that even when solving the potentially more complex task of enumerating all Pareto-optimal solutions, the other approaches clearly outperform Seesaw.
+Note that Seesaw and ParetoMCS cannot enumerate all Pareto-optimal solutions and are therefore excluded for these experiments.
 
 % mlic-cactus-multi
 \begin{figure}
@@ -277,25 +296,8 @@ A per-instance runtime comparison between \msh{} and $P$-minimal for the task of
 $P$-minimal did also not uniquely solve any instance for enumerating all Pareto-optimal solutions.
 Furthermore, \msh{} was outperformed by $P$-minimal on 71 instances while \msh{} solved 257 instances faster.
 
-% nsolved-multi
-\begin{table}
-  \centering
-  \caption{Solved instances by approach and benchmark family;
-    enumeration of all Pareto-optimal solutions.
-  }\label{tab:nsolved-multi}
-  \begin{tabular}{@{}lrrrrrr@{}}
-    \toprule
-    Instance Type & \satunsat{} & \unsatsat{} & \msu{} & \oll{} & \msh{} & $P$-minimal \\
-    \midrule
-    Decision Rules & \textbf{215} & \textbf{215} & \textbf{215} & 213 & \textbf{215} & 213 \\
-    \scep{} & 75 & 71 & 70 & 58 & \textbf{81} & 68 \\
-    \scsc{} & 35 & 29 & 36 & 34 & \textbf{40} & 26 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
 % Single multi comparison
-Comparing the number of solved instances between \cref{tab:nsolved-single} and \cref{tab:nsolved-multi}, we can see that the performance difference between \algname{} and $P$-minimal is greater when enumerating all Pareto-optimal solutions.
+Comparing the number of solved instances in \cref{tab:nsolved}, we can see that the performance difference between \algname{} and $P$-minimal is greater when enumerating all Pareto-optimal solutions.
 Furthermore, \cref{fig:combined-msh-scatter-single-multi} (right) shows a runtime comparison between enumerating a single representative solution per Pareto point and enumerating all Pareto-optimal solutions with \msh{}.
 Overall, the approach scales well also for the latter task, although there understandable is an overhead when the number of solutions required to be enumerated grows significantly;
 this is the case for learning interpretable decision rules, where some instances have more than 10\,000 solutions per Pareto point.

@@ -85,16 +85,12 @@
     text opacity=1
   },
   tick pos=left,
-]
-\nextgroupplot[
   xmode=log,
   ymode=log,
   xmin=30,
   xmax=5400,
   ymin=30,
   ymax=5400,
-  xlabel={$P$-minimal (s)},
-  ylabel={\texttt{MSHybrid} (s)},
   log ticks with fixed point,
   axis x line*=bottom,
   axis y line*=left,
@@ -104,8 +100,12 @@
   extra y ticks={30,5400},
   extra x tick labels={30,5\,400},
   extra y tick labels={30,5\,400},
-  minor xtick={70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
+  minor xtick={40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
   minor ytick={40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
+]
+\nextgroupplot[
+  xlabel={$P$-minimal (s)},
+  ylabel={\texttt{MSHybrid} (s)},
 ]
 
 \draw [dotted] (30,30) -- (5400,5400);
@@ -122,25 +122,8 @@
 \addlegendentry{Decision Rules}
 
 \nextgroupplot[
-  xmode=log,
-  ymode=log,
-  xmin=30,
-  xmax=5400,
-  ymin=30,
-  ymax=5400,
   xlabel={single representative (s)},
   ylabel={all representatives (s)},
-  log ticks with fixed point,
-  axis x line*=bottom,
-  axis y line*=left,
-  xtickten={2,3},
-  ytickten={2,3},
-  extra x ticks={30,5400},
-  extra y ticks={30,5400},
-  extra x tick labels={30,5\,400},
-  extra y tick labels={30,5\,400},
-  minor xtick={70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
-  minor ytick={40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
 ]
 
 \draw [dotted] (30,30) -- (5400,5400);

@@ -4,6 +4,7 @@
 \usepackage{pgfplots}
 
 \pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
 
 \begin{document}
 \begin{tikzpicture}
@@ -63,14 +64,19 @@
 
 \input{../macros.tex}
 
-\begin{loglogaxis}[
-  width=7cm,
+\begin{groupplot}[
+  group style={
+    group size=2 by 1,
+    horizontal sep=6em,
+  },
   height=7cm,
+  width=7cm,
   label style={font=\small},
   tick label style={
     font=\small,
     /pgf/number format/1000 sep=\,,
   },
+  scaled y ticks={base 10:-3},
   legend style={
     legend pos=north west,
     font=\footnotesize,
@@ -79,8 +85,8 @@
     text opacity=1
   },
   tick pos=left,
-  xlabel={\Min{} (s)},
-  ylabel={\Simpr{} (s)},
+  xmode=log,
+  ymode=log,
   xmin=30,
   xmax=5400,
   ymin=30,
@@ -94,23 +100,43 @@
   extra y ticks={30,5400},
   extra x tick labels={30,5\,400},
   extra y tick labels={30,5\,400},
-  minor xtick={70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
+  minor xtick={40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
   minor ytick={40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000},
+]
+\nextgroupplot[
+  xlabel={$P$-minimal (s)},
+  ylabel={\msh{} (s)},
 ]
 
 \draw [dotted] (30,30) -- (5400,5400);
 \draw [loosely dotted] (60,30) -- (5400,2700);
 \draw [loosely dotted] (30,60) -- (2700,5400);
 
-\addplot [only marks,color0,mark=x] table [x=increasing,y=decreasing,col sep=comma] {setcover-element-prob-inc-dec-time-scatter-single.csv};
+\addplot [only marks,color0,mark=x] table [x=pminimal,y=bioptsat-msh,col sep=comma] {setcover-element-prob-msh-scatter-single.csv};
 \addlegendentry{SetCovering-EP}
 
-\addplot [only marks,color1,mark=o] table [x=increasing,y=decreasing,col sep=comma] {setcover-set-card-inc-dec-time-scatter-single.csv};
+\addplot [only marks,color1,mark=o] table [x=pminimal,y=bioptsat-msh,col sep=comma] {setcover-set-card-msh-scatter-single.csv};
 \addlegendentry{SetCovering-SC}
 
-\addplot [only marks,color2,mark=+] table [x=increasing,y=decreasing,col sep=comma] {mlic-inc-dec-time-scatter-single.csv};
+\addplot [only marks,color2,mark=+] table [x=pminimal,y=bioptsat-msh,col sep=comma] {mlic-msh-scatter-single.csv};
 \addlegendentry{Decision Rules}
 
-\end{loglogaxis}
+\nextgroupplot[
+  xlabel={\Min{} (s)},
+  ylabel={\Simpr{} (s)},
+]
+
+\draw [dotted] (30,30) -- (5400,5400);
+\draw [loosely dotted] (60,30) -- (5400,2700);
+\draw [loosely dotted] (30,60) -- (2700,5400);
+\addplot [forget plot,no marks,dotted,smooth,domain=30:5400,samples=300] {5400-x};
+
+\addplot [only marks,color0,mark=x] table [x=increasing,y=decreasing,col sep=comma] {setcover-element-prob-inc-dec-time-scatter-single.csv};
+
+\addplot [only marks,color1,mark=o] table [x=increasing,y=decreasing,col sep=comma] {setcover-set-card-inc-dec-time-scatter-single.csv};
+
+\addplot [only marks,color2,mark=+] table [x=increasing,y=decreasing,col sep=comma] {mlic-inc-dec-time-scatter-single.csv};
+
+\end{groupplot}
 \end{tikzpicture}
 \end{document}
