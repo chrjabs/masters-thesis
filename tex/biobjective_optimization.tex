@@ -96,6 +96,8 @@ As mentioned in \cref{sec:multiopt}, Pareto optimality is only one notion of wha
 There are two other important notions of optimality for bi-objective optimization that narrow down the set of solutions that are considered optimal:
 lexicographic optimization and lexicographic max-ordering optimization~\autocite{Ehrgott2005-5}.
 These notions of optimality can be seen as a way of specifying in advance which Pareto-optimal solutions are of interest, considering only a subset of all Pareto-optimal solutions optimal.
+In a sense, solving multi-objective optimization under these other notions of optimality can be considered easier than solving it under Pareto optimality.
+This is because the solutions are a subset of all Pareto-optimal solutions and every algorithm finding all Pareto-optimal solutions will therefore also find all solutions optimal under these other notions.
 Both lexicographic optimization and lexicographic max-ordering optimization are general for any number of objectives, however, here we describe them in the context of bi-objective optimization.
 
 % Lexicographic optimization
@@ -118,7 +120,7 @@ This is a common approach to solving lexicographic optimization, since solving a
 % Leximax optimization
 Lexicographic max-ordering (leximax) optimization~\autocite{Ehrgott2005-5} is closely related to lexicographic optimization.
 The only difference is that for leximax optimization, the objective values are sorted in descending order before comparing them lexicographically.
-This leads to the Pareto points with smallest maximum objective value being considered optimal.
+This leads to the Pareto points with the smallest maximum objective value being considered optimal.
 Let $\generalobj_\text{max}(x) = \max\{\generalobj_1(x), \generalobj_2(x)\}$ and $\generalobj_\text{min}(x) = \min\{\generalobj_1(x), \generalobj_2(x)\}$.
 Formally, a solution $x$ dominates another solution $x^d$ in the leximax sense if (a)~$\generalobj_\text{max}(x) < \generalobj_\text{max}(x^d)$, or (b)~$\generalobj_\text{max}(x) = \generalobj_\text{max}(x^d)$ and $\generalobj_\text{min}(x) < \generalobj_\text{min}(x^d)$.
 Informally speaking, this notion of optimality seeks to keep all objective values low by minimizing the maximum value first.
@@ -147,12 +149,9 @@ enumeration of $P$-minimal solutions, Seesaw, and enumeration of Pareto-minimal 
 
 \subsubsection{$P$-minimal Solution Enumeration\label{sec:p-minimal}}
 
-\TODO{Move comparison arguments to experiments.}
-
 % P-minimal solution enumeration
 The approach perhaps closest to ours is solving multi-objective constraint optimization problems by enumerating so-called $P$-minimal solutions~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ftp/KoshimuraNFH09}.
-Since this approach is arguably the most similar among existing to the approach developed in this thesis, we are using it as one of the two approaches we empirically compare \algname{} to in \cref{chap:experiments}.
-The $P$-minimal approach  corresponds to enumerating the solutions of $\formula^\text{W} = \formula \land \tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$ that are subset-minimal w.r.t.\ the set of outputs of the totalizers.
+This approach corresponds to enumerating the solutions of $\formula^\text{W} = \formula \land \tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$ that are subset-minimal w.r.t.\ the set of outputs of the totalizers.
 More precisely, if $P$ is the set of output literals of $\tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$, then the goal is to enumerate solutions $\sol^m$ such that no other solution $\sol$ has $\{ l \mid l \in P \land \sol(l) = 0\} \subsetneq \{ l \mid l \in P \land \sol^m(l) = 0\}$.
 The procedure for enumerating such solutions~\autocite{DBLP:conf/ftp/KoshimuraNFH09} works by (i)~using a solver to obtain any solution $\sol$ of $\formula^\text{W}$, (ii)~iteratively minimizing the subset of variables of $P$ set to true by the solution, and, once a minimal solution $\sol_m$ has been found, (iii)~adding the clause $(\ov{\Obj_{\inc}}{k_1} \lor \ov{\Obj_{\dec}}{k_2})$ containing the output variables corresponding to the lowest index set to true by $\sol_m$.
 We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal'' for short.
@@ -172,20 +171,14 @@ We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal
   To find a next Pareto-optimal solution, the solver is queried without any assumptions for a new solution to start the minimization process from.
 \end{example}
 
-% P-minimal not ordered
-\TODO{Move to \cref{chap:approach}.}
-Note that $P$-minimal has no guarantee on the order that the solutions are enumerated in. 
-Intuitively, when an intermediate solution $\sol$ is found, the following SAT solver call either provides another solution that dominates $\sol$, or proves that $\sol$ is Pareto-optimal.  
-
 % Extending P-minimal to enumerate the full Pareto front
 As presented in~\cite{DBLP:conf/cp/SohBTB17}, the $P$-minimal approach will only enumerate one representative solution per Pareto point.
 In our implementation we extended $P$-minimal to the task of enumerating all solutions on the Pareto front.
 Specifically, we add a new relaxation variable $r$ to the clause added each iteration for use as an assumption to enumerate all solutions at that Pareto point:
-the next SAT solver query is done including the assumption $\lnot r$, if a dominating solution is found, the clause is hardened by adding $\lnot r$ as a unit clause.
-If no dominating solution is found, all solutions corresponding to the just discovered Pareto point can be enumerated when removing the assumption $\lnot r$ by blocking every found solution and querying the solver again until it returns \unsat{}.
-If the next solution found dominates the previous one, we harden the clause added at the previous iteration by adding $\lnot r$ as a unit clause.
-Once all solutions for that Pareto point are enumerated, the clause is hardened.
-\TODO{Rewrite second halve of paragraph to be ``less papery''}
+the next SAT solver query is done including the assumption $\lnot r$, if a dominating solution is found, the clause is made permanent by adding $\lnot r$ as a unit clause.
+If no dominating solution is found, all solutions corresponding to the just discovered Pareto point can be enumerated when removing the assumption $\lnot r$---effectively removing the clause that $r$ appears in---by blocking every found solution and querying the solver again until it returns \unsat{}.
+Once all solutions for that Pareto point are enumerated, the clause is hardened by adding $\lnot r$ as a unit clause.
+If the next solution found dominates the previous one, we also harden the clause added in the previous iteration.
 
 % Example: P-minimal for full Pareto front
 \begin{example}
@@ -321,7 +314,7 @@ It was first proposed for a single objective~\autocite{DBLP:journals/science/Kir
 An example of an algorithm building on multi-objective simulated annealing can be found in~\textcite{DBLP:journals/isci/SenguptaS18}.
 
 % Evolutionary algorithms
-A second big group of algorithms are evolutionary algorithms~\autocites{Saini2021,Dasgupta2013}.
+A second big group of algorithms are evolutionary algorithms~\autocites{Saini2021,DBLP:books/daglib/0087893}.
 These meta-heuristic algorithms hold a set of candidate solutions referred to as \emph{population}, which is then developed over multiple iterations to approximate the Pareto front;
 this process simulates evolution in nature, hence the name.
 Algorithms for this category were presented in many places (e.g.,~\autocites{DBLP:journals/jgo/StornP97,DBLP:journals/tec/DebAPM02}).

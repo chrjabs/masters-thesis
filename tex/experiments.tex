@@ -11,10 +11,6 @@ We evaluate the relative runtime performance of the \algname{} variants against 
 As a parametric detail, in its default \msh{} is configured to switch between \msu{} and \satunsat{} once 70\% of the literals in $\Obj_\inc$ have been added to $\tot(\Act)$.
 All experiments were run on 2.60-GHz Intel Xeon E5-2670 machines with 64-GB RAM in RHEL under a 1.5-hour per-instance time and 16-GB memory limit.
 
-\section{Competing Approaches\label{sec:competing}}
-
-\TODO{Move arguments for what we compare to from \cref{sec:approaches} here.}
-
 \section{Benchmarks\label{sec:benchmarks}}
 
 % Signposting
@@ -134,6 +130,11 @@ due to the fact that \algname{} is guaranteed to enumerate the Pareto-optimal so
 % Seesaw not feasible
 Since both objectives in the bi-objective set covering problem are monotone over the chosen cover, the refined core extraction strategy for Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21} cannot be used.
 Seesaw is therefore infeasible for this problem since it would enumerate every possible solution.
+
+\section{Competing Approaches\label{sec:competing}}
+
+\TODO{Move arguments for what we compare to from \cref{sec:approaches} here.}
+\TODO{Move Seesaw instantiation Here.}
 
 \section{Results\label{sec:results}}
 
