@@ -84,8 +84,6 @@
 \usepackage{tikz}            % For making vector graphics (hard to learn but powerful)
 %\usepackage{wrapfig}        % For nice text-wrapping figures (use at own discretion)
 \usepackage{amsmath, amssymb} % For better math
-\usepackage{algorithm}       % For pseudocode
-\usepackage[noend]{algorithmic} % For pseudocode
 \usepackage{booktabs}        % For nicer tables
 \usepackage{multirow}        % Multirow cells in tables
 \usepackage{rotating}        % For sidewaystable
@@ -115,6 +113,10 @@
 \newtheorem{example}[example]{Example}
 \aliascntresetthe{example}
 \Crefname{observation}{Observation}{Observations}
+
+\usepackage{algorithm}       % For pseudocode
+\usepackage[noend]{algorithmic} % For pseudocode
+\renewcommand{\algorithmiccomment}[1]{\hspace*{\fill}\{#1\}}
 
 % TODO: Remove
 \usepackage{lipsum}
