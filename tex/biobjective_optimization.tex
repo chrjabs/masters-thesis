@@ -25,7 +25,7 @@ One natural way to define optimality for multiple objectives is Pareto optimalit
   We represent $x$ dominating $x'$ by $x \prec x'$.
 \end{definition}
 \begin{definition}[Pareto Optimality~\autocite{Ehrgott2005-2}]
-  Given a MOOP as defined in \cref{eq:moop}, a solution $x \in \feasible$ is Pareto-optimal (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj$) iff there is no $x' \in \feasible$ such that $x' \prec x$, i.e., $x$ is not dominated by any other solution.
+  Given a MOOP as defined in \cref{eq:moop}, a solution $x \in \feasible$ is Pareto-optimal (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj$) if and only if there is no $x' \in \feasible$ such that $x' \prec x$, i.e., $x$ is not dominated by any other solution.
 \end{definition}
 When the objectives are clear from context, we will simply say that a solution $x$ is Pareto-optimal.
 Note that there can be multiple Pareto-optimal solutions to a MOOP.

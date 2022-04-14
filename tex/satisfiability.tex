@@ -63,7 +63,7 @@ The advantage of using SAT as a declarative programming language for solving oth
   The groups of ingredients the guests like form three \emph{sets}, and you want to know if a \emph{cover} (another set of ingredients) of at most size two exists so that this cover intersects all three of the sets.
   The set covering problem can be encoded into SAT by introducing a variable for each element and encoding each set as a clause.
   For this example, this yields the following three clauses: $\clause_\text{A} = (v_\text{tomato} \lor v_\text{courgette} \lor v_\text{bell pepper})$, $\clause_\text{B} = (v_\text{spinache} \lor v_\text{egg} \lor v_\text{peas})$, $\clause_\text{C} = (v_\text{mushroom} \lor v_\text{chilli})$.
-  The semantics of these variables are that iff an assignment $\sol$ assigns $\sol(v)=1$, then the element that this variable is included in the cover the assignment encodes.
+  The semantics of these variables are that if and only if an assignment $\sol$ assigns $\sol(v)=1$, then the element that this variable is included in the cover the assignment encodes.
   In addition to the sets, we need to encode the constraint that the cover can be at most of size two.
   For now, assume that $\texttt{As-CNF}\left(\sum_{v \in V)} v \le 2\right)$ (where $V$ is the set of all variables, i.e., $V = \var(\clause_\text{A}) \cup \var(\clause_\text{B}) \cup \var(\clause_\text{C})$) is a set of clauses that encodes exactly that.
   A set of clauses like this is known as a cardinality constraint and will be discussed in \cref{sec:card-const}.\\
@@ -97,7 +97,7 @@ Numerous methods of forming such CNF formulas are known (e.g.,~\autocites{DBLP:c
 % Totalizer encoding
 In this work we make use of the totalizer encoding.
 Given a set $L$ of $n$ input literals and a bound $k=1, \ldots, n$, the (incremental) totalizer~\autocites{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/MartinsJML14} encoding produces a CNF formula $\tot(L, k)$ that defines a set $\{\ov{L}{1}, \ldots, \ov{L}{k}\} \subset \var(\tot(L))$ of \emph{output literals} that---informally speaking---count the number of literals in $L$ assigned to true by solutions to $\tot(L)$:
-if $\sol$ is an assignment that satisfies $\tot(L)$, then $\sol(\ov{L}{b}) = 1$ iff $\sum_{l \in L} \sol(l) < b$.
+if $\sol$ is an assignment that satisfies $\tot(L)$, then $\sol(\ov{L}{b}) = 1$ if and only if $\sum_{l \in L} \sol(l) < b$.
 For applications where only either upper or lower bounding on the number of true literals is needed, the size of the encoded totalizer can be reduced by encoding implications in only one direction instead of in both (i.e., $\ov{L}{b} \leftarrow (\sum_{l \in L} l < b)$ or $\ov{L}{b} \rightarrow \sum_{l \in L} l < b$ but not both, depending on if upper or lower bounding is needed).
 The algorithmic approach presented in this paper only uses upper bounding cardinality constraints, we therefore use the size-reduced version of the totalizer encoding.
 The \emph{incremental} totalizer supports both increasing the bound $k$ and adding new input literals without having to rebuild the whole formula:
