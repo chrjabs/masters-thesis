@@ -119,7 +119,6 @@ It asks for a solution that satisfies as many of the given clauses as possible.
 Most commonly and in this work, MaxSAT refers to the extension of \emph{weighted partial} MaxSAT, in which a set of \emph{hard} clauses $\formula$ and another set of \emph{soft} clauses $\softs$ are given.
 Each clause $\clause \in \softs$ is assigned a weight $w_\clause$ and a solution $\sol$ that satisfies $\formula$ while achieving minimum weight of falsified soft clauses $\sum_{\clause\in\softs \mid \tau(\clause)=0} w_\clause$ is optimal for the problem.
 Since the \NP-complete SAT decision problem (recall \cref{sec:sat}) can be reduced to MaxSAT (its optimization extension), MaxSAT is \NP-hard.
-\TODO{(soundness?).}
 
 % MaxSAT as a modelling language
 In the same way that SAT can be used as a declarative language to solve other decision problems, MaxSAT can be used to solve optimization problems.
