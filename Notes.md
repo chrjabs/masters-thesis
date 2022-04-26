@@ -157,11 +157,15 @@
 ## Intro
 
 - Vagueness in parts intentional (how to do better?)
+  - easily encoded: succinctly
   - e.g. "small enough encoding": should I say "polynomial size encoding"? Technically it should be something like "an encoding of size smaller than the worst-case runtime of the problem"
 - Earlier version: multi-objective earlier, Matti asked to move declarative/SAT earlier
   - Need to find balance
 - Complexity discussion?
-- "MaxSAT as the declarative progamming language": is something like "SAT-based language similar to MaxSAT" better?
+  - Unse NP-hard _informally_
+  - Discuss real-world runtimes
+- Encoding size: "the efficiency of the pipeline depends on the size of the encoding"
+- "MaxSAT as the declarative programming language": is something like "SAT-based language similar to MaxSAT" better?
 - p4: Pareto point definition move forward?
 - Struggle to find balance between not making the intro more lengthy and explaining enough so that it is understandable
 
@@ -178,6 +182,7 @@
 - MaxSAT notation using O for soft clauses: was intentional because S seems overloaded and O is basically the same in MaxSAT and Bi-Opt
 - Other notions: Matti asked to point out that they can be considered "easier"
 - SAT cores for Seesaw: how much detail is needed, since it is not a main contribution but still new
+- Seesaw cores, rework paragraph
 
 ## BiOptSat
 
