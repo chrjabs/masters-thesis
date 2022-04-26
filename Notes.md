@@ -151,3 +151,43 @@
 - SAT-based bi-/multi-objective optimization not very active in last years
 - Contributions
 - Signposting for chapters
+
+# 26.04.2022 - Feedback Jeremias
+
+## Intro
+
+- Vagueness in parts intentional (how to do better?)
+  - e.g. "small enough encoding": should I say "polynomial size encoding"? Technically it should be something like "an encoding of size smaller than the worst-case runtime of the problem"
+- Earlier version: multi-objective earlier, Matti asked to move declarative/SAT earlier
+  - Need to find balance
+- Complexity discussion?
+- "MaxSAT as the declarative progamming language": is something like "SAT-based language similar to MaxSAT" better?
+- p4: Pareto point definition move forward?
+- Struggle to find balance between not making the intro more lengthy and explaining enough so that it is understandable
+
+> **_SUMMARY:_** Make sure the reader gets the idea (_exact_, _multi-objective_ optimization for _hard_ problems) early
+
+## SAT
+
+- Learned clause "can be deleted"?
+- SAT encoding example: change from arbitrary meal to pizza
+- Cooking/pizza example for incremental SAT
+
+## Bi-Opt
+
+- MaxSAT notation using O for soft clauses: was intentional because S seems overloaded and O is basically the same in MaxSAT and Bi-Opt
+- Other notions: Matti asked to point out that they can be considered "easier"
+- SAT cores for Seesaw: how much detail is needed, since it is not a main contribution but still new
+
+## BiOptSat
+
+- Point out that the first solution is lexicographically optimal
+- $\tau^r$ as "running model" was an attempt to make sure what $\tau$ I'm talking about in the text
+  - Maybe better to rename superscript-less $\tau$s in text
+- MSU3 connection to optimization cores
+- Spell out relaxation of cores in OLL
+- Mention that we tried double bound hardening and did not get enough advantage to justify more clauses
+
+## Experiments
+
+- Shorten objective swapping discussion in results
