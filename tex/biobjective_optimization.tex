@@ -9,7 +9,7 @@ For reference of what other work has been done as well, we give an overview of o
 
 % Multiobjective optimization
 Multi-objective optimization deals with optimizing $\nobj$ given objective functions $\generalobj_i: \feasible \rightarrow \mathbb{R}^+$ where $i=1,\dots,\nobj$, with the solution $\decvar$, while $\decvar$ is from a feasible set $\feasible$~\autocite{Ehrgott2005-1}.
-W.l.o.g., we assume that all optimizations seek to \emph{minimize} the objective functions.
+W.l.o.g., we assume that all objective functions are to be \emph{minimized}.
 Formally, a multi-objective optimization problem (MOOP) is of the form:
 \begin{equation}\label{eq:moop}
   \min (\generalobj_1(x),\dots,\generalobj_\nobj(x)),\ \text{subject to}\ x\in \feasible.
@@ -18,7 +18,7 @@ The space that the feasible set $\feasible$ is a subset of is called \emph{decis
 Every point in the decision space is mapped to a point in \emph{objective space} by the objective functions.
 
 % Pareto optimality
-For multi-objective optimization problems, since the objectives might be in conflict with each other, no single optimal solution exists.
+For multi-objective optimization problems, since the objectives might be in conflict with each other (i.e., optimality cannot be reached for all of them at the same time) no single optimal solution exists.
 One natural way to define optimality for multiple objectives is Pareto optimality, based on dominated solutions.
 \begin{definition}[Dominated Solutions~\autocite{Ehrgott2005-2}]
   Given a MOOP as defined in \cref{eq:moop} and two solutions $x,x' \in \feasible$, $x$ dominates $x'$ (w.r.t.\ $\generalobj_1,\dots,\generalobj_\nobj$) if (i)~$\generalobj_i(x) \leq \generalobj_i(x')$ for all $i=1,\dots,\nobj$, and (ii)~$\generalobj_i(x) < \generalobj_i(x')$ for some $i\in\{1,\dots,\nobj\}$.
@@ -96,9 +96,9 @@ An important property of Pareto-optimal solutions to bi-objective problems is su
 As mentioned in \cref{sec:multiopt}, Pareto optimality is only one notion of optimality for multiple objectives.
 There are two other important notions of optimality for bi-objective optimization that narrow down the set of solutions that are considered optimal:
 lexicographic optimization and lexicographic max-ordering optimization~\autocite{Ehrgott2005-5}.
-These notions of optimality can be seen as a way of specifying in advance which Pareto-optimal solutions are of interest, considering only a subset of all Pareto-optimal solutions optimal.
-In a sense, solving multi-objective optimization under these other notions of optimality can be considered easier than solving it under Pareto optimality.
-This is because the solutions considered optimal are a subset of all Pareto-optimal solutions and every algorithm finding all Pareto-optimal solutions will therefore also find all solutions optimal under these other notions.
+These notions of optimality can be seen as a way of specifying in advance which Pareto-optimal solutions are of interest.
+The solutions considered optimal are a subset of all Pareto-optimal solutions and every algorithm finding all Pareto-optimal solutions will therefore also find all solutions optimal under these other notions.
+For this reason, solving multi-objective optimization under these other notions of optimality can be considered easier than solving it under Pareto optimality.
 Both lexicographic optimization and lexicographic max-ordering optimization are general for any number of objectives, however, here we describe them in the context of bi-objective optimization.
 
 % Lexicographic optimization
@@ -177,7 +177,7 @@ We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal
 As presented in~\cite{DBLP:conf/cp/SohBTB17}, the $P$-minimal approach will only enumerate one representative solution per Pareto point.
 In our implementation we extended $P$-minimal to the task of enumerating all solutions on the Pareto front.
 Specifically, we add a new relaxation variable $r$ to the clause added each iteration for use as an assumption to enumerate all solutions at that Pareto point:
-the next SAT solver query is done including the assumption $\lnot r$, if a dominating solution is found, the clause is made permanent by adding $\lnot r$ as a unit clause.
+the next SAT solver query is done including the assumption $\lnot r$, if a dominating solution is found, the clause is made permanent, i.e., hardening it, by adding $\lnot r$ as a unit clause.
 If no dominating solution is found, all solutions corresponding to the just discovered Pareto point can be enumerated when removing the assumption $\lnot r$---effectively removing the clause that $r$ appears in---by blocking every found solution and querying the solver again until it returns \unsat{}.
 Once all solutions for that Pareto point are enumerated, the clause is hardened by adding $\lnot r$ as a unit clause.
 If the next solution found dominates the previous one, we also harden the clause added in the previous iteration.
@@ -268,9 +268,10 @@ More precisely, if the hitting set is found to increase from size $|\hs|$ to siz
 
 % Core extraction strategies for Seesaw
 Note that the optimization-core-extraction strategy that only computes $\Obj_\inc \setminus \hs$ as the new optimization core detailed in the example corresponds to what is called the weakest possible strategy by~\textcite{DBLP:conf/cp/JanotaMSM21}.
-Seesaw is only feasible in practice when using a stronger optimization-core-extraction strategy---like the improved version detailed in the original Seesaw paper---since Seesaw otherwise reduces to enumerating all subsets of $\Obj_\inc$ as hitting sets~\autocite{DBLP:conf/cp/JanotaMSM21}.
+Seesaw is only feasible in practice when using a stronger optimization-core-extraction strategy since Seesaw otherwise reduces to enumerating all subsets of $\Obj_\inc$ as hitting sets~\autocite{DBLP:conf/cp/JanotaMSM21}.
+One such stronger strategy for extracting optimization cores that is generally applicable if the oracle function is anti-monotone was presented in the original paper~\autocite{DBLP:conf/cp/JanotaMSM21}.
 When using a SAT-based instantiation of the black box objective in Seesaw, it is also possible to use cores extracted by the SAT solver as the optimization cores for Seesaw.
-Using cores extracted by a SAT solver in Seesaw is an example of a task-specific optimization-core-extraction method mentioned in the paper proposing Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
+More details on this are given with the concrete instantiations of Seesaw that we use in \cref{sec:competing}.
 
 % Extending Seesaw to full pareto front enumeration
 Also note that, in contrast to \algname{} and $P$-minimal, extending Seesaw as it was originally presented~\autocite{DBLP:conf/cp/JanotaMSM21} to support the enumeration of all Pareto-optimal solutions seems non-trivial.

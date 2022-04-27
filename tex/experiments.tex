@@ -65,13 +65,13 @@ The interpretation of the variables is that $\selector_l^j=1$ if and only if the
 We represent the sample with index $i$ with a Boolean class label $y_i$ and the Boolean features $x_i^j$ where $j=1,\dots,\nfeat$.
 With this, the encoding is $\lnot \noise_i \rightarrow (y_i \leftrightarrow \bigwedge_{l=1}^\nclauses \bigvee_{j=1}^\nfeat (x_i^j \land \selector_l^j))$.
 We use this encoding as $\formula$, literals $\selector_l^j$ as $\Obj_\inc$ and literals $\noise_i$ as $\Obj_\dec$.
-This corresponds to finding Pareto-optimal solutions w.r.t.\ the size of the decision rule as the total number of literals and its classification error.
-In preliminary experiments, we found that choosing the objectives as described here leads to better performance than swapping them.
+The task in this benchmark is therefore to find Pareto-optimal solution w.r.t.\ the size of the decision rule (measured as the number of literals in the rule) and its classification error.
+In preliminary experiments, we found that choosing the objectives as described here leads to better performance than using classification error as the increasing objective.
 
 % Symmetry breaking clauses
-Since decision rules in CNF contain many symmetric solutions obtained by changing the order of clauses, we add additional clauses to the encoding to break these symmetries.
+Since decision rules in CNF contain many symmetric solutions obtained by changing the order of clauses in the rule, we add additional clauses to the encoding to break these symmetries.
 The idea behind the symmetry breaking is that the bit-strings $\sol(\selector_l^1)\sol(\selector_l^2)\dots\sol(\selector_l^\nfeat)$ are forced to be in lexicographic ordering.
-In addition to the $\selector$ variables, we introduce variables $\equals_l^j$ for $j=1,\dots,\nfeat$ and $l=2,\dots,\nclauses$ that represent whether the bit-strings of the clauses with index $(l-1)$ and $l$ are equal for the first $j$ bits.
+In more detail, additionally to the $\selector$ variables, we introduce variables $\equals_l^j$ for $j=1,\dots,\nfeat$ and $l=2,\dots,\nclauses$ that represent whether the bit-strings of the clauses with index $(l-1)$ and $l$ are equal for the first $j$ bits.
 The semantics of this representation are encoded as follows:
 $\equals_l^1 \leftrightarrow (\selector_{l-1}^1 \leftrightarrow \selector_l^1)$ and $\equals_l^j \leftrightarrow (\equals_l^{j-1} \land (\selector_{l-1}^f \leftrightarrow \selector_l^j))$ for $j=2,\dots,\nfeat$.
 The lexicographic ordering is then enforced by adding the constraints $\lnot \equals_l^1 \rightarrow (\selector_{l-1}^1 \land \lnot \selector_{l-1}^1)$ and $(\equals_l^{j-1} \land \lnot \equals_l^j) \rightarrow (\selector_{l-1}^j \land \lnot \selector_l^j)$ for $j=2,\dots,\nfeat$, enforcing that the bit with the smallest index in which the clauses differ should be 1 in the clause with index $(l-1)$ and 0 in the clause with index $l$.
@@ -254,8 +254,7 @@ The arc that forms in this plot is the timeout border, which is where the sum of
 It can be seen that for the decision rule instances, more time is spent in the \Simpr{} subroutine, while for the set covering instances, more time is spent in the \Min{} subroutine.
 This indicates that there is no easy answer to the question of which step of the lexicographic minimization is harder, it depends on the instance.
 We furthermore note that the two objectives for the set covering instances are both generated randomly with the same procedure, therefore swapping the objectives does not change the instances.
-For the decision rule instances however, the objectives are structurally different, so the results will look different when swapping the objectives.
-\TODO{Can or should I say this if we don't have experiments for it?}
+For the decision rule instances, the objectives are structurally different, but---as mentioned previously---preliminary experiments have shown that this configuration of the objectives leads to better performance.
 
 \subsection{Enumerating All Pareto-Optimal Solutions}
 

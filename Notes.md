@@ -152,7 +152,7 @@
 - Contributions
 - Signposting for chapters
 
-# 26.04.2022 - Feedback Jeremias
+# 26.04.2022 - Feedback and Meeting Jeremias
 
 ## Intro
 
