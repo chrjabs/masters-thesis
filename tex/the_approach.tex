@@ -305,14 +305,17 @@ The following observation proves that doing so can be done without removing any 
 \subsection{\oll{}\label{sec:oll}}
 
 % High-level OLL
-As mentioned in \cref{sec:max-sat}, the OLL MaxSAT algorithm~\autocite{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19} builds a cardinality constraint for each core extracted from the formula, treating the totalizer outputs as new soft clauses.
+As mentioned in \cref{sec:max-sat}, the OLL MaxSAT algorithm~\autocite{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19} builds a cardinality constraint for each core extracted from the formula, treating the totalizer outputs as part of the objective.
 The same holds true for the \oll{} instantiation of \Min{}.
-In each iteration, the assumptions given to the SAT solver consist of (i)~the inactive literals of $\Obj_\inc$, (ii)~the outputs of previously built totalizers corresponding to the lowest number of input literals that should be assigned to $1$ in any possible satisfying assignment and (iii)~the bound $\ov{\Obj_\dec}{b_\dec}$.
+Assume in the $i$th iteration, \oll{} extracts the core $\core_i$.
+It will build a totalizer $\tot(\core_i, 1)$ and enforce $\sum_{l\in\core_i} l \le 1$ as an assumption.
+For all literals in the extracted core, if the literal is part of the objective, the literal is marked as active.
+If the literal is the output of a totalizer built over a previous core, the bound enforced on that totalizer is increased by one.
+In each iteration, the assumptions given to the SAT solver consist of (i)~the inactive literals of $\Obj_\inc$, (ii)~the outputs of previously built totalizers corresponding to the lowest number of input literals that should be assigned to $1$ in any possible satisfying assignment, and (iii)~the bound $\ov{\Obj_\dec}{b_\dec}$.
 The procedure terminates when the SAT solver returns a solution $\sol$.
+
 Similarly to \msu{}, the assumptions for enforcing a bound on $\Obj_\inc$ in the other subroutines of \cref{alg:base-algorithm} need to be adapted when using \oll{} by assuming the inactive literals of $l \in \Obj_{\inc} \setminus \Act$ to $0$.
 Additionally, a set of assumptions over the totalizer outputs needs to be included.
-
-\TODO{Spell out how individual totalizers are built and how the outputs are treated}
 
 \subsection{\msh{}\label{sec:hybrid}}
 
@@ -414,10 +417,14 @@ For this reason, bound hardening is only employed for the decreasing objective.
 
 \subsection{Refinements to Core-Guided Variants}
 
+% Overview of core-guided refinements
 Our implementation of the \algname{} variants \msu{} and \oll{} make use of refinements commonly used in core-guided MaxSAT solving.
 More specifically, we employ core minimization~\autocite{DBLP:journals/jsat/IgnatievMM19} (either exact or heuristic) and core-exhaustion~\autocites{DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/AnsoteguiBGL13}.
 Additionally, we consider a disjoint core extraction phase~\autocite{DBLP:conf/cp/DaviesB11}.
+
+% Very brief descriptions of the refinements
 Given a core $\core$ returned by the SAT solver, heuristic core minimization refers to reinvoking the SAT solver with $\{\lnot l \mid l \in \core\}$ as the assumptions hoping that the solver returns a smaller set of assumptions.
 Exact core minimization refers to iteratively finding a minimal unsatisfiable subset by attempting to remove each assumption separately.
 Core exhaustion is an OLL-specific technique that seeks to improve the upper bound of each totalizer being added.
+For this, it increases the bound and checks if the SAT query is still unsatisfiable.
 A disjoint core phase refers to iteratively invoking the SAT solver in order to extract several disjoint sets of objective literals to add to the totalizer (when using \msu{}) or build new totalizers over (when using \oll{}).
