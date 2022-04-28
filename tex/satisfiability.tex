@@ -55,13 +55,13 @@ The advantage of using SAT as a declarative programming language for solving oth
 \begin{example}\label{ex:sat-modelling}
   We give an example of a real-world problem, modelling and solving it with the help of SAT.
   Assume the following situation:
-  you have three guests coming over and want to make a pizza that contains something that each person likes.
+  you have three guests coming over and want to make a pizza where each guest likes at least one topping.
   Guest A tells you they like pepperoni, courgette, and bell pepper;
   Guest B likes chicken, avocado, and prawns;
   Guest C likes mushrooms and chilli pepper.
-  However, you only have enough money to get two ingredients from the store.
+  However, you only have enough money to get two toppings from the store.
   The described situation is an instantiation of the set covering decision problem~\autocite{DBLP:conf/coco/Karp72} that can be encoded into SAT.
-  The groups of ingredients the guests like form three \emph{sets}, and you want to know if a \emph{cover} (another collection of ingredients) of at most size two exists, so that this cover intersects with all three of the sets.
+  The groups of toppings the guests like form three \emph{sets}, and you want to know if a \emph{cover} (another collection of toppings) of at most size two exists, so that this cover intersects with all three of the sets.
   The set covering problem can be encoded into SAT by introducing a variable for each element and encoding each set as a clause.
   For this example, this yields the following three clauses: $\clause_\text{A} = (v_\text{pepperoni} \lor v_\text{courgette} \lor v_\text{bell pepper})$, $\clause_\text{B} = (v_\text{chicken} \lor v_\text{avocado} \lor v_\text{prawns})$, $\clause_\text{C} = (v_\text{mushroom} \lor v_\text{chilli pepper})$.
   The semantics of these variables are that if and only if an assignment $\sol$ assigns $\sol(v)=1$, then the element that this variable encodes is included in the cover the assignment.
@@ -69,7 +69,7 @@ The advantage of using SAT as a declarative programming language for solving oth
   For now, assume that $\texttt{As-CNF}\left(\sum_{v \in V)} v \le 2\right)$ (where $V$ is the set of all variables, i.e., $V = \var(\clause_\text{A}) \cup \var(\clause_\text{B}) \cup \var(\clause_\text{C})$) is a set of clauses that encodes exactly that.
   A set of clauses like this is known as a cardinality constraint and possible ways of representing it in propositional logic will be discussed in \cref{sec:card-const}.\\
   We can now build the formula $\clause_\text{A} \allowbreak \land \clause_\text{B} \allowbreak \land \clause_\text{C} \allowbreak \land \texttt{As-CNF}\left(\sum_{v \in V} v \le 2\right)$ and query a SAT solver for a solution to it.
-  The solver will return \unsat{}, telling us that there is no solution to the given problem instance, i.e., that there is no two ingredients so that every guest likes at least one of them.
+  The solver will return \unsat{}, telling us that there is no solution to the given problem instance, i.e., that there is no two toppings so that every guest likes at least one of them.
   Now if Guest C says that they also like prawns, $\clause_\text{C}$ changes to $\clause_\text{C} = (v_\text{mushrooms} \lor v_\text{chilli pepper} \lor v_\text{prawns})$ and the formula becomes satisfiable.
   In this case, the SAT solver might return the solution $\sol$ with $\sol(v_\text{bell pepper}) = \sol(v_\text{prawns}) = 1$ and $\sol(v) = 0$ for all other $v$.
   This tells us that in a dish containing bell pepper and peas, every guest will find something they like.
@@ -89,7 +89,7 @@ The subset $\core$ is called an unsatisfiable \emph{core}~\autocite{handbook2-cd
 \begin{example}\label{ex:inc-sat}
   Recall the situation from \cref{ex:sat-modelling} after the change of Guest C liking prawns.
   Assume that there is no bell pepper at the store.
-  To check if we can still make a pizza with only two ingredients such that every Guest likes at least one of the ingredients, we can use incremental SAT solving.
+  To check if we can still make a pizza with only two toppings such that every Guest likes at least one of the toppings, we can use incremental SAT solving.
   Instead of adding the fact that bell pepper is not available as a new clause $(\lnot v_\text{bell pepper})$, we can set the assumptions to $\assumps=\{\lnot v_\text{bell pepper}\}$.
   Solving with these assumptions, the solver might return the solution $\sol$ with $\sol(v_\text{courgette}) = \sol(v_\text{prawns}) = 1$ and $\sol(v) = 0$ for all other $v$. \\
   If instead prawns are not available, we can set the assumptions to $\assumps=\{\lnot v_\text{prawns}\}$.
@@ -140,7 +140,7 @@ In the same way that SAT can be used as a declarative language to solve other de
   We can change the problem from the set covering decision problem to the optimization variant by asking for the \emph{smallest} cover rather than giving an upper bound on the size of the cover.
   This is done by removing the cardinality constraint from the encoding and using the encoded sets as hard clauses for a partial MaxSAT instances.
   In addition to that, for every variable $v\in V$, a soft clause $\lnot v$ is added.
-  Solving this MaxSAT instance for the initial situation, the MaxSAT solver will return that at least three of the soft clauses need to be falsified, i.e., that at least three ingredients must be chosen so that every guest likes something.
+  Solving this MaxSAT instance for the initial situation, the MaxSAT solver will return that at least three of the soft clauses need to be falsified, i.e., that at least three toppings must be chosen so that every guest likes something.
   An optimal solution $\sol$ that the solver might return for this has $\sol(v_\text{courgette}) = \sol(v_\text{chicken}) = \sol(v_\text{mushroom}) = 1$ and $\sol(v) = 0$ for all other $v$.
   After we modify the instance to account for guest C liking prawns, the MaxSAT solver might give us the optimal solution $\sol$ with $\sol(v_\text{bell pepper}) = \sol(v_\text{prawns}) = 1$ and $\sol(v) = 0$ for all other $v$.
   There is no valid cover with size smaller than two.
