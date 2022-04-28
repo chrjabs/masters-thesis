@@ -196,3 +196,25 @@
 ## Experiments
 
 - Shorten objective swapping discussion in results
+
+# 28.04.2022 - Intro Outline
+
+- Flats: one objective
+- Flats: two objectives
+- Approaches and declarative optimization
+- SAT and MaxSAT
+
+- Complexity of optimization problems
+- Examples for single- and bi-objective optimization problems
+
+- Declarative programming pipeline
+- Advantages of the declarative approach
+- Complexity of the declarative approach
+
+- The conflict with two objectives
+- Pareto optimality
+- Multi- vs bi-objective
+
+- BiOptSat
+- Evaluation
+- Signposting
