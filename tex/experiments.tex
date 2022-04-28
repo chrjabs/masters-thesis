@@ -211,6 +211,8 @@ The best-performing approach for each benchmark is highlighted in bold.
 For more details, \cref{fig:combined-msh-single-obj-time} (left) shows a per-instance runtime comparison between \msh{} and $P$-minimal.
 We note that $P$-minimal did not uniquely solve any instance.
 In general, \msh{} was outperformed by $P$-minimal on only 31 instances while \msh{} solved 297 instances in less time.
+Both, \algname{} and our implementation of $P$-minimal make full incremental use of the SAT solver, never resetting it during search.
+This suggests that the advantage \algname{} has over $P$-minimal lies in the search being more structured.
 
 % nsolved-single
 \begin{table}
