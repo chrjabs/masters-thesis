@@ -1,4 +1,4 @@
-\chapter{Conclusion\label{chap:conclusion}}
+\chapter{Conclusions\label{chap:conclusion}}
 
 % Recap of contribution
 In this thesis, we presented \algname{}, an algorithm for exact bi-objective optimization under Pareto optimality.
@@ -7,8 +7,7 @@ It can solve three different tasks for \NP-hard optimization problems encoded in
 finding a single Pareto-optimal solution, one representative solution for each Pareto point, and all Pareto-optimal solutions.
 
 % Results of BiOptSat variants comparing to competitors
-\algname{} can be instantiated based on different MaxSAT algorithms.
-We presented five variants of \algname{}, \satunsat{}, \unsatsat{}, \msu{}, \oll{} and \msh{}.
+We presented five variants of \algname{}, based on different MaxSAT algorithms: \satunsat{}, \unsatsat{}, \msu{}, \oll{} and \msh{}.
 In our empirical evaluation we found that the \msh{} variant did not only outperform all other four variants of \algname{} but also all three competitors, $P$-minimal~\autocite{DBLP:conf/cp/SohBTB17}, ParetoMCS~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}, and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
 For most cases, also other variants of \algname{} outperformed the competitors.
 The good performance of \algname{} can be explained by the incremental use of the SAT solver and especially the structured nature of the search it performs.
@@ -24,7 +23,7 @@ Other refinements that did not show a significant impact on performance are bloc
 % Future work
 Going beyond the work presented in this thesis, \algname{} could be further improved and evaluated.
 Evaluating the performance of \algname{} as well for the task of finding a single Pareto-optimal solution is interesting future work.
-Furthermore, for weighted problem instances, the used totalizer encoding could be replaced by the improved generalized totalizer encoding~\autocite{}.
-This encoding is smaller in the case that the subset sums of the cost values do not include every possible value in the range from 1 to $k$.
+Furthermore, for weighted problem instances, the used totalizer encoding could be replaced by the improved generalized totalizer encoding~\autocite{DBLP:conf/cp/0001MM15}.
+This encoding is smaller in the case that the subset sums of the cost values do not include every possible value in the range from 1 to the upper bound $k$.
 For this reason, this change of cardinality constraint encoding could improve the performance of \algname{} on weighted instances.
 Furthermore, a better understanding for what objective should be chosen as increasing to achieve the best performance remains an interesting open question.
