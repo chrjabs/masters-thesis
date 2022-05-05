@@ -8,9 +8,10 @@ finding a single Pareto-optimal solution, one representative solution for each P
 
 % Results of BiOptSat variants comparing to competitors
 We presented five variants of \algname{}, based on different MaxSAT algorithms: \satunsat{}, \unsatsat{}, \msu{}, \oll{} and \msh{}.
-In our empirical evaluation we found that the \msh{} variant did not only outperform all other four variants of \algname{} but also all three competitors, $P$-minimal~\autocite{DBLP:conf/cp/SohBTB17}, ParetoMCS~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}, and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
-For most cases, also other variants of \algname{} outperformed the competitors.
-The good performance of \algname{} can be explained by the incremental use of the SAT solver and especially the structured nature of the search it performs.
+These five variants were evaluated on two benchmark domains: learning interpretable decision rules~\autocite{DBLP:conf/cp/MaliotovM18} and bi-objective set covering.
+In the empirical evaluation we found that the \msh{} variant did not only outperform all other four variants of \algname{} but also all three competitors, $P$-minimal~\autocite{DBLP:conf/cp/SohBTB17}, ParetoMCS~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}, and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
+Other variants of \algname{} also outperformed the competitors in many cases.
+The good performance of \algname{} is in part because of the incremental use of the SAT solver, but mainly due to the structured nature of the search performed by the algorithm.
 \msh{} in particular achieves good performance by combining advantages from the MSU3 and the SAT-UNSAT MaxSAT algorithms.
 Evaluation was done for the two tasks of finding one representative solution for each Pareto point, and for enumerating all Pareto-optimal solutions.
 The advantage of \algname{} over its competitors is slightly more pronounced when enumerating all Pareto-optimal solutions.

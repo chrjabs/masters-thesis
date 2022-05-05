@@ -218,3 +218,19 @@
 - BiOptSat
 - Evaluation
 - Signposting
+
+# 04.05.2022 - Intro Feedback and Meeting Matti
+
+- Hardness on first page
+- Don't make the reader feel like I'm going backwards
+- Cold start
+- Shorten declarative stuff and put earlier
+- Flow
+  - Cold start
+  - Optimization
+  - Hardness (expressing feasible solutions concisely)
+  - Approaches and declarative approach
+- Declarative approaches: classical language: MIP, more recently: MaxSAT
+- Intuition for the algorithm with contributions
+- Mention that we're _not_ doing lexicographic optimization
+- One sentence paragraph on paper (make sure to mention that we're extending on it)
