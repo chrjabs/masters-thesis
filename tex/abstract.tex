@@ -1,26 +1,17 @@
-% \begin{abstract}{finnish}
-
-% Tämä dokumentti on tarkoitettu Helsingin yliopiston tietojenkäsittelytieteen osaston opin\-näyt\-teiden ja harjoitustöiden ulkoasun ohjeeksi ja mallipohjaksi. Ohje soveltuu kanditutkielmiin, ohjelmistotuotantoprojekteihin, seminaareihin ja maisterintutkielmiin. Tämän ohjeen lisäksi on seurattava niitä ohjeita, jotka opastavat valitsemaan kuhunkin osioon tieteellisesti kiinnostavaa, syvällisesti pohdittua sisältöä.
-
-
-% Työn aihe luokitellaan  
-% ACM Computing Classification System (CCS) mukaisesti, 
-% ks.\ \url{https://dl.acm.org/ccs}. 
-% Käytä muutamaa termipolkua (1--3), jotka alkavat juuritermistä ja joissa polun tarkentuvat luokat erotetaan toisistaan oikealle osoittavalla nuolella.
-
-% \end{abstract}
-
 \begin{otherlanguage}{english}
 \begin{abstract}
-Write your abstract here.
+Combinatorial optimization problems arise naturally in many real-world problems.
+For this reason, and since these problems are typically computationally hard, there is a need for non-trivial algorithmic solutions for solving combinatorial optimization.
+Many such solutions (e.g., local search, evolutionary algorithms of declarative programming) have been presented for optimization problems with a single objective, however, real-world problems are often inherently bi-objective.
 
-In addition, make sure that all the entries in this form are completed.
+In this work, we present \algname{}, an exact declarative programming approach for finding so-called Pareto-optimal solutions to bi-objective optimization problems.
+We use propositional logic as the declarative programming language and seek to extend the progress and success in MaxSAT solving to two objectives.
+The presented approach follows the lexicographic method and makes use of a single SAT solver that is preserved throughout the entire search procedure.
+\algname{} allows for solving three tasks for bi-objective optimization:
+finding a single Pareto-optimal solution, one representative solution for each Pareto point or enumerating all Pareto-optimal solutions.
 
-Finally, specify 1--3 ACM Computing Classification System (CCS) topics, as per \url{https://dl.acm.org/ccs}.
-Each topic is specified with one path, as shown in the example below, and elements of the path separated with an arrow.
-Emphasis of each element individually can be indicated
-by the use of bold face for high importance or italics for intermediate
-level.
-
+We present and evaluate five different variants of \algname{}, all building on different algorithms known from MaxSAT solving.
+In the empirical evaluation, we compare \algname{} to three competing algorithmic approaches, showing practical benefits of our approach in the contexts of learning interpretable decision rules and bi-objective set covering.
+Furthermore, for the best-performing variant of \algname{}, we study the effects of proposed refinements to determine their effectiveness.
 \end{abstract}
 \end{otherlanguage}

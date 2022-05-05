@@ -234,3 +234,4 @@
 - Intuition for the algorithm with contributions
 - Mention that we're _not_ doing lexicographic optimization
 - One sentence paragraph on paper (make sure to mention that we're extending on it)
+- Mention implementation in contributions
