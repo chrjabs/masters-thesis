@@ -1,8 +1,8 @@
 \begin{otherlanguage}{english}
 \begin{abstract}
 Combinatorial optimization problems arise naturally in many real-world problems.
-For this reason, and since these problems are typically computationally hard, there is a need for non-trivial algorithmic solutions for solving combinatorial optimization.
-Many such solutions (e.g., local search, evolutionary algorithms of declarative programming) have been presented for optimization problems with a single objective, however, real-world problems are often inherently bi-objective.
+For this reason, and since these problems are typically \NP-hard, there is a need for non-trivial algorithmic solutions for solving combinatorial optimization.
+Many such solutions (e.g., local search, evolutionary algorithms or declarative programming) have been presented for optimization problems with a single objective, however, real-world problems are often inherently bi-objective.
 
 In this work, we present \algname{}, an exact declarative programming approach for finding so-called Pareto-optimal solutions to bi-objective optimization problems.
 We use propositional logic as the declarative programming language and seek to extend the progress and success in MaxSAT solving to two objectives.
@@ -10,7 +10,7 @@ The presented approach follows the lexicographic method and makes use of a singl
 \algname{} allows for solving three tasks for bi-objective optimization:
 finding a single Pareto-optimal solution, one representative solution for each Pareto point or enumerating all Pareto-optimal solutions.
 
-We present and evaluate five different variants of \algname{}, all building on different algorithms known from MaxSAT solving.
+We provide an open source implementation and evaluate five different variants of \algname{}, all building on different algorithms known from MaxSAT solving.
 In the empirical evaluation, we compare \algname{} to three competing algorithmic approaches, showing practical benefits of our approach in the contexts of learning interpretable decision rules and bi-objective set covering.
 Furthermore, for the best-performing variant of \algname{}, we study the effects of proposed refinements to determine their effectiveness.
 \end{abstract}
