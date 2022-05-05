@@ -5,6 +5,7 @@ We implemented  all variants and refinements of \algname{} described in \cref{ch
 Our implementations of MSU3 and OLL were inspired by their implementations in Open-WBO~\autocite{DBLP:conf/sat/MartinsML14}, the other variants were implemented from scratch.
 We used CaDiCaL~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers} as the internal SAT solver.
 As three competing approaches we chose $P$-minimal, ParetoMCS and Seesaw.
+The implementation, also including $P$-minimal and Seesaw, is available as open source ({\small\url{https://bitbucket.org/coreo-group/bioptsat/}}).
 We evaluate the relative runtime performance of the \algname{} variants against the three competing approaches, as well as the impact of the specific refinements (recall \cref{sec:refinements}) to \algname{} on their runtime performance.
 Additionally, we compare performance for the two tasks of either finding a single representative per Pareto point and enumerating all Pareto-optimal solutions.
 We also investigate how much time \algname{} spends in the \Min{} compared to the \Simpr{} procedure.

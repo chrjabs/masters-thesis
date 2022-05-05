@@ -235,3 +235,32 @@
 - Mention that we're _not_ doing lexicographic optimization
 - One sentence paragraph on paper (make sure to mention that we're extending on it)
 - Mention implementation in contributions
+
+# 05.05.2022 - Intro Outline
+
+- Cold start
+
+- Flats: one objective
+- Hardness or real-world problems (shortened a lot) (incorporate examples)
+- Approaches
+- Declarative optimization (Briefly survey pipeline)
+- Solvers and languages (MIP, MaxSAT, Solvers)
+- Advantages of the declarative approach (Briefly give pipeline and mention hardness of language)
+
+- Flats: two objectives
+- The conflict with two objectives
+- Examples for bi-objective optimization
+- Pareto optimality
+- Multi- vs bi-objective
+
+- BiOptSat (intuition)
+- Implementation
+- Evaluation
+- Paper
+- Signposting
+
+CUT
+- Complexity of optimization problems
+- Examples for single- and bi-objective optimization problems (rework)
+- Complexity of the declarative approach
+- Declarative programming pipeline
