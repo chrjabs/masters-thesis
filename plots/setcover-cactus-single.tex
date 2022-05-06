@@ -111,17 +111,20 @@
 \addplot [semithick,color1,dashed,mark=+] table [x=nsolved,y=bioptsat-su,col sep=comma] {setcover-element-prob-cactus-single.csv};
 \addlegendentry{\satunsat}
 
+\addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=bioptsat-us,col sep=comma] {setcover-element-prob-cactus-single.csv};
+\addlegendentry{\unsatsat}
+
 \addplot [semithick,color2,dashdotted,mark=star] table [x=nsolved,y=bioptsat-msu3,col sep=comma] {setcover-element-prob-cactus-single.csv};
 \addlegendentry{\msu}
 
-\addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=bioptsat-us,col sep=comma] {setcover-element-prob-cactus-single.csv};
-\addlegendentry{\unsatsat}
+\addplot [semithick,color4,dashdotted,mark=|] table [x=nsolved,y=bioptsat-oll,col sep=comma] {setcover-element-prob-cactus-single.csv};
+\addlegendentry{\oll}
 
 \addplot [semithick,color5,solid,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {setcover-element-prob-cactus-single.csv};
 \addlegendentry{$P$-minimal}
 
-\addplot [semithick,color4,dashdotted,mark=|] table [x=nsolved,y=bioptsat-oll,col sep=comma] {setcover-element-prob-cactus-single.csv};
-\addlegendentry{\oll}
+\addplot [semithick,color7,solid,mark=o] table [x=nsolved,y=seesaw-satexmin,col sep=comma] {setcover-element-prob-cactus-single.csv};
+\addlegendentry{Seesaw-SAT-min}
 
 \nextgroupplot[
   xmin=0,
@@ -140,15 +143,17 @@
 
 \addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {setcover-set-card-cactus-single.csv};
 
+\addplot [semithick,color1,dashed,mark=+] table [x=nsolved,y=bioptsat-su,col sep=comma] {setcover-set-card-cactus-single.csv};
+
+\addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=bioptsat-us,col sep=comma] {setcover-set-card-cactus-single.csv};
+
 \addplot [semithick,color2,dashdotted,mark=star] table [x=nsolved,y=bioptsat-msu3,col sep=comma] {setcover-set-card-cactus-single.csv};
 
 \addplot [semithick,color4,dashdotted,mark=|] table [x=nsolved,y=bioptsat-oll,col sep=comma] {setcover-set-card-cactus-single.csv};
 
-\addplot [semithick,color1,dashed,mark=+] table [x=nsolved,y=bioptsat-su,col sep=comma] {setcover-set-card-cactus-single.csv};
-
 \addplot [semithick,color5,solid,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {setcover-set-card-cactus-single.csv};
 
-\addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=bioptsat-us,col sep=comma] {setcover-set-card-cactus-single.csv};
+\addplot [semithick,color7,solid,mark=o] table [x=nsolved,y=seesaw-satexmin,col sep=comma] {setcover-set-card-cactus-single.csv};
 
 \end{groupplot}
 \end{tikzpicture}

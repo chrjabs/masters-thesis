@@ -187,14 +187,14 @@ ParetoMCS performs even worse, solving only 34 instances.
 
 % setcover-cactus-single
 Next, we look at a similar comparison for the bi-objective set covering benchmarks.
-In this comparison, Seesaw is not included since it cannot be feasibly instantiated for this task.
-\TODO{Seesaw-SAT and Seesaw-SAT-min will be included once implemented and run!}
-ParetoMCS did not manage to solve any of the set covering instances, with and without stratification.
+In this comparison, only the Seesaw variants with SAT core extraction are included since the default Seesaw core extraction strategy cannot be applied for this problem.
 \Cref{fig:setcover-cactus-single} shows the number of solved instances per individual time limit for the two generated sets of bi-objective set covering instances.
-Here again \msh{} is the best-performing variant of \algname{}, considerably outperforming $P$-minimal:
-$P$-minimal solved 71 (respectively 38) fixed element probability (respectively set cardinality) instances, whereas \msh{} solved 83 (respectively 40) instances.
+ParetoMCS with and without stratification, as well as Seesaw-SAT did not manage to solve any of the set covering instances.
+The best-performing variant of \algname{} is again \msh{}, considerably outperforming $P$-minimal and Seesaw-SAT-min:
+$P$-minimal solved 71 (respectively 38) fixed element probability (respectively set cardinality) instances, Seesaw-SAT-min solved 60 (respectively 38), whereas \msh{} solved 83 (respectively 40) instances.
 For this application, not all variants of \algname{} outperformed $P$-minimal:
 \msu{} and \oll{} were outperformed for both instance variants while \satunsat{} and \unsatsat{} were only outperformed for the instances generated with fixed set cardinality.
+\TODO{Should I comment on hypothesis that Seesaw-SAT-min does well because of weights in CPLEX?}
 
 % setcover-cactus-single
 \begin{figure}
@@ -233,8 +233,8 @@ This suggests that the advantage \algname{} has over $P$-minimal lies in the sea
     \msh{} & \textbf{223} & \textbf{215} & \textbf{83} & \textbf{81} & \textbf{40} & \textbf{40} \\\addlinespace
     $P$-minimal & 219 & 213 & 71 & 68 & 38 & 26 \\\addlinespace
     Seesaw & 123 & -- & -- & -- & -- & -- \\
-    Seesaw-SAT & 42 & -- & \TODO{tbd} & -- & \TODO{tbd} & -- \\
-    Seesaw-SAT-min & 139 & -- & \TODO{tbd} & -- & \TODO{tbd} & -- \\\addlinespace
+    Seesaw-SAT & 42 & -- & 0 & -- & 0 & -- \\
+    Seesaw-SAT-min & 139 & -- & 60 & -- & 38 & -- \\\addlinespace
     ParetoMCS & 34 & -- & 0 & -- & 0 & -- \\
     ParetoMCS-strat & 32 & -- & 0 & -- & 0 & -- \\
     \bottomrule
