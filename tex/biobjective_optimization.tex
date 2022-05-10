@@ -311,16 +311,16 @@ There are different algorithmic approaches in this field, some based on the Simp
 Other than the exact algorithms presented so far, there are also probabilistic and meta-heuristic search algorithms for multi-objective optimization problems~\autocite{Saini2021}.
 These algorithms are \emph{not} guaranteed to return the exact Pareto front, but they will return good solutions that might be sufficiently close approximations.
 Probabilistic and meta-heuristic algorithms are mainly used for problems that are too large to solve them with exact methods under given resource constraints.
-Comparing exact with approximative approaches does not necessarily give much insight, however for the sake of completeness we are giving a short overview of these approximative methods as well.
+Comparing exact with inexact approaches does not necessarily give much insight, however for the sake of completeness we are giving a short overview of these inexact methods as well.
 
 % Simulated annealing
-The first category of approximative algorithms is the family of simulated annealing algorithms~\autocite{Saini2021}.
+The first category of inexact algorithms is the family of simulated annealing algorithms~\autocite{Saini2021}.
 These probabilistic and meta-heuristic algorithms model the annealing process that is used to increase the quality of crystalline structure in metals.
 It was first proposed for a single objective~\autocite{DBLP:journals/science/KirkpatrickGV83} and extended to multiple later~\autocite{DBLP:journals/tec/BandyopadhyaySMD08}.
 An example of an algorithm building on multi-objective simulated annealing can be found in~\textcite{DBLP:journals/isci/SenguptaS18}.
 
 % Evolutionary algorithms
 A second big group of algorithms are evolutionary algorithms~\autocites{Saini2021,DBLP:books/daglib/0087893}.
-These meta-heuristic algorithms hold a set of candidate solutions referred to as \emph{population}, which is then developed over multiple iterations to approximate the Pareto front;
+These meta-heuristic algorithms hold a set of candidate solutions referred to as \emph{population}, which is then developed over multiple iterations to inexact the Pareto front;
 this process simulates evolution in nature, hence the name.
 Algorithms for this category were presented in many places (e.g.,~\autocites{DBLP:journals/jgo/StornP97,DBLP:journals/tec/DebAPM02}).

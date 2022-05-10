@@ -65,3 +65,4 @@ MaxSAT-like
 SAT-UNSAT
 UNSAT-SAT
 ParetoMCS-strat
+MILP
