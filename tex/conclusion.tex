@@ -10,13 +10,13 @@ finding a single Pareto-optimal solution, finding one representative solution fo
 We presented four variants of \algname{} that are based on algorithms proposed for MaxSAT (\satunsat{}, \unsatsat{}, \msu{}, and \oll{}), as well as \msh{}, a hybrid between \msu{} and \satunsat{}.
 The main difference between the \algname{} variants and their MaxSAT inspirations is that an additional constraint over the second objective needs to be enforced during the optimization.
 An open-source implementation of all five variants and two of the three previously proposed SAT-based approaches is provided.
-The previously-proposed approaches that we are comparing to are $P$-minimal~\autocite{DBLP:conf/cp/SohBTB17}, ParetoMCS~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}, and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
+The previously-proposed approaches that we are comparing \algname{} to are $P$-minimal~\autocite{DBLP:conf/cp/SohBTB17}, ParetoMCS~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}, and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
 We evaluated the five variants of \algname{}, comparing them to the three competitors, on two benchmark domains: learning interpretable decision rules~\autocite{DBLP:conf/cp/MaliotovM18} and bi-objective set covering.
 Additionally, we evaluate the algorithms for the two tasks of finding one representative solution for each Pareto point, and of enumerating all Pareto-optimal solutions.
 In the empirical evaluation we found that the \msh{} variant did not only outperform all other four variants of \algname{} but also the three competitors.
-The advantage of \algname{} over its competitors is slightly more pronounced when enumerating all Pareto-optimal solutions.
+\msh{} achieves improved performance by combining advantages from the MSU3 and the SAT-UNSAT MaxSAT algorithms.
+When enumerating all Pareto-optimal solutions, the advantage of \algname{} over its competitors is slightly more pronounced.
 The good performance of \algname{} is in part due to of the incremental use of the SAT solver, but---since $P$-minimal also makes fully incremental use of a SAT solver---more important for the good efficiency is the structured nature of the search of \algname{}.
-\msh{} in particular achieves improved performance by combining advantages from the MSU3 and the SAT-UNSAT MaxSAT algorithms.
 
 % Results of refinements
 Going beyond evaluating variants of \algname{}, we also evaluated refinements to the best-performing variant, \msh{}.

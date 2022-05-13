@@ -23,7 +23,7 @@ These two problems, learning interpretable decision rules from data and the bi-o
 \subsection{Learning Interpretable Decision Rules\label{sec:lidr}}
 
 % What is MLIC
-Recently, a variety of SAT and MaxSAT-based approaches have been developed for learning interpretable classifiers from data~\autocites{DBLP:conf/ijcai/Ignatiev0NS21,DBLP:conf/cp/MaliotovM18,DBLP:conf/ijcai/NarodytskaIPM18,DBLP:conf/ijcai/Hu0HH20,DBLP:conf/cp/YuISB20,DBLP:conf/cade/IgnatievPNM18}.
+Recently, a variety of SAT and MaxSAT-based approaches have been developed for learning interpretable classifiers from data~\autocites{DBLP:conf/ijcai/Ignatiev0NS21,DBLP:conf/cp/MaliotovM18,DBLP:conf/ijcai/NarodytskaIPM18,DBLP:conf/ijcai/Hu0HH20,DBLP:journals/corr/abs-2010-09919,DBLP:conf/cp/YuISB20,DBLP:conf/cade/IgnatievPNM18}.
 The two objectives of minimizing size (the smaller, the more interpretable) and classification error (when there is no perfect classifier, as typical for real-world data) are conflicting, hence giving naturally rise to bi-objective optimization problems.
 Here we consider learning of interpretable decision rules as a representative benchmark domain from this line of work, building on the encoding presented by~\textcite{DBLP:conf/cp/MaliotovM18}.
 In short, a decision rule is a binary classifier in the form of a CNF formula over Boolean features.
@@ -172,7 +172,7 @@ For comparing the performance of the variants of \algname{} presented in \cref{s
 The best-performing approaches are the \algname{} variants \msh{}, \satunsat{}, \unsatsat{} and \msu{}, solving 223 instances, while $P$-minimal solved 219 instances.
 All variants of \algname{} outperform $P$-minimal to some extent.
 Seesaw and ParetoMCS are very clearly outperformed by all other approaches.
-Even the best variant of Seesaw (Seesaw-SAT-min) only solves 139 instances within the resource constraints.
+Even the best variant of Seesaw (Seesaw-SAT-min) only solves 136 instances within the resource constraints.
 ParetoMCS performs even worse, solving only 34 instances.
 
 % mlic-cactus-single
@@ -234,7 +234,7 @@ This suggests that the advantage \algname{} has over $P$-minimal lies in the sea
     $P$-minimal & 219 & 213 & 71 & 68 & 38 & 26 \\\addlinespace
     Seesaw & 123 & -- & -- & -- & -- & -- \\
     Seesaw-SAT & 42 & -- & 0 & -- & 0 & -- \\
-    Seesaw-SAT-min & 139 & -- & 60 & -- & 38 & -- \\\addlinespace
+    Seesaw-SAT-min & 136 & -- & 60 & -- & 38 & -- \\\addlinespace
     ParetoMCS & 34 & -- & 0 & -- & 0 & -- \\
     ParetoMCS-strat & 32 & -- & 0 & -- & 0 & -- \\
     \bottomrule
