@@ -81,14 +81,14 @@ $\formula$ corresponds to the hard clauses while the two objectives correspond t
 
 % Proposition: Ordered Pareto front
 An important property of Pareto-optimal solutions to bi-objective problems is summarized by the next proposition.
-\begin{observation}[Adapted from~\autocite{DBLP:conf/aaai/HartertS14}] \label{prop:biobjective}
+\begin{observation}[Adapted from~\autocite{DBLP:conf/aaai/HartertS14}] \label{obs:biobjective}
   Sorting the Pareto-optimal solutions of a bi-objective optimization problem under the objectives $\generalobj_1$ and $\generalobj_2$ w.r.t.\ increasing values of $\generalobj_1$ amounts to sorting them w.r.t.\ decreasing values of $\generalobj_2$ and vice-versa.
 \end{observation}
 
 % Example: Ordered Pareto front
 \begin{example}
   Consider the formula $\formula$, the objectives $\Obj_\inc$ and $\Obj_\dec$ and the three Pareto-optimal solutions $\sol^o_1$, $\sol^o_2$ and $\sol^o_3$ from \cref{fig:biobj-inst} and \cref{ex:main}.
-  By \cref{prop:biobjective}, lowering the value of one objective of a Pareto-optimal solution has to increase the value of the other;
+  By \cref{obs:biobjective}, lowering the value of one objective of a Pareto-optimal solution has to increase the value of the other;
   we have $\Obj_\inc(\sol^o_1) = 1 < \Obj_\inc(\sol^o_2) = 2 < \Obj_\inc(\sol^o_3) = 3$ and $\Obj_\dec(\sol^o_1) = 3 > \Obj_\dec(\sol^o_2) = 2 > \Obj_\dec(\sol^o_3) = 1$.
 \end{example}
 

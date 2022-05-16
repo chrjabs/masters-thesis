@@ -74,25 +74,24 @@
     xlabels at=edge bottom,
     ylabels at=edge left,
   },
+  height=6.7cm,
+  width=6.7cm,
   label style={font=\small},
   tick label style={font=\small},
   scaled y ticks={base 10:-3},
   legend style={
-    anchor=south,
-    at={(1.05,1.15)},
+    anchor=west,
+    at={(2.25,0.5)},
     font=\footnotesize,
     fill opacity=0.8,
     draw opacity=1,
     text opacity=1,
-    legend columns=4
   },
   tick pos=left,
   xlabel={\# instances solved},
   ylabel={cpu time (s)},
 ]
 \nextgroupplot[
-  height=7cm,
-  width=7cm,
   xmin=0,
   xmax=223,
   ymin=0,
@@ -109,14 +108,14 @@
 \coordinate (orig window start) at ({rel axis cs: 1,1}-|{axis cs:\xcut,0});
 \coordinate (orig window end) at (rel axis cs: 1,1);
 
-\addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {mlic-cactus-single.csv};
-\addlegendentry{\msh}
-
 \addplot [semithick,color1,dashed,mark=+] table [x=nsolved,y=bioptsat-su,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{\satunsat}
 
 \addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=bioptsat-us,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{\unsatsat}
+
+\addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {mlic-cactus-single.csv};
+\addlegendentry{\msh}
 
 \addplot [semithick,color2,dashdotted,mark=star] table [x=nsolved,y=bioptsat-msu3,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{\msu}
@@ -127,14 +126,14 @@
 \addplot [semithick,color5,solid,mark=x] table [x=nsolved,y=pminimal,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{$P$-minimal}
 
+\addplot [semithick,color7,solid,mark=o] table [x=nsolved,y=seesaw-satexmin,col sep=comma] {mlic-cactus-single.csv};
+\addlegendentry{Seesaw-SAT-min}
+
 \addplot [semithick,color6,dashed,mark=o] table [x=nsolved,y=seesaw,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{Seesaw}
 
 \addplot [semithick,color8,dashdotted,mark=o] table [x=nsolved,y=seesaw-sat,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{Seesaw-SAT}
-
-\addplot [semithick,color7,solid,mark=o] table [x=nsolved,y=seesaw-satexmin,col sep=comma] {mlic-cactus-single.csv};
-\addlegendentry{Seesaw-SAT-min}
 
 \addplot [semithick,color9,solid,mark=diamond] table [x=nsolved,y=paretomcs,col sep=comma] {mlic-cactus-single.csv};
 \addlegendentry{ParetoMCS}
@@ -143,8 +142,6 @@
 \addlegendentry{ParetoMCS-strat}
 
 \nextgroupplot[
-  height=7cm,
-  width=7cm,
   xmin=\xcut,
   xmax=223,
   ymin=0,
@@ -161,11 +158,11 @@
 \coordinate (zoom window start) at (rel axis cs: 0,1);
 \coordinate (zoom window end) at (rel axis cs: 1,1);
 
-\addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {mlic-cactus-single.csv};
-
 \addplot [semithick,color1,dashed,mark=+] table [x=nsolved,y=bioptsat-su,col sep=comma] {mlic-cactus-single.csv};
 
 \addplot [semithick,color3,dashed,mark=-] table [x=nsolved,y=bioptsat-us,col sep=comma] {mlic-cactus-single.csv};
+
+\addplot [semithick,color0,solid,mark=asterisk] table [x=nsolved,y=bioptsat-msh,col sep=comma] {mlic-cactus-single.csv};
 
 \addplot [semithick,color2,dashdotted,mark=star] table [x=nsolved,y=bioptsat-msu3,col sep=comma] {mlic-cactus-single.csv};
 

@@ -2,8 +2,8 @@
 
 % Experiment setup and some signposting
 We implemented  all variants and refinements of \algname{} described in \cref{chap:approach} in C++.
-Our implementations of MSU3 and OLL were inspired by their implementations in Open-WBO~\autocite{DBLP:conf/sat/MartinsML14}, the other variants were implemented from scratch.
-We used CaDiCaL~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers} as the internal SAT solver.
+Our implementations of MSU3 and OLL were inspired by their implementations in Open-WBO (v2.1)~\autocite{DBLP:conf/sat/MartinsML14}, the other variants were implemented from scratch.
+We used the (state-of-the-art~\autocite{DBLP:journals/ai/FroleyksHIJS21}) SAT solver CaDiCaL (v1.5.2)~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers}.
 As three competing approaches we chose $P$-minimal, ParetoMCS and Seesaw.
 The implementation, also including $P$-minimal and Seesaw, is available as open source ({\small\url{https://bitbucket.org/coreo-group/bioptsat/}}).
 We evaluate the relative runtime performance of the \algname{} variants against the three competing approaches, as well as the impact of the specific refinements (recall \cref{sec:refinements}) to \algname{} on their runtime performance.
@@ -24,7 +24,7 @@ These two problems, learning interpretable decision rules from data and the bi-o
 
 % What is MLIC
 Recently, a variety of SAT and MaxSAT-based approaches have been developed for learning interpretable classifiers from data~\autocites{DBLP:conf/ijcai/Ignatiev0NS21,DBLP:conf/cp/MaliotovM18,DBLP:conf/ijcai/NarodytskaIPM18,DBLP:conf/ijcai/Hu0HH20,DBLP:journals/corr/abs-2010-09919,DBLP:conf/cp/YuISB20,DBLP:conf/cade/IgnatievPNM18}.
-The two objectives of minimizing size (the smaller, the more interpretable) and classification error (when there is no perfect classifier, as typical for real-world data) are conflicting, hence giving naturally rise to bi-objective optimization problems.
+The two objectives of minimizing size (the smaller, the more interpretable) and classification error (when there is no perfect classifier, as typical for real-world data) are conflicting, hence naturally giving rise to bi-objective optimization problems.
 Here we consider learning of interpretable decision rules as a representative benchmark domain from this line of work, building on the encoding presented by~\textcite{DBLP:conf/cp/MaliotovM18}.
 In short, a decision rule is a binary classifier in the form of a CNF formula over Boolean features.
 The result of the formula evaluated on the features of a data sample is the binary classification assigned by the classifier to this sample.
@@ -88,10 +88,10 @@ The lexicographic ordering is then enforced by adding the constraints $\lnot \eq
 
 % Benchmark datasets
 As the basis of our benchmark instances, we used 24 standard UCI~\autocite{UciMlr} and Kaggle ({\small\url{https://www.kaggle.com}}) benchmark datasets, including ones used in the original evaluation of the encoding~\autocite{DBLP:conf/cp/MaliotovM18}; see \cref{appendix:datasets} for details.
-We randomly and independently sampled subsets of $\nsamp\in\{50,100,1000,5000,10000\}$ data samples from the datasets, four of each size (when applicable), resulting in a total of 372 datasets.
+We independently at random sampled subsets of $\nsamp\in\{50,100,1000,5000,10000\}$ data samples from the datasets, four of each size (when applicable), resulting in a total of 372 datasets.
 The datasets were discretized as in~\autocite{DBLP:conf/cp/MaliotovM18}:
 categorical features are one-hot encoded, continuous features discretized by comparing to a collection of thresholds.
-All experiments on these datasets were run with the encoding configured to learn CNF decision rules consisting of two clauses ($\nclauses = k$).
+All experiments on these datasets were run with the encoding configured to learn CNF decision rules consisting of two clauses ($\nclauses = 2$).
 
 % Domain-specific blocking
 When enumerating multiple solutions corresponding to the same Pareto point, the blocking clauses for \algname{} (as well as $P$-minimal compared to in the experiments) can be strengthened to find solutions mapping to distinct rules:
@@ -130,9 +130,9 @@ due to the fact that \algname{} is guaranteed to enumerate the Pareto-optimal so
 % Competitors and their implementations
 We compare \algname{} to the three algorithms presented in \cref{sec:sat-based}: $P$-minimal, Seesaw and ParetoMCS.
 These algorithms were chosen because they are similar in that they are (or can be) also SAT-based, and they solve the same task of enumerating Pareto-optimal solutions.
-Of $P$-minimal and Seesaw, no general implementation is publicly available, for this reason we implemented these approaches in C++.
-The SAT solver used in all algorithms implemented by us is CaDiCaL~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers} and hitting set extraction in Seesaw is done with CPLEX 20.10.
-For ParetoMCS, we are using the publicly-available Sat4j-based~\autocite{DBLP:journals/jsat/BerreP10} implementation ({\small\url{https://gitlab.ow2.org/sat4j/moco}}).
+No general implementation of $P$-minimal and Seesaw is publicly available, for this reason we implemented these approaches in C++.
+The SAT solver used in all algorithms implemented by us is CaDiCaL~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers} and hitting set extraction in Seesaw is done with CPLEX (v20.10).
+For ParetoMCS, we use the publicly-available Sat4j-based~\autocite{DBLP:journals/jsat/BerreP10} implementation ({\small\url{https://gitlab.ow2.org/sat4j/moco}}).
 
 % Tasks solved
 \algname{} is able to either enumerate a representative solution for each Pareto point or the full Pareto front.
@@ -152,8 +152,8 @@ This instantiation was chosen because finding the smallest rule misclassifying $
 Furthermore, we instantiate two more variants of Seesaw where optimization cores are extracted in the solution-improving search procedure by the SAT solver.
 The last SAT query of solution-improving search will always be \unsat{};
 the core returned by the solver for this call can be used as an optimization core for Seesaw.
-Optionally we apply exact core-minimization to these cores before using them in Seesaw.
-(We found that heuristic core-minimization leads to no significant improvement over no minimization at all.)
+Optionally we apply exact core minimization to these cores before using them in Seesaw.
+(We found that heuristic core minimization leads to no significant improvement over no minimization at all.)
 These two variants will be referred to as Seesaw-SAT and Seesaw-SAT-min.
 
 \section{Results\label{sec:results}}
@@ -173,7 +173,7 @@ The best-performing approaches are the \algname{} variants \msh{}, \satunsat{}, 
 All variants of \algname{} outperform $P$-minimal to some extent.
 Seesaw and ParetoMCS are very clearly outperformed by all other approaches.
 Even the best variant of Seesaw (Seesaw-SAT-min) only solves 136 instances within the resource constraints.
-ParetoMCS performs even worse, solving only 34 instances.
+ParetoMCS performs even worse, solving only 34 instances without and 32 with stratification.
 
 % mlic-cactus-single
 \begin{figure}
@@ -206,7 +206,7 @@ For this application, not all variants of \algname{} outperformed $P$-minimal:
 \end{figure}
 
 % Overall solved instances and best-performaning
-The number of solved instances for all approaches are summarized in \cref{tab:nsolved}.
+The numbers of solved instances for all approaches are summarized in \cref{tab:nsolved}.
 The best-performing approach for each benchmark is highlighted in bold.
 \msh{} is the best-performing \algname{} variant overall, outperforming $P$-minimal in all cases.
 For more details, \cref{fig:combined-msh-single-obj-time} (left) shows a per-instance runtime comparison between \msh{} and $P$-minimal.
@@ -219,7 +219,7 @@ This suggests that the advantage \algname{} has over $P$-minimal lies in the sea
 \begin{table}
   \centering
   \caption{Solved instances by approach and benchmark domain.
-    Results are for both tasks, finding a single solution per Pareto point (single) and enumerating all Pareto-optimal solutions (all).
+    Results for both tasks, finding a single solution per Pareto point (single) and enumerating all Pareto-optimal solutions (all).
   }\label{tab:nsolved}
   \begin{tabular}{@{}l@{\hspace{2em}}rrrrrr@{}}
     \toprule
@@ -246,17 +246,17 @@ This suggests that the advantage \algname{} has over $P$-minimal lies in the sea
   \centering
   \includegraphics{all-datasets-combined-msh-single-obj-time.pdf}
   \caption{Left: Runtime comparison between $P$-minimal and \algname{} in the \msh{} variant.
-    Right: Time spent in the \Min{} and \Simpr{} subroutines for \algname{} in the \msh{} variant.
-    Both for enumeration of a single representative per Pareto point.
+    Right: Time (in seconds) spent in the \Min{} and \Simpr{} subroutines for \algname{} in the \msh{} variant.
+    Both plots are for enumeration of a single representative per Pareto point.
   }\label{fig:combined-msh-single-obj-time}
 \end{figure}
 
 % Time spent per objective
 \Cref{fig:combined-msh-single-obj-time} (right) shows how much time is spent in the \Min{} compared to the \Simpr{} subroutine for the \msh{} variant of \algname{}.
 The arc that forms in this plot is the timeout border, which is where the sum of both axes equals the 5\,400-second timeout.
-It can be seen that for the decision rule instances, more time is spent in the \Simpr{} subroutine, while for the set covering instances, more time is spent in the \Min{} subroutine.
-This indicates that there is no easy answer to the question of which step of the lexicographic minimization is harder, it depends on the instance.
-We furthermore note that the two objectives for the set covering instances are both generated randomly with the same procedure, therefore swapping the objectives does not change the instances.
+It can be seen that for the decision rule instances, in general more time is spent in the \Simpr{} subroutine, while for the set covering instances, more time is spent in the \Min{} subroutine.
+This indicates that there is no easy answer to the question of which step of the lexicographic minimization is harder, as it depends on the instance.
+Furthermore, we note that the two objectives for the set covering instances are both generated randomly with the same procedure, therefore swapping the objectives does not change the instances.
 For the decision rule instances, the objectives are structurally different, but---as mentioned previously---preliminary experiments have shown that this configuration of the objectives leads to better performance.
 
 \subsection{Enumerating All Pareto-Optimal Solutions}
@@ -280,7 +280,7 @@ Note that Seesaw and ParetoMCS cannot enumerate all Pareto-optimal solutions and
 \end{figure}
 
 % setcover-cactus-multi
-Looking at the same comparison for bi-objective set covering, we can see in \cref{fig:setcover-cactus-multi} that \msh{} was the best-performing approach also here.
+Looking at the same comparison for bi-objective set covering, we can see in \cref{fig:setcover-cactus-multi} that \msh{} is the best-performing approach also here.
 For the instances with fixed set cardinality, all \algname{} variants solved at least as many instances as $P$-minimal, for the instances with fixed element probability only \oll{} performed worse than $P$-minimal.
 The best-performing variant, \msh{}, solved 81 (respectively 40) of the fixed element probability (respectively set cardinality) instances while $P$-minimal only solved 68 (respectively 26).
 
