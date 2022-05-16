@@ -68,6 +68,7 @@ With this, the encoding is $\lnot \noise_i \rightarrow (y_i \leftrightarrow \big
 We use this encoding as $\formula$, literals $\selector_l^j$ as $\Obj_\inc$ and literals $\noise_i$ as $\Obj_\dec$.
 The task in this benchmark is therefore to find Pareto-optimal solution w.r.t.\ the size of the decision rule (measured as the number of literals in the rule) and its classification error.
 In preliminary experiments, we found that choosing the objectives as described here leads to better performance than using classification error as the increasing objective.
+This might be because the cores that can be extracted from the size objective are more beneficial for the search procedure.
 
 % Symmetry breaking clauses
 Since decision rules in CNF contain many symmetric solutions obtained by changing the order of clauses in the rule, we add additional clauses to the encoding to break these symmetries.
@@ -194,7 +195,7 @@ The best-performing variant of \algname{} is again \msh{}, considerably outperfo
 $P$-minimal solved 71 (respectively 38) fixed element probability (respectively set cardinality) instances, Seesaw-SAT-min solved 60 (respectively 38), whereas \msh{} solved 83 (respectively 40) instances.
 For this application, not all variants of \algname{} outperformed $P$-minimal:
 \msu{} and \oll{} were outperformed for both instance variants while \satunsat{} and \unsatsat{} were only outperformed for the instances generated with fixed set cardinality.
-\TODO{Should I comment on hypothesis that Seesaw-SAT-min does well because of weights in CPLEX?}
+The good performance of Seesaw-SAT-min on these instances might be explained by the fact that the weights for one of the objectives in Seesaw are handled by an integer linear programming solver, rather than in propositional logic.
 
 % setcover-cactus-single
 \begin{figure}
@@ -352,7 +353,8 @@ As the last refinement considered, we look at adding a disjoint core extraction 
 \Cref{fig:refinements-2} shows the impact of adding this refinement to the default configuration of \msh{}.
 It can be seen that adding the disjoint phase does not result in a clear positive or negative effect, however the impact per instance varies a lot more compared to the impact of blocking dominated solutions.
 The only clear negative impact can be seen on three instances for learning interpretable decision rules.
-The strongest outlier is an instance that was solved by the configuration without a disjoint phase in under 700 seconds but could not be solved within the resource constraints by the configuration with a disjoint phase.
+The strongest outlier is an instance that was solved by the configuration without a disjoint phase in under 500 seconds but only barely under the timeout value of 5400 seconds by the configuration with a disjoint phase.
+It is unclear why for this specific this refinement has such a strong negative effect.
 
 % refinements-2
 \begin{figure}

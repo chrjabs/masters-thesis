@@ -102,13 +102,11 @@ The subset $\core$ is called an unsatisfiable \emph{core}~\autocite{handbook2-cd
 
 \section{Encoding Cardinality Constraints as Totalizers\label{sec:card-const}}
 
-\TODO{rewrite motivation, splitting it into applications with cardinality constraints (that we want to be able to represent) and algorithms, e.g., enforcing a bound on a objective}
-
 % Cardinality constraints
-Numerous applications and encodings based on propositional logic require so-called cardinality constraints.
-These applications include algorithms for solving maximum satisfiability and the algorithmic approach presented in this thesis.
-Informally speaking, cardinality constraints enforce a bound on how many literals in a given set can be assigned to true.
-Formally, for a set $L$ of literals and a bound $b \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \circ b\right)$ denotes a CNF formula that encodes the linear (in)equality $\sum_{l \in L} l \circ b$, where $\circ \in \{< ,> ,\geq, \leq, =\}$.
+Many problem applications in the real world require so-called cardinality constraints, enforcing a bound on how many literals in a given set can be assigned to true.
+In addition to that, algorithms (for example for MaxSAT) often need to enforce a bound on a linear objective.
+The algorithmic approach to bi-objective optimization presented in this thesis also makes heavy use of cardinality constraints.
+Formally, for a set $L$ of literals and a bound $b \in \mathbb{N}$, $\texttt{As-CNF}\left(\sum_{l \in L} l \circ b\right)$ denotes a cardinality constraint as a CNF formula that encodes the linear (in)equality $\sum_{l \in L} l \circ b$, where $\circ \in \{< ,> ,\geq, \leq, =\}$.
 Numerous methods of forming such CNF formulas are known (e.g.,~\autocites{DBLP:conf/cp/BailleuxB03,DBLP:conf/cp/Sinz05,DBLP:journals/jsat/EenS06}).
 
 % Totalizer encoding
