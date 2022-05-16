@@ -35,3 +35,4 @@
 {"rule":"POSSESSIVE_APOSTROPHE","sentence":"^\\QAs a proxy for the objective of interpretability, typically a notion of “size” of the model is used, leading to a natural bi-objective optimization problem with the objectives classification error and model size Dummies.\\E$"}
 {"rule":"EN_UPPER_CASE_NGRAM","sentence":"^\\QAs a proxy for the objective of interpretability, typically a notion of “size” of the model is used, leading to a natural bi-objective optimization problem with the objectives classification error and model size Dummies.\\E$"}
 {"rule":"ADJECTIVE_IN_ATTRIBUTE","sentence":"^\\QThis allows for the encoding to be polynomial in size for \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q-hard optimization problems.\\E$"}
+{"rule":"EN_UPPER_CASE_NGRAM","sentence":"^\\QThere is also earlier work on SAT-based lexicographic optimization (recall \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q) Dummies.\\E$"}

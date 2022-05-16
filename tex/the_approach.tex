@@ -79,6 +79,27 @@ As soon as unsatisfiability is reached, $\Simpr$ returns $b_\dec=b+1$ and the la
 At this point, we know that there is no solution of $\formula$ that dominates $\sol$, so $\sol$ is returned as Pareto-optimal on \cref{ln:stage3}.
 If one wants to enumerate all solutions $\sol^o$ that correspond to the Pareto point $(b_\inc,b_\dec)$, the \E{} procedure repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{b_\inc}\}$ and blocks each found solution until no more solutions are found.
 
+% Search-trace fig
+\begin{figure}
+  \begin{minipage}{0.377\textwidth}
+    \small
+    \begin{align*}
+      \formula = &\bigg\{ \texttt{As-CNF}\left(\sum_ {l \in \Obj_\inc \cup \Obj_\dec} l \geq 4 \right), \\
+        &(i_1 \lor i_2), (i_2 \lor i_3), (i_2 \lor i_4) \\
+        &(d_1 \lor d_2), (d_2 \lor d_3), (d_2 \lor d_4) \bigg\}, \\
+      \Obj_\inc =&\{ i_1, i_2, i_3, i_4 \}, \\
+      \Obj_\dec =&\{ d_1, d_2, d_3, d_4 \} 
+    \end{align*}
+  \end{minipage}
+  \;
+  \begin{minipage}{0.605\textwidth}
+    \includegraphics{search-trace.pdf}
+  \end{minipage}
+  \caption{Left: The same example formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ as in \cref{fig:biobj-inst}.
+    Right: the feasible region of $\formula$ in the objective space defined by $\Obj_\inc$ and $\Obj_\dec$.
+    Furthermore, the search progression of the \satunsat{} variant of \algname{}.\label{fig:search-trace}}
+\end{figure}
+
 % Main algorithm example
 \begin{example}\label{ex:main-iteration}
   Invoke \algname{} on the formula $\formula$ and objectives $\Obj_\inc$, $\Obj_\dec$ detailed in \cref{fig:search-trace}. 
