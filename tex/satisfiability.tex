@@ -30,7 +30,7 @@ A formula $\formula$ is satisfiable if it has a solution, otherwise it is unsati
 \end{example}
 
 % SAT solvers
-A SAT solver is an implementation of an algorithm that determines the satisfiability of a given formula $\formula$.
+A SAT solver~\autocite{handbook2-cdcl} is an implementation of an algorithm that determines the satisfiability of a given formula $\formula$.
 If $\formula$ is satisfiable, the solver returns ``satisfiable'' (\sat{}) and a solution $\sol$ with $\sol(\formula)=1$;
 if $\formula$ is unsatisfiable, the return value is ``unsatisfiable'' (\unsat{}).
 
@@ -130,7 +130,7 @@ As such we will leave them out from the solutions we describe in favour of brevi
 \section{Maximum Satisfiability\label{sec:max-sat}}
 
 % MaxSAT
-Maximum satisfiability (MaxSAT) is the optimization variant of the SAT decision problem.
+Maximum satisfiability (MaxSAT)~\autocite{handbook2-maxsat} is the optimization variant of the SAT decision problem.
 It asks for a solution that satisfies as many of the given clauses as possible.
 Most commonly and in this work, MaxSAT refers to the extension of \emph{weighted partial} MaxSAT, in which a set of \emph{hard} clauses $\hards$ and a set of \emph{soft} literals $\softs$ are given.
 Soft clauses can be modelled by adding a new relaxation variable to the clause, treating it as a hard clause and the relaxation variable as a soft literal.
@@ -144,7 +144,7 @@ In the same way that SAT can be used as a declarative language to solve other de
 \begin{example}\label{ex:maxsat-modelling}
   Recall \cref{ex:sat-modelling}.
   We can change the problem from the set covering decision problem to the optimization variant by asking for the \emph{smallest} cover rather than giving an upper bound on the size of the cover.
-  This is done by removing the cardinality constraint from the encoding and using the encoded sets as hard clauses for a partial MaxSAT instances.
+  This is done by removing the cardinality constraint from the encoding and using the encoded sets as hard clauses for a partial MaxSAT instance.
   In addition to that, the set of soft literals is assigned as the set of all variables $\softs = V$.
   Solving this MaxSAT instance for the initial situation, the MaxSAT solver will return that at least three of the soft literals need to be set, i.e., that at least three toppings must be chosen so that every guest likes something.
   An optimal solution $\sol$ that the solver might return for this has $\sol(v_\text{courgette}) = \sol(v_\text{chicken}) = \sol(v_\text{mushroom}) = 1$ and $\sol(v) = 0$ for all other $v$.
@@ -154,7 +154,9 @@ In the same way that SAT can be used as a declarative language to solve other de
 
 % MaxSAT solving algorithms
 Many algorithms for solving MaxSAT have been proposed over the recent years.
-Best scalability to large instances is achieved by algorithms that solve MaxSAT by solving a number of SAT instances with the help of an underlying SAT solver, implicit hitting set approaches, or solving MaxSAT via integer programming~\autocite{handbook2-maxsat}.
+Best scalability to large instances is achieved by algorithms that solve MaxSAT by solving a number of SAT instances with the help of an underlying SAT solver~\autocite{handbook2-cdcl}, or solving MaxSAT via integer programming~\autocite{handbook2-maxsat}.
+MaxSAT algorithms using SAT solvers can be further characterized based on how the objective function is modelled:
+many algorithms encode cardinality constraints in propositional logic whereas the implicit hitting set approach~\autocite{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20} employs an integer programming solver to natively model the objective.
 This thesis builds on the MaxSAT algorithms that solve a sequence of SAT problems;
 these algorithms can be categorized as either solution-improving, bound-improving or core-guided algorithms.
 Detailed descriptions for most of these algorithms can be found in~\autocite{handbook2-maxsat}.
@@ -164,7 +166,7 @@ The two simplest algorithms we build on are solution-improving SAT-UNSAT search~
 SAT-UNSAT (also known as Linear SAT-UNSAT (LSU)~\autocite{handbook2-maxsat}) search solves MaxSAT by starting from a known satisfiable solution for the hard clauses.
 From this, a cardinality constraint is added to the SAT solver, enforcing that the next found solution achieves a better objective value than the last.
 If such a solution is found, the cardinality constraint is tightened to the objective value of this new solution.
-As soon as the SAT solver return \unsat{} for a call, the last found solution is known to be optimal.
+As soon as the SAT solver returns \unsat{} for a call, the last found solution is known to be optimal.
 Because this search procedure goes through a series of satisfiable calls first, terminating at the first unsatisfiable call, it is known as SAT-UNSAT search.
 UNSAT-SAT search is similar, however the optimal value is found by lower-bounding instead of upper-bounding.
 It starts by adding a tight cardinality constraint to the SAT solver---resulting in unsatisfiable queries---and slowly loosening the constraint until a first satisfiable query is reached.
@@ -185,5 +187,6 @@ Instead of building one large cardinality constraint over all cores, it builds a
 Furthermore, these cardinality constraints are not treated as hard but as additional \emph{soft} clauses, meaning they can be relaxed in subsequent iterations of the algorithm.
 
 % MaxSAT algorithms and cardinality constraints
-All MaxSAT algorithms that solve a series of SAT queries need to build cardinality constraints over the soft literals of the MaxSAT instance and typically these only change slightly from query to query.
+To model the objective function for MaxSAT in a SAT solver, cardinality constraints over the soft literals of the MaxSAT instance are encoded in propositional logic.
+Typically, these encodings only change slightly from query to query.
 For this reason, incremental cardinality constraints such as the incremental totalizer (discussed in \cref{sec:card-const}) are employed in modern MaxSAT solvers to allow for incrementally using the underlying SAT solver without resetting it.
