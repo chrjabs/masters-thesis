@@ -1,9 +1,10 @@
 \begin{otherlanguage}{english}
 \begin{abstract}
-\NP-hard combinatorial optimization problems arise naturally for many real-world applications.
-Due to this, there is a need for non-trivial algorithmic solutions for finding optimal solutions to combinatorial problems.
+Many real-world problem settings give rise to \NP-hard combinatorial optimization problems.
+This results in a need for non-trivial algorithmic solutions for finding optimal solutions to such problems.
 Many such solutions---ranging from local search over evolutionary algorithms to declarative programming---have been presented for optimization problems with a single objective.
-However, many real-world problems are inherently bi-objective.
+However, often real-world problems are inherently bi-objective.
+For example, when learning interpretable classifiers, one wants to balance the size of the classifier and its classification error.
 
 We present \algname{}, an exact declarative programming approach for finding so-called Pareto-optimal solutions to bi-objective optimization problems.
 Using propositional logic as the declarative programming language, we seek to extend the progress and success in maximum satisfiability (MaxSAT) solving to two objectives.
