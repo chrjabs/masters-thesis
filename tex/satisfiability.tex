@@ -11,7 +11,8 @@ MaxSAT is discussed in \cref{sec:max-sat}.
 
 % Propositional logic and SAT
 For a Boolean variable $v$ there are two literals, the positive $v$ and the negative $\lnot v$. 
-A clause $C$ is a set of (disjunction over) literals, and a CNF formula $\formula$ is a set of (conjunction over) clauses.
+A clause $C$ is a set of (i.e., disjunction over) literals, and a CNF formula $\formula$ is a set of (i.e., conjunction over) clauses.
+\TODO{add tseitin sentence}
 The set of variables and literals appearing in $\formula$ are $\var(\formula)$ and $\lit(\formula)$, respectively.  
 A truth assignment $\sol$ maps Boolean variables to 1 (true) or 0 (false).
 For a negated variable, $\sol(\neg v) = 1 - \sol(v)$.
@@ -35,7 +36,7 @@ If $\formula$ is satisfiable, the solver returns ``satisfiable'' (\sat{}) and a 
 if $\formula$ is unsatisfiable, the return value is ``unsatisfiable'' (\unsat{}).
 
 % CDCL solvers
-So-called Conflict-Driven Clause Learning (CDCL) solvers are the state of the art in terms of SAT solving.
+So-called conflict-driven clause learning (CDCL) solvers are the state of the art in terms of SAT solving.
 They have been found to solve many real-world problems significantly more efficiently than the exponential worst-case runtime.
 Two central techniques in modern CDCL solvers that enable this success are clause learning and search restarts~\autocite{handbook2-cdcl}.
 SAT solving algorithms typically assign variables through either decisions or implications.
@@ -44,6 +45,7 @@ On the other hand, an implication assignment is an assignment that is \emph{impl
 During the search procedure, the decision assignments made at earlier stages might lead to conflicts, meaning that the formula becomes unsatisfiable with these assignments.
 In this case, the solver needs to backtrack and start over from an earlier point.
 CDCL solvers add conflict analysis to this process.
+\TODO{works on partial assignments -> decisions and unit propagation -> conflict analysis (never see partial assignment again) -> non-chronological backtracking (remove some number of most-recent of recent decisions) -> search terminates at solution or when learning empty clause (empty clause entailed by formula)}
 In conflict analysis, the solver finds the set of decisions that lead to the conflict and forms a clause that can be added to the formula.
 This clause contains information learned from the found conflict and can be retained for the remainder of the search process.
 In addition to that, the search of a CDCL solver is restarted based on heuristics to improve performance.
@@ -53,6 +55,7 @@ The SAT problem was proved to be \NP-complete by~\textcite{DBLP:conf/stoc/Cook71
 This result is central to the modern day use of SAT in the declarative programming approach to solving other \NP-complete problems by encoding them as a propositional formula, solving them with a SAT solver and then decoding the solution to the original problem domain.
 The advantage of using SAT as a declarative programming language for solving other problems comes from the fact that CDCL solvers for SAT are efficient in practice and can solve real-world instances with up to millions of variables and clauses~\autocite{handbook2-cdcl}.
 This holds even though propositional logic can only express a very limited set of constraints (compared to other declarative languages) natively.
+\TODO{sat has shown to be impactful, solving instances with up to millions of problems}
 
 % Example: SAT modelling
 \begin{example}\label{ex:sat-modelling}
@@ -79,6 +82,8 @@ This holds even though propositional logic can only express a very limited set o
 \end{example}
 
 \section{Incremental SAT Solving under Assumptions\label{sec:inc-sat}}
+
+\TODO{solvers here}
 
 % Incremental SAT solving
 Many applications of SAT solving---such as algorithms for solving maximum satisfiability~\autocite{handbook2-maxsat}---require solving a series of SAT problems that only differ slightly.
@@ -153,7 +158,7 @@ In the same way that SAT can be used as a declarative language to solve other de
 % MaxSAT solving algorithms
 Many algorithms for solving MaxSAT have been proposed over the recent years.
 Best scalability to large instances is achieved by algorithms that solve MaxSAT by solving a number of SAT instances with the help of an underlying SAT solver~\autocite{handbook2-cdcl}, or solving MaxSAT via integer programming~\autocite{handbook2-maxsat}.
-MaxSAT algorithms using SAT solvers can be further characterized based on how the objective function is modelled:
+MaxSAT algorithms using SAT solvers can be further characterized w.r.t.\ how the objective function is modelled:
 many algorithms encode cardinality constraints in propositional logic whereas the implicit hitting set approach~\autocite{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20} employs an integer programming solver to natively model the objective.
 This thesis builds on the MaxSAT algorithms that solve a sequence of SAT problems;
 these algorithms can be categorized as either solution-improving, bound-improving or core-guided algorithms.
@@ -166,6 +171,7 @@ From this, a cardinality constraint is added to the SAT solver, enforcing that t
 If such a solution is found, the cardinality constraint is tightened to the objective value of this new solution.
 As soon as the SAT solver returns \unsat{} for a call, the last found solution is known to be optimal.
 Because this search procedure goes through a series of satisfiable calls first, terminating at the first unsatisfiable call, it is known as SAT-UNSAT search.
+\TODO{frame as opposite}
 UNSAT-SAT search is similar, however the optimal value is found by lower-bounding instead of upper-bounding.
 It starts by adding a tight cardinality constraint to the SAT solver---resulting in unsatisfiable queries---and slowly loosening the constraint until a first satisfiable query is reached.
 The idea of UNSAT-SAT search was first proposed not as an algorithm, but as a formulation for subset satisfiable boolean formulas~\autocite{DBLP:journals/tcad/XuRS03}.

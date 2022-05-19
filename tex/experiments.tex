@@ -4,6 +4,8 @@
 We implemented  all variants and refinements of \algname{} described in \cref{chap:approach} in C++.
 Our implementations of MSU3 and OLL were inspired by their implementations in Open-WBO v2.1~\autocite{DBLP:conf/sat/MartinsML14}, the other variants were implemented from scratch.
 We used the state-of-the-art~\autocite{DBLP:journals/ai/FroleyksHIJS21} SAT solver CaDiCaL v1.5.2~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers}.
+\TODO{fix chose}
+\TODO{put implementation of P-min and seesaw back}
 As three competing approaches we chose $P$-minimal, ParetoMCS and Seesaw.
 Our implementation, is available as open source ({\small\url{https://bitbucket.org/coreo-group/bioptsat/}}).
 We also implemented $P$-minimal and Seesaw from scratch as, to the best of our knowledge, no general implementation of these approaches are publicly available.
@@ -354,7 +356,7 @@ However, the effect is smaller than that of lazily building $\tot(\Obj_\dec)$.
 
 % Blocking dominated solutions
 \Cref{fig:refinements-2} (left) shows the effect of blocking dominated solutions in the \satunsat{} phase of \msh{}.
-The impact of this refinement is negligible on all benchmarks, although, there are three instances of the set covering benchmarks with fixed element probability that were only solved when not blocking dominated solutions, giving this configuration a slight advantage.
+The impact of this refinement is negligible on all benchmarks, although there are three instances of the set covering benchmarks with fixed element probability that were only solved when not blocking dominated solutions, giving this configuration a slight advantage.
 On the decision rule instances, while slight positive effects of the refinement can be seen, the effect is not strong enough to enable solving additional instances.
 
 % Disjoint phase
