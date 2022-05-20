@@ -18,12 +18,12 @@ Solving such an implicitly defined optimization problem is typically \NP-hard~\a
 Examples of such hard optimization problems appear in scheduling~\autocites{DBLP:conf/cp/Stojadinovic14,DBLP:conf/cpaior/BofillGSV15,DBLP:journals/ior/Solomon87,DBLP:journals/candie/AkyolB07}, supply chain optimization~\autocite{DBLP:journals/cce/Papageorgiou09}, air traffic management~\autocites{DBLP:journals/ior/BertsimasLO11,RichardsHow2002Aircrafttrajectoryplanning}, clustering~\autocite{DBLP:journals/ai/DaoDV17,DBLP:conf/sdm/DavidsonRS10}, optimal data representation~\autocites{DBLP:conf/cp/MaliotovM18,DBLP:conf/ijcai/NarodytskaIPM18,DBLP:conf/ijcai/Hu0HH20,DBLP:conf/cp/YuISB20,DBLP:conf/aaai/DemirovicS21,DBLP:conf/cp/ShatiCM21,DBLP:conf/cade/IgnatievPNM18}, among various other fields.
 
 % Approaches to solving optimization
-\TODO{revisit}
 Different approaches to \NP-hard optimization have been proposed.
-One way of categorizing these approaches is into exact and inexact approaches.
+These approaches can be categorized as exact and inexact.
 Inexact approaches have no guarantee to find an optimal solution but return a \emph{good} solution within given resource constraints.
 Examples of such approaches are local search~\autocite{DBLP:books/daglib/0017492} or evolutionary algorithms~\autocite{DBLP:books/daglib/0087893,DBLP:journals/jgo/StornP97}.
-Central to exact approaches, that are guaranteed to find an \emph{optimal} solution, is the declarative approach to optimization.
+Exact approaches on the other hand are guaranteed to find an \emph{optimal} solution, given enough resources.
+Central to exact approaches is the declarative approach to optimization.
 
 % Solving pipeline for declarative approaches
 The declarative approach to solving optimization problems, as shown in \cref{fig:solving-pipeline}, first encodes the original problem into a set of mathematical constraints formulated in an encoding language.
@@ -38,15 +38,15 @@ As a last step, this found solution to the encoded instance is mapped back to th
 \end{figure}
 
 % Advantages of the declarative approach and languages
-\TODO{revisit}
-An advantage of the declarative approach is that it is generally applicable, as long as a compact encoding exists.
+An advantage of the declarative approach is that it is generally applicable to any problem, as long as a compact encoding for said problem exists.
 When solving an optimization problem with the declarative approach, the challenge lies in choosing the encoding language that allows for a natural encoding and finding such an encoding.
-Determining satisfiability for encoding languages is typically \NP-complete, the existence of solvers that can efficiently solve relevant instances is therefore critical as well.
+Determining satisfiability for encoding languages is typically \NP-complete.
+For a given declarative language, the existence of solvers that can efficiently solve relevant optimization instances of said language is therefore critical as well.
 Branch-and-cut algorithms for mixed integer linear programming (MILP)~\autocite{ChenEtAl2010-intro,KorteVygen2018-5} are an example of solver technology that achieves good performance on real-world instances.
 The corresponding language of linear inequalities is arguably the most classical language for modelling hard optimization problems.
-It might come as a surprise that the encoding language of propositional logic---which is very limited in expressiveness---has seen a stark increase in usage as well.
-However, recent  research in propositional satisfiability (SAT)~\autocite{handbook2-sat} has seen a big success using conflict-driven clause learning solvers~\autocite{handbook2-cdcl}.
-This success has also been translated to optimization, in the for of maximum satisfiability (MaxSAT)~\autocite{handbook2-maxsat} solvers.
+On the other hand, it might come as a surprise that the encoding language of propositional logic---which is very limited in expressiveness---has seen a stark increase in usage as well.
+This is because recent research in propositional satisfiability (SAT)~\autocite{handbook2-sat} has seen a big success using conflict-driven clause learning solvers~\autocite{handbook2-cdcl}.
+This success has also been translated to optimization, in the form of maximum satisfiability (MaxSAT)~\autocite{handbook2-maxsat} solvers.
 
 % Reveal conflicting second objective
 It should be noticed that a clear majority of declarative optimization approaches, including MILP and MaxSAT, work under the assumptions that we are dealing with problems which intrinsically have a single objective to optimize.

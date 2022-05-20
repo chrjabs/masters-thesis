@@ -4,11 +4,10 @@
 We implemented  all variants and refinements of \algname{} described in \cref{chap:approach} in C++.
 Our implementations of MSU3 and OLL were inspired by their implementations in Open-WBO v2.1~\autocite{DBLP:conf/sat/MartinsML14}, the other variants were implemented from scratch.
 We used the state-of-the-art~\autocite{DBLP:journals/ai/FroleyksHIJS21} SAT solver CaDiCaL v1.5.2~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers}.
-\TODO{fix chose}
-\TODO{put implementation of P-min and seesaw back}
-As three competing approaches we chose $P$-minimal, ParetoMCS and Seesaw.
 Our implementation, is available as open source ({\small\url{https://bitbucket.org/coreo-group/bioptsat/}}).
-We also implemented $P$-minimal and Seesaw from scratch as, to the best of our knowledge, no general implementation of these approaches are publicly available.
+We compare the performance of this implementation to that of $P$-minimal, ParetoMCS and Seesaw.
+To the best of our knowledge, there is no general implementation of $P$-minimal and Seesaw publicly available.
+Therefore, we also implemented $P$-minimal and Seesaw from scratch, including them in our implementation.
 
 In our implementation, the core-guided variants of \algname{} use heuristic core minimization by default and dominated solutions are not blocked in \satunsat{}.
 As an additional parametric detail, in its default \msh{} is configured to switch between \msu{} and \satunsat{} once 70\% of the literals in $\Obj_\inc$ have been added to $\tot(\Act)$.
