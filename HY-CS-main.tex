@@ -100,25 +100,28 @@
 
 
 \usepackage{amsthm}          % Theorems
-\usepackage{aliascnt}        % Cleveref with shared number theorems
-\newtheorem{theorem}{Theorem}[chapter]
-\newaliascnt{lemma}{theorem}
-\newtheorem{lemma}[lemma]{Lemma}
-\aliascntresetthe{lemma}
-\newaliascnt{proposition}{theorem}
-\newtheorem{proposition}[proposition]{Proposition}
-\aliascntresetthe{proposition}
-\newaliascnt{definition}{theorem}
-\newtheorem{definition}[definition]{Definition}
-\aliascntresetthe{definition}
-\newaliascnt{observation}{theorem}
-\newtheorem{observation}[observation]{Observation}
-\aliascntresetthe{observation}
-\theoremstyle{definition}
-\newaliascnt{example}{theorem}
-\newtheorem{example}[example]{Example}
-\aliascntresetthe{example}
+\usepackage{thmtools}        % Theorem styling
+\usepackage{framed}
+\renewenvironment{leftline}{%
+  \def\FrameCommand{{\vrule width 0.75pt} \hspace{8pt}}%
+  \MakeFramed {\advance\hsize-\width \FrameRestore}}%
+ {\endMakeFramed}
+\declaretheoremstyle[
+  preheadhook=\begin{leftline},%
+  postfoothook=\end{leftline},%
+]{customTheorem}
+\declaretheorem[style=customTheorem,numberwithin=chapter]{theorem}
+\declaretheorem[style=customTheorem,numberlike=theorem]{proposition}
+\declaretheorem[style=customTheorem,numberlike=theorem]{definition}
+\declaretheorem[style=customTheorem,numberlike=theorem]{observation}
+\declaretheorem[style=customTheorem,numberlike=theorem]{example}
 \Crefname{observation}{Observation}{Observations}
+
+% Footnote settings
+\usepackage{footnote}
+\usepackage{etoolbox}
+\BeforeBeginEnvironment{example}{\savenotes}
+\AfterEndEnvironment{example}{\spewnotes}
 
 \usepackage{algorithm}       % For pseudocode
 \usepackage[noend]{algorithmic} % For pseudocode

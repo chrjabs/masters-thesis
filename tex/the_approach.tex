@@ -36,7 +36,7 @@ To conclude the chapter, in \cref{sec:refinements} we discuss some refinements t
 To find a Pareto-optimal solution, the lexicographic method for multi-objective optimization creates multiple iterative single-objective optimization problems minimizing the objectives in order, where the latter calls are under the additional constraint to not worsen the previously minimized objectives.
 Once a first Pareto-optimal solution is found, the search continues by adding a constraint that one of the objectives needs to be improved.
 The lexicographic method will enumerate all Pareto-optimal solutions in monotonically increasing order of the first objective.
-Following \cref{prop:biobjective}, for bi-objective optimization, this means that the solutions are in decreasing order for the second objective.
+Following \cref{obs:biobjective}, for bi-objective optimization, this means that the solutions are in decreasing order for the second objective.
 For this reason, we call objective $\Obj_\inc$ \emph{increasing} and $\Obj_\dec$ \emph{decreasing}.
 
 % Single SAT solver and high-level overview

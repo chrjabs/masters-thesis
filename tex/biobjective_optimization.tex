@@ -80,7 +80,7 @@ $\formula$ corresponds to the hard clauses while the two objectives correspond t
 \end{example}
 
 % Proposition: Ordered Pareto front
-An important property of Pareto-optimal solutions to bi-objective problems is summarized by the next proposition.
+An important property of Pareto-optimal solutions to bi-objective problems is summarized by the next observation.
 \begin{observation}[Adapted from~\autocite{DBLP:conf/aaai/HartertS14}] \label{obs:biobjective}
   Sorting the Pareto-optimal solutions of a bi-objective optimization problem under the objectives $\generalobj_1$ and $\generalobj_2$ w.r.t.\ increasing values of $\generalobj_1$ amounts to sorting them w.r.t.\ decreasing values of $\generalobj_2$ and vice-versa.
 \end{observation}
@@ -151,7 +151,7 @@ We highlight three SAT-based approaches to bi-objective optimization under Paret
 enumeration of $P$-minimal solutions, enumeration of Pareto-minimal correction sets, and Seesaw.
 Furthermore, we touch on SAT-based optimization under lexicographic optimality.
 
-\subsubsection{$P$-minimal Solution Enumeration\label{sec:p-minimal}}
+\subsubsection{$P$-Minimal Solution Enumeration\label{sec:p-minimal}}
 
 % P-minimal solution enumeration
 The approach perhaps closest to ours is solving multi-objective constraint optimization problems by enumerating so-called $P$-minimal solutions~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ftp/KoshimuraNFH09}.
@@ -167,7 +167,8 @@ We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal
   Consider the formula $\formula$ and two objectives $\Obj_\inc$ and $\Obj_\dec$ from \cref{fig:biobj-inst}.
   $P$-minimal starts by building two totalizers $\tot(\Obj_\inc)$ and $\tot(\Obj_\dec)$ and invoking the SAT solver on $\formula^\text{W} = \formula \land \tot(\Obj_\inc) \land \tot(\Obj_\dec)$.
   The result is satisfiable;
-  assume the first solution obtained is $\sol^c_1 = \solcone$. 
+  assume the first solution obtained is $\sol^c_1 = \solcone$.%
+  \footnote{Note that the auxiliary and output variables of the totalizer encoding are implied by the input variables. For this reason we omit them when giving the assignment of a solution.} 
   In order to minimize $\sol^c_1$, the clause $(\ov{\Obj_\inc}{4} \lor \ov{\Obj_\dec}{4})$ is added to the SAT solver, and the solver is invoked again under the assumptions $\{ \ove{\Obj_\inc}{4}, \ove{\Obj_\dec}{4} \}$.
   The added clause blocks $\sol^c_1$ and all solutions dominated by $\sol^c_1$ from the search space.
   Assume the next solution obtained is $\sol^c_5 = \solmcstrap$. 
