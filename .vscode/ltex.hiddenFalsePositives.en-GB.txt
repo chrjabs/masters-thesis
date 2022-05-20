@@ -37,3 +37,4 @@
 {"rule":"ADJECTIVE_IN_ATTRIBUTE","sentence":"^\\QThis allows for the encoding to be polynomial in size for \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q-hard optimization problems.\\E$"}
 {"rule":"EN_UPPER_CASE_NGRAM","sentence":"^\\QThere is also earlier work on SAT-based lexicographic optimization (recall \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q) Dummies.\\E$"}
 {"rule":"EN_FOR_DE_SPEAKERS_FALSE_FRIENDS_ART_WAY","sentence":"^\\QSo-called conflict-driven clause learning (CDCL) solvers are the state of the art in terms of SAT solving.\\E$"}
+{"rule":"THE_SUPERLATIVE","sentence":"^\\QBy removing the constraint on the size of the cover and asking for a smallest cover, we can change the problem from a decision to an optimization problem.\\E$"}

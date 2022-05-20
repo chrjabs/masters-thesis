@@ -76,7 +76,7 @@ $\formula$ corresponds to the hard clauses while the two objectives correspond t
   The solution space is illustrated on the right side.
   The three solid dots correspond to the three Pareto points of $\formula$ w.r.t.\ $\Obj_\inc$ and $\Obj_\dec$. 
   Examples of Pareto-optimal solutions corresponding to these points are $\sol^o_1 = \soloone$, $\sol^o_2 = \solotwo$ and $\sol^o_3 = \solothree$.
-  The solution $\sol^c_3 = \solcthree$ is dominated by $\sol^o_1$ ($\sol^o_1 \prec \sol^c_3$) because $\Obj_\inc(\sol^o_1) \leq \Obj_\inc(\sol^c_3)$ and $\Obj_\dec(\sol^o_1) < \Obj_\dec(\sol^c_3)$. \\
+  The solution $\sol^c_3 = \solcthree$ is dominated by $\sol^o_1$ ($\sol^o_1 \prec \sol^c_3$) because $\Obj_\inc(\sol^o_1) \leq \Obj_\inc(\sol^c_3)$ and $\Obj_\dec(\sol^o_1) < \Obj_\dec(\sol^c_3)$.
 \end{example}
 
 % Proposition: Ordered Pareto front
@@ -234,7 +234,7 @@ The implicit hitting set approach has been successfully applied to MaxSAT~\autoc
 Recently, Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21} was proposed as a generalized implicit hitting set framework for bi-objective optimization.
 In contrast to our work, in Seesaw one of the objectives is treated as a black box.
 This allows for---but also requires---problem-specific instantiations of the black box.
-SAT and MaxSAT solvers can be used in both, the hitting set extraction and the black box objective, but Seesaw is not necessarily SAT-based.
+SAT and MaxSAT solvers can be used in both the hitting set extraction and the black box objective but Seesaw is not necessarily SAT-based.
 
 % Seesaw in a SAT context
 While the original paper presents Seesaw in general terms, in our context the Seesaw algorithm computes Pareto-optimal solutions of a formula $\formula$ by maintaining a collection $\cores$ of optimization cores that are subsets of $\Obj_\inc$.

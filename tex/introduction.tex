@@ -19,16 +19,16 @@ Examples of such hard optimization problems appear in scheduling~\autocites{DBLP
 
 % Approaches to solving optimization
 Different approaches to \NP-hard optimization have been proposed.
-These approaches can be categorized as exact and inexact.
-Inexact approaches have no guarantee to find an optimal solution but return a \emph{good} solution within given resource constraints.
+These approaches can be categorized as either exact or inexact.
+Inexact approaches provide no guarantee of finding an optimal solution but return a \emph{good} solution within given resource constraints.
 Examples of such approaches are local search~\autocite{DBLP:books/daglib/0017492} or evolutionary algorithms~\autocite{DBLP:books/daglib/0087893,DBLP:journals/jgo/StornP97}.
 Exact approaches on the other hand are guaranteed to find an \emph{optimal} solution, given enough resources.
 Central to exact approaches is the declarative approach to optimization.
 
 % Solving pipeline for declarative approaches
 The declarative approach to solving optimization problems, as shown in \cref{fig:solving-pipeline}, first encodes the original problem into a set of mathematical constraints formulated in an encoding language.
-An encoding is hereby a mapping of each instance of the original problem to a set of constraints in the declarative language, where each optimal solution to the encoded instance corresponds to an optimal solution to the original instance.
-Having encoded the problem instance, a so-called solver, an algorithm for finding optimal solutions for instances of the encoded problem, is invoked on the encoded instance to find a solution with the lowest cost.
+An encoding is hereby a mapping of each instance of the original problem to a set of constraints in the declarative language, where each optimal solution of the encoded instance corresponds to an optimal solution of the original instance.
+Having encoded the problem instance, a so-called solver, an algorithm for finding optimal solutions for instances formulated in the encoding language, is invoked on the encoded instance to find a solution with the lowest cost.
 As a last step, this found solution to the encoded instance is mapped back to the original problem space.
 
 \begin{figure}
@@ -40,21 +40,21 @@ As a last step, this found solution to the encoded instance is mapped back to th
 % Advantages of the declarative approach and languages
 An advantage of the declarative approach is that it is generally applicable to any problem, as long as a compact encoding for said problem exists.
 When solving an optimization problem with the declarative approach, the challenge lies in choosing the encoding language that allows for a natural encoding and finding such an encoding.
-Determining satisfiability for encoding languages is typically \NP-complete.
-For a given declarative language, the existence of solvers that can efficiently solve relevant optimization instances of said language is therefore critical as well.
+Determining if a solution to constraints formulated in an encoding language exists is typically \NP-complete.
+For a given declarative language, the existence of solvers that can \emph{efficiently} solve relevant optimization instances of said language is therefore critical as well.
 Branch-and-cut algorithms for mixed integer linear programming (MILP)~\autocite{ChenEtAl2010-intro,KorteVygen2018-5} are an example of solver technology that achieves good performance on real-world instances.
 The corresponding language of linear inequalities is arguably the most classical language for modelling hard optimization problems.
 On the other hand, it might come as a surprise that the encoding language of propositional logic---which is very limited in expressiveness---has seen a stark increase in usage as well.
-This is because recent research in propositional satisfiability (SAT)~\autocite{handbook2-sat} has seen a big success using conflict-driven clause learning solvers~\autocite{handbook2-cdcl}.
+This is because recent research in propositional satisfiability (SAT)~\autocite{handbook2-sat} has seen much success using conflict-driven clause learning solvers~\autocite{handbook2-cdcl}.
 This success has also been translated to optimization, in the form of maximum satisfiability (MaxSAT)~\autocite{handbook2-maxsat} solvers.
 
 % Reveal conflicting second objective
 It should be noticed that a clear majority of declarative optimization approaches, including MILP and MaxSAT, work under the assumptions that we are dealing with problems which intrinsically have a single objective to optimize.
 However, this is not always the case.
 Coming back to the flat search example, we notice that some requirements, like the number of rooms, might be easy to specify, but consider the distance of ones daily commute.
-Rather than setting a fixed threshold as ``maximum $d$ kilometres distance'', what we might actually want to do is minimize this distance at the same time as the cost of the flat.
+Rather than setting a fixed threshold such as ``maximum $d$ kilometres distance'', what we might actually want to do is minimize this distance at the same time as the cost of the flat.
 Now there are two objectives to take into account regarding what constitutes a ``best'' solution.
-Two objectives give rise to \emph{multi-objective} optimization.
+Two or more objectives give rise to \emph{multi-objective} optimization.
 
 % Conflicting objectives and why there might be no single optimal solution
 A crucial difference between single- and multi-objective optimization is that there is no single notion of optimality for two or more objectives.
@@ -67,18 +67,20 @@ Typically, a situation like that occurs when two of the objectives considered ar
 % Pareto optimality
 % Point out different nomenclature
 In this thesis, we use the commonly-used concept of \emph{Pareto optimality}%
-\footnote{Pareto optimality is sometimes also called \emph{efficiency}~\autocite{DBLP:journals/siamjo/SantisENR20}}%
+\footnote{Pareto optimality is sometimes called \emph{efficiency}~\autocite{Ehrgott2005-2,DBLP:journals/siamjo/SantisENR20}}%
 ~\autocite{Ehrgott2005-2} as the notion of optimality.
 Intuitively, under Pareto optimality a solution is considered optimal if no solutions that improve some objective without worsening the other exist.
 As an example, this definition considers the two flats A and B from earlier both equally optimal.
 Under Pareto optimality, the task of solving a bi-objective optimization problem exactly can mean multiple things:
-finding a single Pareto-optimal solution, finding a representative solution for each Pareto point (i.e., tuple of Pareto-optimal objective values, also called non-dominated point in literature~\autocite{Ehrgott2005-2}), or finding all Pareto-optimal solutions.
+finding a single Pareto-optimal solution, finding a representative solution for each Pareto point (i.e., tuple of Pareto-optimal objective values)%
+\footnote{A Pareto point is also called a \emph{non-dominated point} in literature~\autocite{Ehrgott2005-2}}%
+, or finding all Pareto-optimal solutions.
 Most approaches~\autocite{DBLP:conf/cp/SohBTB17,DBLP:conf/cp/JanotaMSM21,DBLP:conf/ijcai/Terra-NevesLM18a} to solving multi-objective optimization under Pareto optimality appear to focus on the second task where a single solution per Pareto point is computed.
 The last task goes one step further and enumerates the full Pareto front (i.e., all Pareto-optimal solutions), even if multiple of the solutions might lead to the same objective values.
 All three of these tasks can be solved by the algorithmic approach presented in this thesis.
 
 % Applications of bi-objective optimization in literature
-The algorithmic approach presented in this thesis focuses on solving the common class of bi-objective optimization problems, which have two objective functions.
+The algorithmic approach presented in this thesis focuses on solving the common class of \emph{bi}-objective optimization problems, which have exactly two objective functions.
 Bi-objective optimization problems arise naturally for various real-world settings.
 For example, when learning interpretable classifiers~\autocites{DBLP:conf/ijcai/Ignatiev0NS21,DBLP:conf/cp/MaliotovM18,DBLP:conf/ijcai/NarodytskaIPM18,DBLP:conf/ijcai/Hu0HH20,DBLP:journals/corr/abs-2010-09919,DBLP:conf/cp/YuISB20,DBLP:conf/aaai/Ignatiev0S021,DBLP:conf/cade/IgnatievPNM18}, the objectives ``interpretability'' and ``classification error'' are in conflict because a more complex and therefore less interpretable classifier is typically more accurate.
 As another example, a bi-objective optimization problem arises when wanting to create a portfolio of solvers that together solve a set of benchmarks as fast as possible while also containing as few solvers as possible~\autocite{DBLP:conf/cp/JanotaMSM21}.
@@ -105,7 +107,7 @@ finding a single Pareto-optimal solution, one representative solution for each P
 
 % Evaluation: study efficiency of different MaxSAT algorithms
 We provide an open-source implementation of all five variants of \algname{} ({\small\url{https://bitbucket.org/coreo-group/bioptsat/}}) and empirically evaluate its performance on two benchmark domains:
-learning interpretable decision rules from binary data~\autocite{DBLP:conf/cp/MaliotovM18} (as a generalization of settings for which MaxSAT-based single-objective solutions have been proposed previously) and bi-objective set covering.
+learning interpretable decision rules from binary data~\autocite{DBLP:conf/cp/MaliotovM18} (as a generalization of settings for which MaxSAT-based single-objective solutions have been previously proposed) and bi-objective set covering.
 In the experiments, we compare \algname{} to three key SAT-based competitors:
 enumeration of so-called $P$-minimal solutions~\autocite{DBLP:conf/cp/SohBTB17}, ParetoMCS enumeration~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a} and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
 We find that \algname{} outperformed these competitors in all studied cases.

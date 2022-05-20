@@ -2,13 +2,13 @@
 
 % Signposting
 In this chapter, we provide an overview of propositional satisfiability (SAT).
-After a general introduction to the topic, we discuss techniques that our algorithmic approach to bi-objective optimization makes use of: incremental SAT solving, cardinality constraints and maximum satisfiability (MaxSAT).
+After a general introduction to the topic, we discuss techniques that our algorithmic approach to bi-objective optimization builds on: incremental SAT solving, cardinality constraints and maximum satisfiability (MaxSAT).
 
 \section{Propositional Satisfiability\label{sec:sat}}
 
 % Propositional logic and SAT
 For a Boolean variable $v$ there are two literals, the positive $v$ and the negative $\lnot v$. 
-A clause $C$ is a set of (i.e., disjunction over) literals, and a CNF formula $\formula$ is a set of (i.e., conjunction over) clauses.
+A clause $C$ is a set of (i.e., disjunction over) literals, and a CNF formula $\formula$ is a set of (i.e., conjunction over) clauses~\autocite{handbook2-cnf}.
 Any formula that is not in CNF can be converted to an equivalent CNF formula of linear size with the Tseitin encoding~\autocites{handbook2-cnf,Tseitin1983ComplexityDerivationPropositional}.
 The set of variables and literals appearing in $\formula$ are $\var(\formula)$ and $\lit(\formula)$, respectively.  
 A truth assignment $\sol$ maps Boolean variables to 1 (true) or 0 (false).
@@ -29,22 +29,23 @@ A CNF formula $\formula$ is satisfiable if it has a solution, otherwise it is un
 
 % SAT as a declarative modelling language
 The SAT problem was proved to be \NP-complete by~\textcite{DBLP:conf/stoc/Cook71}.
-This result is central to the modern day use of SAT in the declarative programming approach to solving other \NP-complete problems by encoding them as a propositional formula, solving them with a SAT solver and then decoding the solution to the original problem domain.
+This result is central to the modern day use of SAT in the declarative programming approach to solving other \NP-complete problems by encoding them as a CNF formula, solving this formula with a SAT solver and then decoding the solution to the original problem domain.
 The advantage of using SAT as a declarative programming language for solving other problems comes from the fact that state-of-the-art solvers for the SAT problem are efficient in practice and can solve real-world instances with up to millions of variables and clauses~\autocite{handbook2-cdcl}.
-This holds even though CNF formulas can only express a very limited set of constraints (compared to other declarative languages) natively.
+For this reason, the SAT-based declarative approach is successful, even though CNF formulas can only express a very limited set of constraints (compared to other declarative languages) natively.
 
 % Example: SAT modelling
 \begin{example}\label{ex:sat-modelling}
-  We give an example of modelling the well-known set covering decision problem~\autocite{DBLP:conf/coco/Karp72}.
-  This problem is to decide whether a \emph{cover} $\cover$ of size $|\cover|\le b$ exists that intersects with (i.e., contains an element from) every \emph{set} $S \in \sets$.
-  Encoding this problem into a CNF formula can be done by introducing a variable for every distinct element $e$ in the sets.
+  We give an example of modelling the well-known set covering decision problem~\autocite{DBLP:conf/coco/Karp72} in SAT.
+  The set covering problem is to decide whether a \emph{cover} $\cover$ of size $|\cover|\le b$ exists that intersects with (i.e., contains an element from) every \emph{set} $S \in \sets$.
+  Encoding this problem as a CNF formula can be done by introducing a variable $v_e$ for every distinct element $e$ in the sets.
   If an assignment $\sol$ has $\sol(v_e)$, this encodes that the corresponding cover $\cover_\sol$ contains $e$.
   Every set is then represented as a clause of the corresponding variables.
-  Lastly, for now assume that $\texttt{As-CNF}\left(sum_{v \in V} v \le b\right)$, where $V$ is the set of all variables, encodes that a solution should assign at most $b$ variables to 1.
-  A set of clauses like this is known as a cardinality constraint and possible ways of representing it in propositional logic will be discussed in \cref{sec:card-const}.
-  All of this together encodes the set covering problem. \\
+  Lastly, assume that $\texttt{As-CNF}\left(\sum_{v \in V} v \le b\right)$, where $V$ is the set of all variables, encodes that a solution should assign at most $b$ variables to 1.
+  A set of clauses like this is known as a cardinality constraint and possible ways of representing it as a CNF formula will be discussed in \cref{sec:card-const}.
+  All of this together encodes the set covering problem.
+
   As a toy instantiation, assume the following situation:
-  you have three guests coming over and want to make a pizza where each guest likes at least one topping.
+  you have three guests coming over and want to make a pizza from which each guest likes at least one topping.
   Guest A tells you they like pepperoni, courgette, and bell pepper;
   Guest B likes chicken, avocado, and prawns;
   Guest C likes mushrooms and chilli pepper.
@@ -52,15 +53,17 @@ This holds even though CNF formulas can only express a very limited set of const
   The groups of toppings the guests like form three sets, and you want to know if a cover (another collection of toppings) of at most size two exists.
   For this example, the encoding described above yields the following three clauses:
   $\clause_\text{A} = (v_\text{pepperoni} \lor v_\text{courgette} \lor v_\text{bell pepper})$, $\clause_\text{B} = (v_\text{chicken} \lor v_\text{avocado} \lor v_\text{prawns})$, $\clause_\text{C} = (v_\text{mushroom} \lor v_\text{chilli pepper})$.
-  The constraint that the cover should have at most cardinality 2 is encoded as the cardinality constraint $\texttt{As-CNF}\left(\sum_{v \in V} v \le 2\right)$. \\
-  We can now build the CNF formula $\formula = \clause_\text{A} \allowbreak \land \clause_\text{B} \allowbreak \land \clause_\text{C} \allowbreak \land \texttt{As-CNF}\left(\sum_{v \in V} v \le 2\right)$.
-  The CNF formula $\formula$ has no solution, describing that there are no two toppings so that every guest likes at least one of them.
+  The constraint that the cover should have at most cardinality 2 is encoded as the cardinality constraint $\texttt{As-CNF}\left(\sum_{v \in V} v \le 2\right)$.
+
+  We can now construct the CNF formula $\formula = \clause_\text{A} \allowbreak \land \clause_\text{B} \allowbreak \land \clause_\text{C} \allowbreak \land \texttt{As-CNF}\left(\sum_{v \in V} v \le 2\right)$.
+  There is no solution of $\formula$, describing that there are no two toppings so that every guest likes at least one of them.
   Now if Guest C says that they also like prawns, $\clause_\text{C}$ changes to $\clause_\text{C} = (v_\text{mushrooms} \lor v_\text{chilli pepper} \lor v_\text{prawns})$ and the modified formula is satisfiable.
   One solution $\sol$ of $\formula$ is $\sol(v_\text{bell pepper}) = \sol(v_\text{prawns}) = 1$ and $\sol(v) = 0$ for all other $v$.
   This tells us that on a pizza with bell pepper and prawns, every guest will find something they like.
+  \looseness=-1
 \end{example}
 
-\section{SAT Solvers and Incremental Solving under Assumptions\label{sec:inc-sat}}
+\section{Incremental SAT Solving under Assumptions\label{sec:inc-sat}}
 
 % Signposting
 Many applications of SAT solving---such as algorithms for solving maximum satisfiability~\autocite{handbook2-maxsat}---require solving a series of interrelated SAT instances.
@@ -76,28 +79,29 @@ So-called conflict-driven clause learning (CDCL) solvers are the state of the ar
 They have been found to solve many real-world problems significantly more efficiently than the exponential worst-case runtime.
 CDCL solvers work on partial assignments to the variables in a CNF formula $\formula$.
 During the search for a satisfiable assignment, the partial assignment is extended trough decisions and so-called unit propagation.
-In a decision, the algorithm uses heuristics to assign a variable that has no value in the partial assignment.
+In a decision, the algorithm uses heuristics to select a value for a variable that has no value in the current partial assignment.
 The deterministic process of unit propagation finds variable assignments that are implied by the partial assignment, i.e., must hold, otherwise a clause would be falsified by the partial assignment.
 During the search procedure, the partial assignment might lead to conflicts, meaning that $\formula$ becomes unsatisfiable.
-At this stage, CDCL analyses the conflict and learns a clause that ensures that the coming search procedure will never find the current partial assignment again.
-After conflict analysis, the solver backtracks non-chronologically, which removes some number of the most-recent decisions.
+At this stage, CDCL analyses the conflict and learns a clause that ensures that the remaining search procedure will never find the current partial assignment again.
+After conflict analysis, the solver backtracks non-chronologically, removing some number of the most-recent decisions.
 CDCL terminates once a solution is found or the empty clause is learned.
 Since all learned clauses are implied by $\formula$, learning the empty clause proves that $\formula$ is unsatisfiable.
 
 % Incremental SAT solving
 To be able to solve interrelated instances more efficiently, most modern SAT solvers provide an incremental interface that allows for retaining the state of the solver (e.g., learned clauses) from previous solver calls~\autocites{DBLP:journals/entcs/EenS03,handbook2-cdcl}.
-Retaining this learned information allows CDCL solvers to determine satisfiability for subsequent calls faster in many cases.
-In order for the learned clauses from previous queries to be valid in subsequent calls, it is only possible to \emph{add} clauses to the internal formula, not remove them.
+Retaining learned information this way allows CDCL solvers to determine satisfiability for subsequent calls faster in many cases.
+In order for the learned clauses from previous queries to be valid in subsequent calls, it is only possible to \emph{add} clauses to the internal formula of the solver, not remove them.
 Additionally, incremental SAT solvers support solving under \emph{assumptions}.
-Assumptions are literals that are treated as unit clauses, i.e., a solver call with internal formula $\formula$ and as set of assumptions $\assumps$ either returns \sat{} and a solution $\sol \supset \assumps$, or \unsat{} and a subset $\core \subset \{\lnot l \mid l\in\assumps\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
-The subset $\core$ is called an unsatisfiable \emph{core}~\autocite{handbook2-cdcl} and implied by $\formula$, meaning the set of assumptions it stems from cannot all be satisfied together with $\formula$.
+An assumption is a literal that is treated as a temporary unit clause, i.e., a solver call with internal formula $\formula$ and a set of assumptions $\assumps$ either returns \sat{} and a solution $\sol \supset \assumps$, or \unsat{} and a subset $\core \subset \{\lnot l \mid l\in\assumps\}$ such that $\formula \land \bigwedge_{l \in \core} (\lnot l)$ is unsatisfiable.
+The subset $\core$ is called an unsatisfiable \emph{core}~\autocite{handbook2-cdcl} and implied by $\formula$, meaning the assumptions it stems from cannot all be satisfied together with $\formula$.
 
 \begin{example}\label{ex:inc-sat}
-  Recall the situation from \cref{ex:sat-modelling} after the change of Guest C liking prawns.
+  Recall the toy instance from \cref{ex:sat-modelling} after the change of guest C liking prawns.
   Assume that there is no bell pepper at the store.
-  To check if we can still make a pizza with only two toppings such that every Guest likes at least one of the toppings, we can use incremental SAT solving.
-  Instead of adding the fact that bell pepper is not available as a new clause $(\lnot v_\text{bell pepper})$, we can set the assumptions to $\assumps=\{\lnot v_\text{bell pepper}\}$.
-  Solving with these assumptions, the solver might return the solution $\sol$ with $\sol(v_\text{courgette}) = \sol(v_\text{prawns}) = 1$ and $\sol(v) = 0$ for all other $v$. \\
+  To check if we can still make a pizza with only two toppings such that every guest likes at least one of the toppings, we can use incremental SAT solving.
+  Instead of adding the fact that bell pepper is not available as a new clause $(\lnot v_\text{bell pepper})$, we can define assumptions $\assumps=\{\lnot v_\text{bell pepper}\}$.
+  Solving with these assumptions, the solver might return the solution $\sol$ with $\sol(v_\text{courgette}) = \sol(v_\text{prawns}) = 1$ and $\sol(v) = 0$ for all other $v$.
+
   If instead prawns are not available, we can set the assumptions to $\assumps=\{\lnot v_\text{prawns}\}$.
   In this case, the solver will return \unsat{} and the core $\core=\{v_\text{prawns}\}$.
   The interpretation of this core is that prawns need to be available so that we can make a pizza that satisfies all constraints.
@@ -132,7 +136,7 @@ furthermore, if the maximal bound $k$ of a totalizer $\tot(L,k)$ is clear from c
 Maximum satisfiability (MaxSAT)~\autocite{handbook2-maxsat} is the optimization variant of the SAT decision problem.
 In this work, by MaxSAT we refer to \emph{weighted partial} MaxSAT, in which a set of \emph{hard} clauses $\hards$ and a set of \emph{soft} literals $\softs$ are given.%
 \footnote{We note that defining MaxSAT with soft \emph{literals} is non-standard. However, soft clauses can be modelled as soft literals by adding a new relaxation variable to the clause, treating the clause as hard and the relaxation variable as a soft literal.}
-A solution $\sol$ to a MaxSAT instance is any solution to the hard clauses $\hards$.
+A solution of a MaxSAT instance is any solution of the hard clauses $\hards$.
 Each clause $l \in \softs$ is assigned a weight $w_l$ and a solution $\sol$ achieving the smallest cumulative weight of assigned soft literals (i.e., $\sum_{l \in \softs} \sol(l) \cdot w_l$) is optimal.
 Since the \NP-complete SAT decision problem (recall \cref{sec:sat}) can clearly be solved by MaxSAT (its optimization extension), MaxSAT is \NP-hard.
 
@@ -141,39 +145,39 @@ In the same way that SAT can be used as a declarative language to solve other de
 
 % Example: MaxSAT modelling
 \begin{example}\label{ex:maxsat-modelling}
-  Recall \cref{ex:sat-modelling}.
+  Recall the set covering problem from \cref{ex:sat-modelling}.
   By removing the constraint on the size of the cover and asking for a \emph{smallest} cover, we can change the problem from a decision to an optimization problem.
-  For modelling this problem as MaxSAT, we use the clauses encoding the sets as hard clauses and every variable as a soft literal.
-  Coming back to the toy instance from \cref{ex:sat-modelling}, we use the clauses $\clause_\text{A}$, $\clause_\text{B}$ and $\clause_\text{C}$ as hard clauses and all variables as soft literals.
+  For modelling this problem as MaxSAT, we use the clauses representing the sets as hard clauses and each variable as a soft literal.
+  In terms of the toy instance from \cref{ex:sat-modelling}, we use the clauses $\clause_\text{A}$, $\clause_\text{B}$ and $\clause_\text{C}$ as hard clauses and all variables as soft literals.
   In the situation where guest C does \emph{not} like prawns, an optimal solution to this instance is $\sol_1(v_\text{courgette}) = \sol_1(v_\text{chicken}) = \sol_1(v_\text{mushroom}) = 1$ and $\sol_1(v) = 0$ for all other $v$.
   This encodes that a pizza needs to include at least three toppings so that every guest likes at least one of them and one possible set of such toppings is courgette, chicken, and mushroom.
   If guest C likes prawns, an optimal solution is $\sol_2(v_\text{bell pepper}) = \sol_2(v_\text{prawns}) = 1$ and $\sol_2(v) = 0$ for all other $v$.
 \end{example}
 
 % MaxSAT solving algorithms
-Many algorithms for solving MaxSAT have been proposed over the recent years~\autocites{DBLP:conf/sat/FuM06,DBLP:journals/jsat/BerreP10,DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/DaviesB11}.
+Many algorithms for solving MaxSAT have been proposed in recent years~\autocites{DBLP:conf/sat/FuM06,DBLP:journals/jsat/BerreP10,DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/DaviesB11}.
 Best scalability to large instances is achieved by algorithms that solve MaxSAT by solving a number of SAT instances with the help of an underlying SAT solver~\autocite{handbook2-cdcl}, or solving MaxSAT via integer programming~\autocite{handbook2-maxsat}.
-MaxSAT algorithms using SAT solvers can be further categorized w.r.t.\ how the objective function is modelled:
+MaxSAT algorithms using SAT solvers can be categorized w.r.t.\ how the objective function is modelled:
 many algorithms encode cardinality constraints in CNF whereas the implicit hitting set approach~\autocites{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20} employs an integer programming solver to natively handle the objective.
-This thesis builds on the MaxSAT algorithms that solve a sequence of SAT problems;
-these algorithms can be categorized as either solution-improving, bound-improving or core-guided algorithms.
+This thesis builds on MaxSAT algorithms that solve a sequence of SAT problems;
+these algorithms can be further categorized as either solution-improving, bound-improving or core-guided algorithms.
 Detailed descriptions for most of these algorithms can be found in~\autocite{handbook2-maxsat}.
 
 % SAT-UNSAT and UNSAT-SAT
-The two simplest algorithms we build on are solution-improving SAT-UNSAT search~\autocite{DBLP:journals/jsat/BerreP10} and bound-improving UNSAT-SAT search~\autocite{DBLP:conf/sat/FuM06}.
+The two conceptually-simplest algorithms we build on are solution-improving SAT-UNSAT search~\autocite{DBLP:journals/jsat/BerreP10} and bound-improving UNSAT-SAT search~\autocite{DBLP:conf/sat/FuM06}.
 SAT-UNSAT (also known as Linear SAT-UNSAT (LSU)~\autocite{handbook2-maxsat}) search solves MaxSAT by starting from a known satisfiable solution for the hard clauses.
 From this, a cardinality constraint is added to the SAT solver, enforcing that the next found solution achieves a better objective value than the last.
 If such a solution is found, the cardinality constraint is tightened to the objective value of this new solution.
 As soon as the SAT solver returns \unsat{} for a call, the last found solution is known to be optimal.
 As this search procedure goes through a series of satisfiable calls first, terminating at the first unsatisfiable call, it is known as SAT-UNSAT search.
-In contrast to SAT-UNSAT, UNSAT-SAT~\autocites{DBLP:conf/sat/FuM06,DBLP:journals/tcad/XuRS03} search find the optimal value by lower-bounding the objective value instead.
+In contrast to SAT-UNSAT, UNSAT-SAT search~\autocites{DBLP:conf/sat/FuM06,DBLP:journals/tcad/XuRS03} find the optimal value by lower-bounding the objective value instead.
 It starts by adding a tight cardinality constraint to the SAT solver---resulting in unsatisfiable queries---and slowly loosening the constraint until a first satisfiable query is reached.
 
 % MSU3 and OLL
 The other two algorithms we are building on in this thesis are MSU3~\autocite{DBLP:journals/corr/abs-0712-1097} and OLL~\autocite{DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19}.
-Both of these search procedures are core-guided, meaning they make use of unsatisfiable cores returned by the SAT solver to more efficiently steer the search.
+Both of these search procedures are core-guided, meaning they make use of unsatisfiable cores returned by the SAT solver.
 Core-guided MaxSAT was first proposed with the algorithm now known as Fu-Malik~\autocite{DBLP:conf/sat/FuM06}.
-The central insight behind core-guided MaxSAT is that an optimal solution must set at least one of the soft literals in every core.
+The central insight behind core-guided MaxSAT is that an optimal solution must assign at least one of the soft literals in every core to true.
 In the MSU3 algorithm, the soft literals are assumed to false and cores are extracted over them.
 When a soft literal appears in a core, this literal is removed from the assumptions and then added to a cardinality constraint allowing some soft literals to be true.
 Every iteration increases the bound of the cardinality constraint by one.

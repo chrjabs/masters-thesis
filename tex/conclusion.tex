@@ -10,19 +10,19 @@ finding a single Pareto-optimal solution, finding one representative solution fo
 We presented four variants of \algname{} that are based on algorithms proposed for MaxSAT (\satunsat{}, \unsatsat{}, \msu{}, and \oll{}), as well as \msh{}, a novel hybrid between \msu{} and \satunsat{}.
 The main difference between the \algname{} variants and their MaxSAT inspirations is that an additional constraint over the second objective needs to be enforced during the optimization.
 An open-source implementation of all five variants and two of the three previously proposed SAT-based approaches is provided.
-Empirically, we compared \algname{} to three previously-proposed approaches:
+We compared \algname{} to three previously-proposed approaches:
 $P$-minimal~\autocite{DBLP:conf/cp/SohBTB17}, ParetoMCS~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}, and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
 We empirically evaluated the five variants of \algname{}, comparing them to the three competitors, on two benchmark domains: learning interpretable decision rules~\autocite{DBLP:conf/cp/MaliotovM18} and bi-objective set covering.
 Additionally, we evaluated the algorithms for the two tasks of finding one representative solution for each Pareto point, and of enumerating all Pareto-optimal solutions.
 In the empirical evaluation we found that the \msh{} variant did not only outperform all other four variants of \algname{} but also the three competitors.
 \msh{} achieves improved performance by combining advantages from the MSU3 and the SAT-UNSAT MaxSAT algorithms.
 When enumerating all Pareto-optimal solutions, the advantage of \algname{} over its competitors is slightly more pronounced.
-The good performance of \algname{} is in part due to of the incremental use of the SAT solver, but---since $P$-minimal also makes fully incremental use of a SAT solver---more important for the good efficiency is the structured nature of the search of \algname{}.
+The good performance of \algname{} is in part due to the incremental use of the SAT solver, but---since $P$-minimal also makes fully incremental use of a SAT solver---more important for the good efficiency is the structured nature of the search of \algname{}.
 
 % Results of refinements
 We also evaluated refinements to the best-performing variant, \msh{}.
 The refinements found most impactful were lazily building the totalizer for the decreasing objective when the two objectives share literals, and heuristic core minimization.
-Other refinements that did not show a significant impact on performance are blocking of solutions dominated by candidates found during the search and adding a disjoint core-extraction phase.
+Other refinements that did not show a significant impact on performance are blocking of solutions dominated by candidates found during the search and adding a disjoint core extraction phase.
 
 % Future work
 Going beyond the work presented in this thesis, it is likely that \algname{} could be further improved and evaluated.
