@@ -113,17 +113,17 @@
 
 
 \if@finnish
-  \RequirePackage[english,swedish,main=finnish]{babel}[2001/03/01 v3.7h The Babel package]
+  \RequirePackage[british,swedish,main=finnish]{babel}[2001/03/01 v3.7h The Babel package]
   \selectlanguage{finnish}
   %\selectbiblanguage{finnish}
 \else
   \if@english
-    \RequirePackage[swedish,finnish,main=english]{babel}[2001/03/01 v3.7h The Babel package]
-    \selectlanguage{english}
+    \RequirePackage[swedish,finnish,main=british]{babel}[2001/03/01 v3.7h The Babel package]
+    \selectlanguage{british}
     %\setbiblanguage{english} 
    \else
     \if@swedish
-      \RequirePackage[finnish,english,main=swedish]{babel}[2001/03/01 v3.7h The Babel package]
+      \RequirePackage[finnish,british,main=swedish]{babel}[2001/03/01 v3.7h The Babel package]
       \selectlanguage{swedish}
       %\setbiblanguage{swedish}
     \fi
@@ -448,7 +448,7 @@
 
 % Additions and changes for document key terms. 
 % These address elements required for computer science.
-\addto\captionsenglish{%
+\addto\captionsbritish{%
 \renewcommand{\bibname}{References}%
 \renewcommand{\refname}{References}%
 \renewcommand{\nomname}{List of acronyms}%
@@ -733,7 +733,7 @@
 % Making the boxed abtract page, in all languages used
 \renewenvironment{abstract}%
 {
-\iflanguage{finnish}{\label{page.abstract.finnish}}{\iflanguage{swedish}{\label{page.abstract.swedish}}{\iflanguage{english}{\label{page.abstract.english}}{\label{page.abstract.other}}}}
+\iflanguage{finnish}{\label{page.abstract.finnish}}{\iflanguage{swedish}{\label{page.abstract.swedish}}{\iflanguage{british}{\label{page.abstract.british}}{\label{page.abstract.other}}}}
 %TM:- commented following line out due to multiple times defined label warning 
 % \label{page.abstract.}
 \thispagestyle{empty}\newpage

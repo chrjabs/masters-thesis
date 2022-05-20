@@ -68,3 +68,7 @@ ParetoMCS-strat
 MILP
 SAT-UNSAT-based
 Tseitin
+CoReO
+Matti
+Jeremias
+FCCI
