@@ -155,8 +155,10 @@ In the same way that SAT can be used as a declarative language to solve other de
 \end{example}
 
 % MaxSAT solving algorithms
-Many algorithms for solving MaxSAT have been proposed in recent years~\autocites{DBLP:conf/sat/FuM06,DBLP:journals/jsat/BerreP10,DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/DaviesB11}.
-Best scalability to large instances is achieved by algorithms that solve MaxSAT by solving a number of SAT instances with the help of an underlying SAT solver~\autocite{handbook2-cdcl}, or solving MaxSAT via integer programming~\autocite{handbook2-maxsat}.
+Many algorithms for solving MaxSAT have been proposed in recent years~\autocites{DBLP:conf/sat/FuM06,DBLP:journals/jsat/BerreP10,DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19,DBLP:conf/cp/DaviesB11,DBLP:conf/cp/LiXCMHH21}.
+When interest in MaxSAT was sparked, most approaches were based on the branch-and-bound scheme~\autocites{handbook2-maxsat-old,DBLP:conf/sat/AlsinetMP05,DBLP:conf/cp/Planes03,DBLP:journals/jgo/AlsinetMP08,DBLP:journals/jair/HerasLO08}.
+Over the years, branch-and-bound was mostly displaced by algorithms that solve MaxSAT via solving a number of SAT instances with the help of an underlying SAT solver~\autocite{handbook2-cdcl}, or solving MaxSAT via integer programming~\autocite{handbook2-maxsat}.
+Recently, there have also been results showing that branch-and-bound combined with clause learning can still achieve good performance~\autocites{DBLP:conf/cp/LiXCMHH21,LiEtAl2021Boostingbranchbound}.
 MaxSAT algorithms using SAT solvers can be categorized w.r.t.\ how the objective function is modelled:
 many algorithms encode cardinality constraints in CNF whereas the implicit hitting set approach~\autocites{DBLP:conf/cp/DaviesB13,DBLP:conf/sat/DaviesB13,DBLP:conf/cp/DaviesB11,DBLP:conf/sat/BergBP20} employs an integer programming solver to natively handle the objective.
 This thesis builds on MaxSAT algorithms that solve a sequence of SAT problems;
