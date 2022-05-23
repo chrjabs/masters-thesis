@@ -38,14 +38,14 @@ For this reason, the SAT-based declarative approach is successful, even though C
   We give an example of modelling the well-known set covering decision problem~\autocite{DBLP:conf/coco/Karp72} in SAT.
   The set covering problem is to decide whether a \emph{cover} $\cover$ of size $|\cover|\le b$ exists that intersects with (i.e., contains an element from) every \emph{set} $S \in \sets$.
   Encoding this problem as a CNF formula can be done by introducing a variable $v_e$ for every distinct element $e$ in the sets.
-  If an assignment $\sol$ has $\sol(v_e)$, this encodes that the corresponding cover $\cover_\sol$ contains $e$.
-  Every set is then represented as a clause of the corresponding variables.
+  If an assignment $\sol$ has $\sol(v_e)=1$, this encodes that the corresponding cover $\cover_\sol$ contains $e$.
+  Every set is represented as a clause of the corresponding variables.
   Lastly, assume that $\texttt{As-CNF}\left(\sum_{v \in V} v \le b\right)$, where $V$ is the set of all variables, encodes that a solution should assign at most $b$ variables to 1.
   A set of clauses like this is known as a cardinality constraint and possible ways of representing it as a CNF formula will be discussed in \cref{sec:card-const}.
-  All of this together encodes the set covering problem.
+  The clauses representing the sets together with the cardinality constraint encode the set covering problem.
 
   As a toy instantiation, assume the following situation:
-  you have three guests coming over and want to make a pizza from which each guest likes at least one topping.
+  you have three guests coming over and want to make a pizza on which each guest likes at least one topping.
   Guest A tells you they like pepperoni, courgette, and bell pepper;
   Guest B likes chicken, avocado, and prawns;
   Guest C likes mushrooms and chilli pepper.
@@ -78,7 +78,7 @@ if $\formula$ is unsatisfiable, the return value is ``unsatisfiable'' (\unsat{})
 So-called conflict-driven clause learning (CDCL) solvers are the state of the art in terms of SAT solving.
 They have been found to solve many real-world problems significantly more efficiently than the exponential worst-case runtime.
 CDCL solvers work on partial assignments to the variables in a CNF formula $\formula$.
-During the search for a satisfiable assignment, the partial assignment is extended trough decisions and so-called unit propagation.
+During the search for a satisfiable assignment, the partial assignment is extended through so-called decisions and unit propagation.
 In a decision, the algorithm uses heuristics to select a value for a variable that has no value in the current partial assignment.
 The deterministic process of unit propagation finds variable assignments that are implied by the partial assignment, i.e., must hold, otherwise a clause would be falsified by the partial assignment.
 During the search procedure, the partial assignment might lead to conflicts, meaning that $\formula$ becomes unsatisfiable.
