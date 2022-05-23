@@ -3,7 +3,7 @@
 % Signposting
 In this chapter, we detail \algname{}, the MaxSAT-based approach to bi-objective optimization developed in this work, together with its variants.
 \Cref{sec:algorithm} gives an overview of the algorithmic framework, while \cref{sec:variants} presents five specific instantiations of one of the subroutines, based on established MaxSAT algorithms.
-To conclude the chapter, in \cref{sec:refinements} we discuss some refinements to \algname{}.
+To conclude the chapter, in \cref{sec:refinements} we discuss refinements to \algname{}.
 
 % BiOptSat pseudo-code
 \begin{algorithm}[t]
@@ -403,7 +403,8 @@ A similar approach of combining core-guided and solution-improving search is kno
 
 \section{Refinements to \algname{}\label{sec:refinements}}
 
-We propose some refinements for possibly improving the performance of \algname{}.
+Finally, we discuss possible refinements to \algname{}.
+Later on, we will empirically evaluate the impact of these refinements on the runtime performance of the algorithm.
 
 \subsection{Lazily Building $\tot(\Obj_\dec)$}
 

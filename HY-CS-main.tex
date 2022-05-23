@@ -39,7 +39,7 @@
 
 %% Reference style: select one 
 %% for APA = Harvard style = authoryear -> (Einstein, 1905) use:
-\usepackage[style=numeric-comp,backend=biber,natbib=true,maxbibnames=99,giveninits=true,uniquename=init,safeinputenc,sorting=none]{biblatex}
+\usepackage[style=numeric-comp,bibstyle=trad-plain,backend=biber,natbib=true,maxbibnames=150,giveninits=true,uniquename=init,safeinputenc,sorting=none]{biblatex}
 %% for numeric = Vancouver style -> [1] use:
 %\usepackage[style=numeric,bibstyle=numeric,backend=biber,natbib=true,maxbibnames=99,giveninits=true,uniquename=init]{biblatex}
 %% for alpahbetic -> [Ein05] use:
@@ -67,8 +67,6 @@
     }
   }
 }
-% Bibliography titles in sentence case
-\DeclareFieldFormat{titlecase}{\MakeSentenceCase*{#1}}
 
 
 %% Block of definitions for fonts and packages for picture management.

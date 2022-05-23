@@ -137,7 +137,8 @@ Maximum satisfiability (MaxSAT)~\autocite{handbook2-maxsat} is the optimization 
 In this work, by MaxSAT we refer to \emph{weighted partial} MaxSAT, in which a set of \emph{hard} clauses $\hards$ and a set of \emph{soft} literals $\softs$ are given.%
 \footnote{We note that defining MaxSAT with soft \emph{literals} is non-standard. However, soft clauses can be modelled as soft literals by adding a new relaxation variable to the clause, treating the clause as hard and the relaxation variable as a soft literal.}
 A solution of a MaxSAT instance is any solution of the hard clauses $\hards$.
-Each clause $l \in \softs$ is assigned a weight $w_l$ and a solution $\sol$ achieving the smallest cumulative weight of assigned soft literals (i.e., $\sum_{l \in \softs} \sol(l) \cdot w_l$) is optimal.
+Each literal $l \in \softs$ has an associated weight $w_l$.
+The task is to find an optimal solution, i.e., a solution that minimizes the linear function $\sum_{l\in \softs}\sol(l)\cdot w_l$.
 Since the \NP-complete SAT decision problem (recall \cref{sec:sat}) can clearly be solved by MaxSAT (its optimization extension), MaxSAT is \NP-hard.
 
 % MaxSAT as a modelling language

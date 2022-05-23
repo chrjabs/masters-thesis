@@ -39,3 +39,4 @@
 {"rule":"EN_FOR_DE_SPEAKERS_FALSE_FRIENDS_ART_WAY","sentence":"^\\QSo-called conflict-driven clause learning (CDCL) solvers are the state of the art in terms of SAT solving.\\E$"}
 {"rule":"THE_SUPERLATIVE","sentence":"^\\QBy removing the constraint on the size of the cover and asking for a smallest cover, we can change the problem from a decision to an optimization problem.\\E$"}
 {"rule":"MISSING_GENITIVE","sentence":"^\\QPareto optimality is sometimes called efficiency \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}
+{"rule":"SINGULAR_VERB_AFTER_THESE_OR_THOSE","sentence":"^\\QThe difference between these two is that for leximax optimization, the objective values are sorted in descending order before comparing them lexicographically.\\E$"}
