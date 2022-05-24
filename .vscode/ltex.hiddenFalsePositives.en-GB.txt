@@ -40,3 +40,4 @@
 {"rule":"THE_SUPERLATIVE","sentence":"^\\QBy removing the constraint on the size of the cover and asking for a smallest cover, we can change the problem from a decision to an optimization problem.\\E$"}
 {"rule":"MISSING_GENITIVE","sentence":"^\\QPareto optimality is sometimes called efficiency \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}
 {"rule":"SINGULAR_VERB_AFTER_THESE_OR_THOSE","sentence":"^\\QThe difference between these two is that for leximax optimization, the objective values are sorted in descending order before comparing them lexicographically.\\E$"}
+{"rule":"SENT_START_CONJUNCTIVE_LINKING_ADVERB_COMMA","sentence":"^\\QOtherwise \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q is an assignment that satisfies the formula.\\E$"}
