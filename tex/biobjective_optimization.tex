@@ -14,7 +14,7 @@ Formally, a multi-objective optimization problem (MOOP) is of the form:
 \begin{equation}\label{eq:moop}
   \min (\generalobj_1(x),\dots,\generalobj_\nobj(x)),\ \text{subject to}\ x\in \feasible.
 \end{equation}
-In this thesis, we focus on problems with $\nobj = 2$ objective functions that is called \emph{bi}-objective optimization.
+We focus on problems with $\nobj = 2$ objective functions that is called \emph{bi}-objective optimization.
 
 % Pareto optimality
 Since the objectives might be in conflict with each other, for multi-objective optimization there is no single optimal tuple of objective function values.
@@ -45,12 +45,12 @@ The algorithmic approach proposed in this thesis can be used for solving all thr
 
 % Bi-objective optimization in a SAT context
 Most often when studying optimization, one considers optimization problems with linear objective functions as in MaxSAT (recall \cref{sec:max-sat}).
-We extend the formalization of MaxSAT to bi-objective optimization as follows.
+We extend the formalization of MaxSAT to bi-objective optimization.
 The set of feasible solutions is declaratively represented as the CNF formula $\formula$.
 An objective $\Obj$ is a multiset of literals.
 In contrast to MaxSAT, all literals in $\Obj$ are considered to have unit cost.
 Formalizing an objective as multisets does allow for representing integer weights by adding a literal multiple times.
-The value $\Obj(\sol)$ of a truth assignment $\sol$ under $\Obj$ is $\Obj(\sol) = \sum_{l \in \Obj} \sol(l)$, i.e., the number of the literals in $\Obj$ that $\sol$ assigns to 1. 
+The value $\Obj(\sol)$ of a truth assignment $\sol$ under $\Obj$ is $\Obj(\sol) = \sum_{l \in \Obj} \sol(l)$, i.e., the number of literals in $\Obj$ that $\sol$ assigns to 1. 
 A bi-objective instance in the SAT context is a triple of a CNF formula and two objectives.
 
 % Example: A bi-objective problem
@@ -159,9 +159,9 @@ Furthermore, we touch on SAT-based optimization under lexicographic optimality.
 
 % P-minimal solution enumeration
 The approach perhaps closest to the one presented in this thesis reduces finding Pareto points to the enumeration of so-called $P$-minimal models~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ftp/KoshimuraNFH09}.
-This approach was originally proposed for solving constraint satisfaction problems~\autocites{DBLP:reference/fai/2} encoded in CNF with the help of the order encoding~\autocite{DBLP:conf/ictai/TamuraBS13}.
+This approach was originally proposed for solving constraint satisfaction problems~\autocites{DBLP:reference/fai/2} encoded in CNF via the order encoding~\autocite{DBLP:conf/ictai/TamuraBS13}.
 We note that the approach can be used with any encoding that allows for representing an objective value as a unary number.
-We present enumeration of $P$-minimal models using the totalizer encoding (recall \cref{sec:card-const}) instead of the order encoding as it also produces a unary encoding of the objective values.
+We present enumeration of $P$-minimal models using the totalizer encoding (recall \cref{sec:card-const}) instead of the order encoding as it also produces a unary representation of the objective values.
 
 % The algorithm
 Finding the Pareto points to the bi-objective optimization problem defined by $\formula$, $\Obj_1$ and $\Obj_2$ corresponds to enumerating the solutions of $\formula^\text{W} = \formula \land \tot(\Obj_1) \land \tot(\Obj_2)$ that are subset-minimal w.r.t.\ the set of outputs of the totalizers.
@@ -233,7 +233,7 @@ In contrast to our work, in Seesaw one of the objectives is treated as a black b
 This black box does allow for SAT-based instantiations of Seesaw.
 
 % Seesaw in a SAT context
-In our context the Seesaw algorithm computes Pareto-optimal solutions of a formula $\formula$ by maintaining a collection $\cores$ of optimization cores that are subsets of $\Obj_\inc$.
+In our context the Seesaw algorithm computes Pareto-optimal solutions of a formula $\formula$ w.r.t.\ $\Obj_\inc$ and $\Obj_\dec$ by maintaining a collection $\cores$ of optimization cores that are subsets of $\Obj_\inc$.
 Informally speaking, in the bi-objective setting, every solution $\sol$ that improves on $\Obj_\dec$ needs to assign at least one literal from each core to 1.
 The algorithm works iteratively by computing a hitting set $\hs \subset \Obj_\inc$ (using an integer programming solver), i.e., a subset-minimal set of literals of $\Obj_\inc$ that intersects with each optimization core in $\cores$.
 Next, a solution $\sol$ is computed, so that $\sol(l) = 1$ for each $l \in \hs$, $\sol(l) = 0$ for each $l \in \Obj_\inc \setminus \hs$, and $\Obj_\dec(\sol)$ is the smallest possible value for all such solutions if one exists.
