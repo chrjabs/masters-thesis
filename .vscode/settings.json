@@ -17,7 +17,8 @@
     "\\newaliascnt{}{}": "ignore",
     "\\sat{}": "dummy",
     "\\unsat{}": "vowelDummy",
-    "\\NP": "dummy"
+    "\\NP": "dummy",
+    "\\E{}": "vowelDummy"
   },
   "ltex.latex.environments": {
     "algorithmic": "ignore"
