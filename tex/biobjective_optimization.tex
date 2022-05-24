@@ -151,21 +151,27 @@ We conclude the section by giving a brief overview of inexact methods and discus
 \subsection{SAT-Based Approaches\label{sec:sat-based}}
 
 % Signposting
-We highlight three SAT-based approaches to bi-objective optimization under Pareto optimality:
+We highlight three key SAT-based approaches to bi-objective optimization under Pareto optimality:
 enumeration of $P$-minimal solutions, enumeration of Pareto-minimal correction sets, and Seesaw.
 Furthermore, we touch on SAT-based optimization under lexicographic optimality.
 
 \subsubsection{$P$-Minimal Solution Enumeration\label{sec:p-minimal}}
 
-\TODO{move implementation details to chapter 5}
-
 % P-minimal solution enumeration
-The approach perhaps closest to ours is solving multi-objective constraint optimization problems by enumerating so-called $P$-minimal solutions~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ftp/KoshimuraNFH09}.
-Originally, enumeration of $P$-minimal solutions was proposed to be used with the order encoding~\autocite{DBLP:conf/ictai/TamuraBS13} for converting constraint satisfaction problems to propositional formulas~\autocite{DBLP:conf/cp/SohBTB17}.
-Instead of the order encoding, we employ the totalizer encoding to achieve the same result of a set of output literals that encode the objective values.
-This approach corresponds to enumerating the solutions of $\formula^\text{W} = \formula \land \tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$ that are subset-minimal w.r.t.\ the set of outputs of the totalizers.
-More precisely, if $P$ is the set of output literals of $\tot(\Obj_{\inc}) \land \tot(\Obj_{\dec})$, then the goal is to enumerate solutions $\sol^m$ such that no other solution $\sol$ has $\{ l \mid l \in P, \sol(l) = 0\} \subsetneq \{ l \mid l \in P, \sol^m(l) = 0\}$.
-The procedure for enumerating such solutions~\autocite{DBLP:conf/ftp/KoshimuraNFH09} works by (i)~using a solver to obtain any solution $\sol$ of $\formula^\text{W}$, (ii)~iteratively minimizing the subset of variables of $P$ set to true by the solution, and, once a minimal solution $\sol_m$ has been found, (iii)~adding the clause $(\ov{\Obj_{\inc}}{k_1} \lor \ov{\Obj_{\dec}}{k_2})$ containing the output variables corresponding to the lowest index set to true by $\sol_m$.
+The approach perhaps closest to the one presented in this thesis reduces finding Pareto points to the enumeration of so-called $P$-minimal models~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ftp/KoshimuraNFH09}.
+This approach was originally proposed for solving constraint satisfaction problems~\autocites{DBLP:reference/fai/2} encoded in CNF with the help of the order encoding~\autocite{DBLP:conf/ictai/TamuraBS13}.
+We note that the approach can be used with any encoding that allows for representing an objective value as a unary number.
+We present enumeration of $P$-minimal models using the totalizer encoding (recall \cref{sec:card-const}) instead of the order encoding as it also produces a unary encoding of the objective values.
+
+% The algorithm
+Finding the Pareto points to the bi-objective optimization problem defined by $\formula$, $\Obj_1$ and $\Obj_2$ corresponds to enumerating the solutions of $\formula^\text{W} = \formula \land \tot(\Obj_1) \land \tot(\Obj_2)$ that are subset-minimal w.r.t.\ the set of outputs of the totalizers.
+More precisely, if $P$ is the set of output literals of $\tot(\Obj_1) \land \tot(\Obj_2)$, then the goal is to enumerate solutions $\sol^m$ such that no other solution $\sol$ has $\{ l \mid l \in P, \sol(l) = 0 \} \subsetneq \{ l \mid l \in P, \sol^m(l) = 0 \}$.
+The procedure for enumerating such solutions~\autocite{DBLP:conf/ftp/KoshimuraNFH09} works by
+\begin{enumerate}[label=(\roman*)]
+  \item using a solver to obtain any solution $\sol$ of $\formula^\text{W}$,
+  \item iteratively minimizing the subset of variables of $P$ set to true by the solution, and,
+  \item once a minimal solution $\sol^m$ has been found, adding the clause $(\ov{\Obj_{\inc}}{k_1} \lor \ov{\Obj_{\dec}}{k_2})$ containing the output variables corresponding to the lowest index set to true by $\sol_m$.
+\end{enumerate}
 We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal'' for short.
 
 % Example: P-minimal
@@ -187,23 +193,9 @@ We refer to the algorithm for enumerating $P$-minimal solutions as ``$P$-minimal
 \end{example}
 
 % Extending P-minimal to enumerate the full Pareto front
-As presented in~\cite{DBLP:conf/cp/SohBTB17}, the $P$-minimal approach will only enumerate one representative solution per Pareto point.
-In our implementation we extended $P$-minimal to the task of enumerating all solutions on the Pareto front.
-Specifically, we add a new relaxation variable $r$ to the clause added at each iteration for use as an assumption to enumerate all solutions at that Pareto point:
-the next SAT solver query is done including the assumption $\lnot r$, if a dominating solution is found, the clause is made permanent, i.e., hardening it, by adding $\lnot r$ as a unit clause.
-If no dominating solution is found, all solutions corresponding to the just discovered Pareto point can be enumerated when removing the assumption $\lnot r$---effectively removing the clause that $r$ appears in---by blocking every found solution and querying the solver again until it returns \unsat{}.
-Once all solutions for that Pareto point are enumerated, the clause is hardened by adding $\lnot r$ as a unit clause.
-If the next solution found dominates the previous one, we also harden the clause added in the previous iteration.
-
-% Example: P-minimal for full Pareto front
-\begin{example}
-  Consider the same invocation of $P$-minimal as in \cref{ex:pmin}.
-  In order to enumerate all solutions in the Pareto front, the clause added in the first iteration is $(\ov{\Obj_\inc}{4} \lor \ov{\Obj_\dec}{4} \lor r_1)$ and the solver is queried again with the assumptions $\{ \ove{\Obj_\inc}{4}, \ove{\Obj_\dec}{4}, \lnot r_1 \}$.
-  Since the solver will return a dominating solution, the clause added is hardened by adding the unit clause $\lnot r_1$ to the solver.
-  The second iteration is modified similarly as the first, adding the relaxation variable $r_2$.
-  In the third iteration, the added clause is $(\ov{\Obj_\inc}{2} \lor \ov{\Obj_\dec}{2} \lor r_3)$ and the solver call with assumptions $\{ \ove{\Obj_\inc}{2}, \ove{\Obj_\dec}{2}, \lnot r_3 \}$ is unsatisfiable.
-  Now, by iteratively querying the solver with the assumptions $\{ \ove{\Obj_\inc}{2}, \ove{\Obj_\dec}{2} \}$ and blocking all found solutions, the set of solutions corresponding to the Pareto point $(2,2)$ are enumerated.
-\end{example}
+As presented in~\autocite{DBLP:conf/cp/SohBTB17}, $P$-minimal enumerates a single representative solution per Pareto point.
+It can, however, be extended to enumerating all Pareto-optimal solutions by adding a relaxation variable to the clause added at each iteration and iteratively blocking solutions once they have been proven to be Pareto-optimal.
+More details on this implementation detail are given in \cref{sec:competing}.
 
 \subsubsection{Enumeration of Pareto-Minimal Correction Sets\label{sec:pareto-mcs}}
 
@@ -301,7 +293,7 @@ In fact, many modern MaxSAT solvers exploit multilevel properties of input insta
 
 % CP-based approaches
 Beyond SAT-based approaches, multi-objective optimization has been studied in other declarative optimization paradigms.
-An early algorithm that can be used in constraint programming is based on the lexicographic method~\autocite{Wassenhove1980}.
+An early algorithm that can be used in constraint programming~\autocite{DBLP:reference/fai/2} is based on the lexicographic method~\autocite{Wassenhove1980}.
 A branch-and-bound-based algorithm that outperforms the previous algorithm was presented later~\autocite{DBLP:conf/ecai/Gavanelli02}.
 This improved filtering algorithm was improved again by the Pareto constraint~\autocite{DBLP:conf/cp/SchausH13,DBLP:conf/aaai/HartertS14}.
 The resulting search algorithm is similar to ParetoMCS in that it maintains a set $\mathcal{T}$ of solutions that do not dominate each other.

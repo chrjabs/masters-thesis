@@ -151,10 +151,28 @@ We implemented $P$-minimal and Seesaw using CaDiCaL~\autocite{BiereFazekasFleury
 For ParetoMCS, we use the publicly-available Sat4j-based~\autocite{DBLP:journals/jsat/BerreP10} implementation ({\small\url{https://gitlab.ow2.org/sat4j/moco}}).
 
 % Tasks solved
-\algname{} can be used to enumerate both a representative solution for each Pareto point and the full Pareto front.
-With the extension presented in \cref{sec:sat-based}, $P$-minimal can solve these same two tasks.
+\algname{} can be used to enumerate both a single representative solution for each Pareto point and the full Pareto front.
+$P$-minimal can be extended to solve these same two tasks.
 For Seesaw, as mentioned before, extending it to enumerating the full Pareto front seems non-trivial, and for ParetoMCS, the given implementation only returns a single solution per Pareto point.
 We therefore only compare to Seesaw and ParetoMCS on the task of enumerating a single representative solution per Pareto point.
+
+% Extending P-minimal to enumerate the full Pareto front
+In our implementation we extend $P$-minimal to the task of enumerating all solutions in the Pareto front.
+Specifically, we add a new relaxation variable $r$ to the clause added at each iteration for use as an assumption to enumerate all solutions at that Pareto point:
+the next SAT solver query is done including the assumption $\lnot r$, if a dominating solution is found, the clause is made permanent, i.e., hardening it, by adding $\lnot r$ as a unit clause.
+If no dominating solution is found, all solutions corresponding to the just discovered Pareto point can be enumerated when removing the assumption $\lnot r$---effectively removing the clause that $r$ appears in---by blocking every found solution and querying the solver again until it returns \unsat{}.
+Once all solutions for that Pareto point are enumerated, the clause is hardened by adding $\lnot r$ as a unit clause.
+If the next solution found dominates the previous one, we also harden the clause added in the previous iteration.
+
+% Example: P-minimal for full Pareto front
+\begin{example}
+  Consider the same invocation of $P$-minimal as in \cref{ex:pmin}.
+  In order to enumerate all solutions in the Pareto front, the clause added in the first iteration is $(\ov{\Obj_\inc}{4} \lor \ov{\Obj_\dec}{4} \lor r_1)$ and the solver is queried again with the assumptions $\{ \ove{\Obj_\inc}{4}, \ove{\Obj_\dec}{4}, \lnot r_1 \}$.
+  Since the solver will return a dominating solution, the clause added is hardened by adding the unit clause $\lnot r_1$ to the solver.
+  The second iteration is modified similarly as the first, adding the relaxation variable $r_2$.
+  In the third iteration, the added clause is $(\ov{\Obj_\inc}{2} \lor \ov{\Obj_\dec}{2} \lor r_3)$ and the solver call with assumptions $\{ \ove{\Obj_\inc}{2}, \ove{\Obj_\dec}{2}, \lnot r_3 \}$ is unsatisfiable.
+  Now, by iteratively querying the solver with the assumptions $\{ \ove{\Obj_\inc}{2}, \ove{\Obj_\dec}{2} \}$ and blocking all found solutions, the set of solutions corresponding to the Pareto point $(2,2)$ are enumerated.
+\end{example}
 
 % ParetoMCS variants
 The implementation of ParetoMCS allows for optionally enabling stratification~\autocite{DBLP:conf/ijcai/Terra-NevesLM18}.
