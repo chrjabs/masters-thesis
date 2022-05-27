@@ -4,12 +4,13 @@
 We implemented  all variants and refinements of \algname{} described in \cref{chap:approach} in C++.
 Our implementations of MSU3 and OLL were inspired by their implementations in Open-WBO v2.1~\autocite{DBLP:conf/sat/MartinsML14}, the other variants were implemented from scratch.
 We used the state-of-the-art~\autocite{DBLP:journals/ai/FroleyksHIJS21} SAT solver CaDiCaL v1.5.2~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers}.
-Our implementation is available as open source at \url{https://bitbucket.org/coreo-group/bioptsat/}.
+Our implementation is available in open source at \url{https://bitbucket.org/coreo-group/bioptsat/}.
 We compare the performance of this implementation to that of $P$-minimal, ParetoMCS and Seesaw.
 To the best of our knowledge, there is no general implementation of $P$-minimal and Seesaw publicly available.
 Therefore, we also implemented $P$-minimal and Seesaw from scratch, including them in our implementation.
 
-In our implementation, the core-guided variants of \algname{} use heuristic core minimization by default and dominated solutions are not blocked in \satunsat{}.
+In terms of refinements (recall \cref{sec:refinements}), in our implementation, the core-guided variants of \algname{} use heuristic core minimization by default.
+Dominated solutions are not blocked in \satunsat{}.
 As an additional parametric detail, in its default \msh{} is configured to switch between \msu{} and \satunsat{} once 70\% of the literals in $\Obj_\inc$ have been added to $\tot(\Act)$.
 
 We empirically evaluate the relative runtime performance of the \algname{} variants against the three competing approaches, as well as the impact of the specific refinements (recall \cref{sec:refinements}) to \algname{} on their runtime performance.
@@ -69,19 +70,19 @@ $\selector_l^j$ for $l=1,\dots,\nclauses$ and $j=1,\dots,\nfeat$, and $\noise_i$
 The interpretation of the variables is that $\selector_l^j=1$ if and only if the $j$th feature is included in the $l$th clause of the decision rule, and $\noise_i=1$ if the $i$th data sample is misclassified.
 We represent the sample with index $i$ with a Boolean class label $y_i$ and the Boolean features $x_i^j$, where $j=1,\dots,\nfeat$.
 With this, the encoding is
-\[ \lnot \noise_i \rightarrow (y_i \leftrightarrow \bigwedge_{l=1}^\nclauses \bigvee_{j=1}^\nfeat (x_i^j \land \selector_l^j)). \]
-We use this encoding as $\formula$, literals $\selector_l^j$ as $\Obj_\inc$ and literals $\noise_i$ as $\Obj_\dec$.
+\[ \lnot \noise_i \rightarrow (y_i \leftrightarrow \bigwedge_{l=1}^\nclauses \bigvee_{j=1}^\nfeat (x_i^j \land \selector_l^j)),\ \text{for}\, i=1,\dots,\nsamp. \]
+We employ this encoding as $\formula$, literals $\selector_l^j$ as $\Obj_\inc$ and literals $\noise_i$ as $\Obj_\dec$.
 The task in this benchmark is therefore to find Pareto-optimal solution w.r.t.\ the size of the decision rule (measured as the number of literals in the rule) and its classification error.
 In preliminary experiments, we found that choosing the objectives as described here leads to better performance than using classification error as the increasing objective.
-This might be because the cores that can be extracted from the size objective are more beneficial for the search procedure.
+\footnote{This might be because the cores that can be extracted from the size objective are more beneficial for the search procedure.}
 
-% Symmetry breaking clauses
+% Symmetry-breaking clauses
 Since decision rules in CNF contain many symmetric solutions obtained by changing the order of clauses in the rule, we add additional clauses to the encoding to break these symmetries.
 The idea behind the symmetry breaking is that the bit-strings $\sol(\selector_l^1)\sol(\selector_l^2)\dots\sol(\selector_l^\nfeat)$ are forced to be in lexicographic ordering.
 In more detail, additionally to the $\selector$ variables, we introduce variables $\equals_l^j$ for $j=1,\dots,\nfeat$ and $l=2,\dots,\nclauses$ that represent whether the bit-strings of the clauses with index $(l-1)$ and $l$ are equal for the first $j$ bits.
 The semantics of this representation are encoded as follows:
 \begin{align*}
-  \equals_l^1 &\leftrightarrow (\selector_{l-1}^1 \leftrightarrow \selector_l^1),\ \text{and} \\
+  \equals_l^1 &\leftrightarrow (\selector_{l-1}^1 \leftrightarrow \selector_l^1)\ \text{and} \\
   \equals_l^j &\leftrightarrow (\equals_l^{j-1} \land (\selector_{l-1}^f \leftrightarrow \selector_l^j))\ \text{for}\ j=2,\dots,\nfeat.
 \end{align*}
 The lexicographic ordering is then enforced by adding the constraints
@@ -97,7 +98,8 @@ enforcing that the bit with the smallest index in which the clauses differ shoul
   It consists of two clauses, $C_1 = x_1$ and $C_2 = x_2$.
   In a solution $\sol$ to the encoding, $C_1$ will be represented as the bit-string $\sol(\selector_l^1)\sol(\selector_l^2)=10$ and $C_2$ as $\sol(\selector_l^1)\sol(\selector_l^2)=01$.
   Without symmetry breaking, either $\sol_1 = \{\selector_1^1, \lnot\selector_1^2, \lnot\selector_2^1, \selector_2^2\}$ or $\sol_2 = \{\lnot\selector_1^1, \selector_1^2, \selector_2^1, \lnot\selector_2^2\}$ would be valid solutions, even though they both map to $r_2$.
-  The symmetry breaking clauses enforce that the bit-string representing $C_1$ precedes the bit-string representing $C_2$, therefore only $\sol_1$ is a feasible solution.
+  The symmetry-breaking clauses enforce that the bit-string representing $C_1$ precedes the bit-string representing $C_2$.
+  Therefore, only $\sol_1$ is a feasible solution.
 \end{example}
 
 % Benchmark datasets
@@ -115,11 +117,11 @@ Further, making use of the algorithm-specific fact that \algname{} is guaranteed
 \subsection{Bi-Objective Set Covering}
 
 % Bi-objective set covering and its encoding
-In the set covering problem over sets $\sets$, a subset $\cover$ of the elements $\{1,\dots,\nelems\}$ needs to be chosen such that (i)~$\cover$ covers all sets in $\sets$, i.e., $\cover\cap S\neq\emptyset,\,\forall S\in\sets$, and (ii)~$\cover$ is minimal regarding some objective.
+In the set covering problem over sets $\sets$, a subset $\cover$ of the set of elements $\{1,\dots,\nelems\}$ needs to be chosen under the constraints that (i)~$\cover$ covers all sets in $\sets$, i.e., $\cover\cap S\neq\emptyset,\,\forall S\in\sets$, and (ii)~$\cover$ is minimal regarding some objective.
 The bi-objective variant assigns each element $\element$ two different cost values $\cost^\element_1$ and $\cost^\element_2$ where the two different objectives for the cover $\cover$ are to minimize $c^\cover_1 = \sum_{\element\in\cover}\cost^\element_1$ and $c^\cover_2 = \sum_{\element\in\cover}\cost^\element_2$.
 When encoding set covering into propositional logic, every set $S\in\sets$ forms one clause in the encoding, i.e., the clauses are $\{l_\element \mid \element\in S\}$ with $l_\element$ being a literal representing if element $\element$ is in $\cover$.
 Furthermore, the integer values for the cost associated with element $\element$ can be represented by adding $l_\element$ to the objective set $\cost^\element$ times.
-Note that multi-objective set covering was also used originally for evaluating $P$-minimal~\autocite{DBLP:conf/cp/SohBTB17}.
+Note that multi-objective set covering was also used originally as a benchmark for evaluating $P$-minimal~\autocite{DBLP:conf/cp/SohBTB17}.
 
 % Example: Set covering
 \begin{example}
@@ -147,7 +149,7 @@ due to the fact that \algname{} is guaranteed to enumerate the Pareto-optimal so
 % Competitors and their implementations
 We compare \algname{} to the three algorithms overviewed in \cref{sec:sat-based}: $P$-minimal, Seesaw and ParetoMCS.
 These algorithms were chosen because they are similar in that they are (or, in the case of Seesaw, can be) SAT-based, and they solve the same task of enumerating Pareto-optimal solutions.
-We implemented $P$-minimal and Seesaw using CaDiCaL~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers} as the SAT solver and CPLEX v20.10 for hitting set extraction.
+We implemented $P$-minimal and Seesaw using CaDiCaL~\autocite{BiereFazekasFleuryHeisinger-SAT-Competition-2020-solvers} as the SAT solver (similarly as for \algname{}) and CPLEX v20.10 for hitting set extraction.
 For ParetoMCS, we use the publicly-available Sat4j-based~\autocite{DBLP:journals/jsat/BerreP10} implementation ({\small\url{https://gitlab.ow2.org/sat4j/moco}}).
 
 % Tasks solved
@@ -157,8 +159,8 @@ For Seesaw, as mentioned before, extending it to enumerating the full Pareto fro
 We therefore only compare to Seesaw and ParetoMCS on the task of enumerating a single representative solution per Pareto point.
 
 % Extending P-minimal to enumerate the full Pareto front
-In our implementation we extend $P$-minimal to the task of enumerating all solutions in the Pareto front.
-Specifically, we add a new relaxation variable $r$ to the clause added at each iteration for use as an assumption to enumerate all solutions at that Pareto point:
+In our implementation we also extended $P$-minimal to the task of enumerating all solutions in the Pareto front.
+For achieving this, we add a new relaxation variable $r$ to the clause added at each iteration for use as an assumption to enumerate all solutions at that Pareto point:
 the next SAT solver query is done including the assumption $\lnot r$, if a dominating solution is found, the clause is made permanent, i.e., hardening it, by adding $\lnot r$ as a unit clause.
 If no dominating solution is found, all solutions corresponding to the just discovered Pareto point can be enumerated when removing the assumption $\lnot r$---effectively removing the clause that $r$ appears in---by blocking every found solution and querying the solver again until it returns \unsat{}.
 Once all solutions for that Pareto point are enumerated, the clause is hardened by adding $\lnot r$ as a unit clause.
@@ -176,18 +178,18 @@ If the next solution found dominates the previous one, we also harden the clause
 
 % ParetoMCS variants
 The implementation of ParetoMCS allows for optionally enabling stratification~\autocite{DBLP:conf/ijcai/Terra-NevesLM18}.
-We use stratification for a second variant of ParetoMCS, which we refer to as ParetoMCS-strat.
+We use stratification for a second variant of ParetoMCS, and refer to it as ParetoMCS-strat.
 
 % Seesaw instantiation for MLIC
 Since Seesaw needs to be instantiated for each task separately, we instantiated Seesaw for learning interpretable decision rules by using misclassifications as the objective over which optimization cores are extracted and a hitting set $\hs$ is found over these optimization cores.
 In the second step, the number of literals in the smallest rule misclassifying the samples in $\hs$ (or a subset of it) is found.
 This function is implemented as a solution-improving search with a SAT solver.
 This instantiation was chosen because finding the smallest rule misclassifying $\hs$ is an anti-monotone function and the refined version of core extraction presented in the original paper~\autocite{DBLP:conf/cp/JanotaMSM21} can therefore be used, making Seesaw feasible in the first place.
-Furthermore, we instantiate two more variants of Seesaw where optimization cores are extracted in the solution-improving search procedure by the SAT solver.
-The last SAT query of solution-improving search will always be \unsat{};
+Furthermore, we implemented two more variants of Seesaw in which optimization cores are extracted in the solution-improving search procedure by the SAT solver.
+The final SAT query of solution-improving search will always be unsatisfiable;
 the core returned by the solver for this call can be used as an optimization core for Seesaw.
 Optionally we apply exact core minimization to these cores before using them in Seesaw.
-(We found that heuristic core minimization leads to no significant improvement over no minimization at all.)
+\footnote{We found that heuristic core minimization leads to no significant improvement over no minimization at all.}
 These two variants will be referred to as Seesaw-SAT and Seesaw-SAT-min.
 
 \section{Results\label{sec:results}}
@@ -195,8 +197,8 @@ These two variants will be referred to as Seesaw-SAT and Seesaw-SAT-min.
 % Signposting
 We turn to an overview of the empirical results.
 First, we present a runtime comparison of the different approaches to bi-objective optimization for the task of finding a single representative solution per Pareto point.
-Next, we show the same comparison for enumerating all Pareto-optimal solutions.
-We conclude the results by an evaluation of the impact the refinements presented in \cref{sec:refinements} have on the performance of \algname{}.
+Then, we show the same comparison for enumerating all Pareto-optimal solutions.
+Finally, we provide observations on the impact the refinements presented in \cref{sec:refinements} have on the performance of \algname{}.
 
 \subsection{Finding a Single Representative Solution per Pareto Point}
 
@@ -340,7 +342,7 @@ Furthermore, \cref{fig:combined-msh-scatter-single-multi} (right) shows a runtim
 Overall, \algname{} scales well also for enumerating all Pareto-optimal solutions, although there is an overhead when the number of solutions required to be enumerated grows significantly;
 this is the case for learning interpretable decision rules, where some instances have more than 10\,000 solutions per Pareto point.
 This is in contrast to the set covering instances, which tend to have only a single (of few) solutions per Pareto point.
-The fewer solutions per Pareto point for the set covering instances can be explained by the weighted objectives which make it significantly less likely that two distinct solutions have identical objective function values.
+The observation that there are fewer solutions per Pareto point for the set covering instances can be intuitively explained by the weighted objectives which make it significantly less likely that two distinct solutions have identical objective function values.
 
 % combined-msh-scatter-single-multi
 \begin{figure}

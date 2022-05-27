@@ -264,3 +264,14 @@ CUT
 - Examples for single- and bi-objective optimization problems (rework)
 - Complexity of the declarative approach
 - Declarative programming pipeline
+
+## 27.05.2022 - Questions Mattis Feedback
+
+### Abstract
+
+- 2nd P, 2nd L, right, "optimization problems arise": can't read
+
+### Intro
+
+- General question: is "low-level language" a clear enough term? I was trying to avoid that because it felt too vague
+- p2, 2nd P, "recent research in propositional": can't read

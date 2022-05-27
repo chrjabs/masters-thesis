@@ -2,14 +2,14 @@
 
 % Recap of contribution
 We presented \algname{}, an algorithm for exact bi-objective optimization under Pareto optimality.
-The structured search procedure of \algname{} builds on algorithms for maximum satisfiability (MaxSAT) and makes incremental use of a solver for propositional satisfiability (SAT).
+The structured search of \algname{} builds on algorithms for maximum satisfiability (MaxSAT) and makes incremental use of a solver for propositional satisfiability (SAT).
 \algname{} can be used to solve three tasks for \NP-hard bi-objective optimization problems encoded in propositional logic:
 finding a single Pareto-optimal solution, finding one representative solution for each Pareto point, and enumerating all Pareto-optimal solutions.
 
 % Results of BiOptSat variants comparing to competitors
 We presented four variants of \algname{} that are based on algorithms proposed for MaxSAT (\satunsat{}, \unsatsat{}, \msu{}, and \oll{}), as well as \msh{}, a novel hybrid between \msu{} and \satunsat{}.
 The main difference between the \algname{} variants and their MaxSAT inspirations is that an additional constraint over the second objective needs to be enforced during the optimization.
-An open-source implementation of all five variants and two of the three previously proposed SAT-based approaches is provided.
+An open-source implementation of all five variants and two of the three previously proposed SAT-based approaches is available.
 We compared \algname{} to three previously-proposed approaches:
 $P$-minimal~\autocite{DBLP:conf/cp/SohBTB17}, ParetoMCS~\autocite{DBLP:conf/ijcai/Terra-NevesLM18a}, and Seesaw~\autocite{DBLP:conf/cp/JanotaMSM21}.
 We empirically evaluated the five variants of \algname{}, comparing them to the three competitors, on two benchmark domains: learning interpretable decision rules~\autocite{DBLP:conf/cp/MaliotovM18} and bi-objective set covering.
@@ -26,7 +26,7 @@ Other refinements that did not show a significant impact on performance are bloc
 
 % Future work
 Going beyond the work presented in this thesis, it is likely that \algname{} could be further improved and evaluated.
-For example, the way weighted objectives are handled in \algname{} at the moment is fairly naive.
-As shown, the performance of \algname{} on weighted instances is already competitive.
+For example, the way weighted objectives are handled in \algname{} at the moment can be considered relatively naive.
+As shown empirically, the performance of \algname{} on weighted instances is already competitive.
 However, applying more sophisticated ways of handling weights promises even better performance.
 Additionally, a better understanding for what objective should be chosen as increasing to achieve the best performance remains an interesting direction for further research.

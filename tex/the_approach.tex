@@ -3,7 +3,7 @@
 % Signposting
 In this chapter, we detail \algname{}, the MaxSAT-based approach to bi-objective optimization developed in this work, together with its variants.
 \Cref{sec:algorithm} gives an overview of the algorithmic framework, while \cref{sec:variants} presents five specific instantiations of one of the subroutines, based on established MaxSAT algorithms.
-To conclude the chapter, in \cref{sec:refinements} we discuss refinements to \algname{}.
+Furthermore, in \cref{sec:refinements} we discuss refinements to \algname{}.
 
 % BiOptSat pseudo-code
 \begin{algorithm}[t]
@@ -33,17 +33,17 @@ To conclude the chapter, in \cref{sec:refinements} we discuss refinements to \al
 % The framework and lexicographic method
 \Cref{alg:base-algorithm} details the \algname{} framework for computing the Pareto-optimal solutions of a given CNF formula $\formula$ w.r.t.\ two given objectives $\Obj_\inc$ and $\Obj_\dec$.
 \algname{} is an instantiation of the general lexicographic method~\autocite{survey} instantiated with a SAT solver.
-To find a Pareto-optimal solution, the lexicographic method for multi-objective optimization defines multiple iterative single-objective optimization problems minimizing the objectives in order, where the later calls are under the additional constraint that the objectives that were already minimized cannot take worse values than the found minimum.
+To find a Pareto-optimal solution, the lexicographic method for multi-objective optimization defines multiple iterative single-objective optimization problems minimizing the objectives in order, where later calls are under the additional constraint that the objectives already minimized by earlier calls cannot take worse values than the found minimum.
 Once a first Pareto-optimal solution is found, the search continues by adding a constraint that one of the objectives needs to be improved.
-The lexicographic method will enumerate all Pareto-optimal solutions in monotonically increasing order of the first objective.
-Following \cref{obs:biobjective}, for bi-objective optimization this means that the solutions are enumerated in decreasing order for the second objective.
+The lexicographic method will enumerate all Pareto-optimal solutions in monotonically-increasing order of the first objective.
+By \cref{obs:biobjective}, for bi-objective optimization this means that the solutions are enumerated in decreasing order for the second objective.
 With this intuition, we call objective $\Obj_\inc$ \emph{increasing} and $\Obj_\dec$ \emph{decreasing}.
 
 % Single SAT solver and high-level overview
 In \algname{}, the lexicographic method is instantiated with a single SAT solver that all subroutines make use of.
 This single solver instantiation is invoked incrementally and preserved (i.e., not reset) during the whole search. 
 \algname{} maintains the bounds $b_\inc$ and $b_\dec$ on the two objectives $\Obj_\inc$ and $\Obj_\dec$, respectively.
-In each iteration, the \Min{} procedure sets the value of $b_\inc$ to the smallest value for which there is a still-undiscovered Pareto-optimal solution $\sol^o$ for which $\Obj_\inc(\sol^o) = b_\inc$.
+In each iteration, the \Min{} procedure sets the value of $b_\inc$ to the smallest value for which there still is an undiscovered Pareto-optimal solution $\sol^o$ for which $\Obj_\inc(\sol^o) = b_\inc$.
 The value of $b_\dec$ is then set to $\Obj_\dec(\sol^o)$ by the $\Simpr$ procedure.
 
 % Optional sub enumeration
@@ -66,7 +66,7 @@ Before the main enumeration procedure starts, the bounds $b_\inc$ and $b_\dec$ o
 
 % Main loop: minimization of increasing objective
 The main search loop (\crefrange{l:loopstart}{l:endL}) iterates as long as there are Pareto-optimal solutions of $\formula$ that have not been enumerated yet. 
-This is the case if there is a solution $\sol$ for which $\Obj_\dec(\sol) < b_\dec$, determined by invoking the SAT solver under the assumption $\ov{\Obj_\dec}{b_\dec}$ on \cref{l:endL}.
+This is the case if there is a solution $\sol$ for which $\Obj_\dec(\sol) < b_\dec$, which is determined by invoking the SAT solver under the assumption $\ov{\Obj_\dec}{b_\dec}$ on \cref{l:endL}.
 In the beginning of each main loop iteration, the procedure $\Min$ is employed to minimize the increasing objective, i.e., to compute the smallest value $b_\inc$ for which there is a solution $\sol^m$ with $\Obj_\inc(\sol^m) = b_\inc$ and $\Obj_\dec(\sol^m) < b_\dec$ (\cref{l:minim1}). 
 The parameters of the $\Min$ procedure are the bound $b_\dec$ that the decreasing objective of the found solution needs to be below, $b_\inc$ as a known lower and $\Obj_\inc(\tau^r)$ as a known upper bound on the minimum increasing objective value.
 We assume that $\Min$ maintains a way to enforce that $\Obj_\inc(\sol) < b$, e.g., through a totalizer $\tot(\Obj_\inc)$, and that \algname{} and all of its subroutines have access to a set of assumptions for enforcing this bound for any $b$.
@@ -384,7 +384,7 @@ Additionally, a set of assumptions over the totalizer outputs needs to be includ
 % MSHybrid intuition
 The final variant proposed in this work, \msh{}, is a hybrid between \msu{} and \satunsat{} with the following intuition:
 if \msu{}  reaches the stage where all literals of the objective are active, its search will break down to \unsatsat{}, meaning it is a lower-bounding search where the bound on the totalizer $\tot(\Obj_\inc)$ is increased by one every iteration until the SAT query is satisfiable.
-The fact that the UNSAT-SAT algorithm is not used in practice for MaxSAT evidences that \satunsat{} may be a significantly better approach than \unsatsat{}.
+Existing work in MaxSAT suggests that \satunsat{} is a better approach than using \unsatsat{} for solving problems arising in real-world domains.
 If this is the case, \msu{} might have an advantage over \satunsat{} as long as not all literals are active, but as soon as all literals are active, this advantage is gone.
 Furthermore, if a problem instance has literals in $\Obj_\inc$ that never appear in any cores (i.e., are not constrained by $\formula$), these literals will never appear in any core making \msu{} behave like \unsatsat{} even before the totalizer is fully built.
 
@@ -430,13 +430,13 @@ The soundness of doing so follows by an argument very similar to \cref{prop:soun
 Essentially, the properties of cores imply that the Pareto-optimal solutions $\sol^o$ of $\formula$ for which $\Obj_\inc(\sol^o) = b_\inc$ assign $\sol^o(l) = 0$ for all  $l \in (\Obj_\dec \cap \Obj_\inc) \setminus \Act$. 
 
 % Why are we doing this?
-The idea behind this refinement is to build the totalizer only over literals that can be assigned to 1.
+The idea behind this refinement is to build the totalizer only over literals that can be assigned to 1 by Pareto-optimal solutions that are currently enumerated.
 With this, unnecessary clauses are removed from the working formula of the SAT solver.
 
 % Adapting assumptions
 Lazy building of $\tot(\Obj_\dec)$ requires a minor adjustment of the termination criterion of \cref{alg:base-algorithm}.
 More specifically, as the totalizer maintained by \Simpr{} might not have all literals of $\Obj_\dec$ as inputs, the algorithm does not have a (straight-forward) way of checking if there exists a solution $\sol$ for which $\Obj_\dec(\sol) < b_\dec$.
-However, the lack of further Pareto-optimal solutions is instead detected in the next call to \Min{} by the SAT solver returning an empty core, or more precisely, a subset of assumptions that does not contain any inactive literals nor outputs of $\tot(\Obj_\inc)$.
+However, the lack of further Pareto-optimal solutions is instead detected in the next call to \Min{} by the SAT solver returning a core that only contains the assumption used for bounding the value of $\Obj_\dec$.
 
 \subsection{Blocking of Dominated Solutions}
 
