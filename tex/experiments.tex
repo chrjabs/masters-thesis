@@ -73,7 +73,7 @@ With this, the encoding is
 \[ \lnot \noise_i \rightarrow (y_i \leftrightarrow \bigwedge_{l=1}^\nclauses \bigvee_{j=1}^\nfeat (x_i^j \land \selector_l^j)),\ \text{for}\, i=1,\dots,\nsamp. \]
 We employ this encoding as $\formula$, literals $\selector_l^j$ as $\Obj_\inc$ and literals $\noise_i$ as $\Obj_\dec$.
 The task in this benchmark is therefore to find Pareto-optimal solution w.r.t.\ the size of the decision rule (measured as the number of literals in the rule) and its classification error.
-In preliminary experiments, we found that choosing the objectives as described here leads to better performance than using classification error as the increasing objective.
+In preliminary experiments, we found that choosing the objectives as described here leads to better performance than using classification error as the increasing objective.%
 \footnote{This might be because the cores that can be extracted from the size objective are more beneficial for the search procedure.}
 
 % Symmetry-breaking clauses
@@ -108,6 +108,7 @@ We independently at random sampled subsets of $\nsamp\in\{50,100,1000,5000,10000
 The datasets were discretized as in~\autocite{DBLP:conf/cp/MaliotovM18}:
 categorical features are one-hot encoded, continuous features discretized by comparing to a collection of thresholds.
 All experiments on these datasets were run with the encoding configured to learn CNF decision rules consisting of two clauses ($\nclauses = 2$).
+\looseness=-1
 
 % Domain-specific blocking
 When enumerating multiple solutions corresponding to the same Pareto point, the blocking clauses for \algname{} (as well as $P$-minimal compared to in the experiments) can be strengthened to find solutions mapping to distinct rules:
@@ -143,6 +144,7 @@ The integer cost values $\cost$ for the two objectives were chosen uniformly at 
 % Domain-specific blocking
 The blocking clauses used in \algname{} for enumerating all Pareto-optimal solutions can be strengthened also for set covering:
 due to the fact that \algname{} is guaranteed to enumerate the Pareto-optimal solutions so that one of the objectives will monotonically decrease, in \algname{} it is enough to block the solution over all $l_e$ that are assigned to true.
+\looseness=-1
 
 \section{Competing Approaches\label{sec:competing}}
 
@@ -188,8 +190,8 @@ This instantiation was chosen because finding the smallest rule misclassifying $
 Furthermore, we implemented two more variants of Seesaw in which optimization cores are extracted in the solution-improving search procedure by the SAT solver.
 The final SAT query of solution-improving search will always be unsatisfiable;
 the core returned by the solver for this call can be used as an optimization core for Seesaw.
-Optionally we apply exact core minimization to these cores before using them in Seesaw.
-\footnote{We found that heuristic core minimization leads to no significant improvement over no minimization at all.}
+Optionally we apply exact core minimization to these cores before using them in Seesaw.%
+\footnote{We found that heuristic core minimization leads to no significant improvement over no minimization at all and therefore don't include it.}
 These two variants will be referred to as Seesaw-SAT and Seesaw-SAT-min.
 
 \section{Results\label{sec:results}}
@@ -319,6 +321,7 @@ Note that Seesaw and ParetoMCS cannot be used for enumerating all Pareto-optimal
 Turning to the same comparison for bi-objective set covering, as seen from \cref{fig:setcover-cactus-multi}, \msh{} is the best-performing approach also here.
 For the instances with fixed set cardinality, all \algname{} variants solved at least as many instances as $P$-minimal, for the instances with fixed element probability only \oll{} performed worse than $P$-minimal.
 The best-performing variant, \msh{}, solved 81 (respectively 40) of the fixed element probability (respectively set cardinality) instances while $P$-minimal solved 68 (respectively 26).
+\looseness=-1
 
 % setcover-cactus-multi
 \begin{figure}

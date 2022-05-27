@@ -191,6 +191,7 @@ The procedure terminates when the result is \unsat{}, after which (on \cref{ln:s
   Assume that the solver returns the solution $\sol^o_2 = \solotwo$.
   \satunsat{} invokes the SAT solver again with the assumptions $\{ \ov{\Obj_\dec}{3}, \ov{\Obj_\inc}{2} \}$.
   The result is \unsat{}, so the procedure returns $b_\inc = 2$ and $\sol^o_2$.
+  \looseness=-1
 
   In the third (and last) iteration of \algname{}, \satunsat{} is invoked with $b_\dec = 2$ and $b=\Obj_\inc(\sol^o_3) = 3$.
   The SAT solver is queried with the assumptions $\{ \ov{\Obj_\dec}{2}, \ov{\Obj_\inc}{3} \}$ and returns \unsat{}.
@@ -302,6 +303,7 @@ In the next call to \Simpr{}, the number of literals in $\Obj_\inc$ set to $1$ n
 Since the totalizer maintained by \msu{} only has $\Act \subset \Obj_\inc$ as inputs, we do not have access to an output literal of form  $\ove{\Obj_\inc}{b_\inc}$.
 Instead, we use  the assumptions $\{ \ove{\Act}{b_\inc}\} \cup \{ \lnot l \mid l \in \Obj_\inc \setminus \Act \}$, i.e., restrict the number of literals in $\Act$ set to $1$ to $b_\inc$ and assume the value of each inactive literal $l \in \Obj_\inc \setminus \Act$ to $0$. 
 In the following proposition, we prove that doing so can be done without removing any Pareto-optimal solutions from the search. 
+\looseness=-1
 \begin{proposition}\label{prop:sound}
   Let $\sol^o$ be a Pareto-optimal solution of $\formula$ for which $\Obj_\inc(\sol^o) = b_\inc$.
   Then $\sol^o(l) = 0$ for all $l \in \Obj_\inc \setminus \Act$. 

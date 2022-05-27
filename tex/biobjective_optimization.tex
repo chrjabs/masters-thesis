@@ -10,6 +10,7 @@ We also provide an overview of other notions of optimality (apart from Pareto op
 Given $\nobj$ objective functions $\generalobj_i: \feasible \rightarrow \mathbb{R}^+$, where $i=1,\dots,\nobj$, in multi-objective optimization the task is to find one or more $x\in \feasible$ that are optimal (under a predetermined notion of optimality) w.r.t.\ $\nobj$ objective functions~\autocite{Ehrgott2005-1}.
 In this work, w.l.o.g.\ we consider \emph{minimization} problems.
 Formally, a multi-objective optimization problem (MOOP) is of the form
+\looseness=-1
 \begin{equation}\label{eq:moop}
   \min (\generalobj_1(x),\dots,\generalobj_\nobj(x)),\ \text{subject to}\ x\in \feasible.
 \end{equation}
@@ -38,7 +39,7 @@ We consider three central related tasks for solving multi-objective optimization
   \item finding a representative solution for every Pareto point (e.g.,~\autocite{DBLP:conf/cp/SohBTB17,DBLP:conf/cp/JanotaMSM21}), and
   \item finding all Pareto-optimal solutions (e.g.,~\autocite{Isermann1979enumerationallefficient}).
 \end{enumerate}
-The algorithmic approach proposed in this thesis can be used for solving all three of these tasks.
+Our algorithmic approach can be used for solving all three of these tasks.
 
 \section{Bi-Objective Optimization in a SAT Context\label{sec:biopt}}
 
@@ -304,7 +305,7 @@ There is one branch-and-bound-based algorithm and another algorithm based on add
 % MIP-based approaches
 Multi-objective optimization has also been studied in the context of linear programming, mixed integer programming and zero-one-programming~\autocites{Ehrgott2005-6,Rasmussen1986,DBLP:journals/eor/AlvesC07}.
 There are different algorithmic approaches in this field, some based on the Simplex algorithm~\autocites{Ehrgott2005-7,DBLP:journals/mp/EvansS73}, others on branch-and-bound~\autocites{Adelgren2021,DBLP:journals/siamjo/SantisENR20} while a last category build on reducing the problem of finding a Pareto-optimal solution to single-objective mixed integer programming~\autocites{DBLP:journals/jota/Sun17,DBLP:journals/ol/LuMS20,Soland1979}.
-\looseness=-1000
+\looseness=-1
 
 \subsection{Inexact Approaches\label{sec:approximative}}
 
