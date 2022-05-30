@@ -156,10 +156,10 @@ Furthermore, we touch on SAT-based optimization under lexicographic optimality.
 \subsubsection{$P$-Minimal Solution Enumeration\label{sec:p-minimal}}
 
 % P-minimal solution enumeration
-The approach perhaps closest to the one presented in this thesis reduces finding Pareto points to the enumeration of so-called $P$-minimal models~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ftp/KoshimuraNFH09}.
+The approach perhaps closest to the one presented in this thesis reduces finding Pareto points to the enumeration of so-called $P$-minimal solutions~\autocites{DBLP:conf/cp/SohBTB17,DBLP:conf/ftp/KoshimuraNFH09}.
 This approach was originally proposed for solving constraint satisfaction problems~\autocites{DBLP:reference/fai/2} encoded in CNF via the order encoding~\autocite{DBLP:conf/ictai/TamuraBS13}.
 We note that the approach can be used with any encoding that allows for representing an objective value as a sorted unary number.
-Here we present enumeration of $P$-minimal models using the totalizer encoding (recall \cref{sec:card-const}) instead of the order encoding as it also produces a unary representation of the objective values.
+Here we present enumeration of $P$-minimal solutions using the totalizer encoding (recall \cref{sec:card-const}) instead of the order encoding as it also produces a unary representation of the objective values.
 
 % The algorithm
 Finding the Pareto points to the bi-objective optimization problem defined by $\formula$, $\Obj_1$ and $\Obj_2$ corresponds to enumerating the solutions of $\formula^\text{W} = \formula \land \tot(\Obj_1) \land \tot(\Obj_2)$ that are subset-minimal w.r.t.\ the outputs of the totalizers assigned to 0.

@@ -18,7 +18,11 @@
     "\\sat{}": "dummy",
     "\\unsat{}": "vowelDummy",
     "\\NP": "dummy",
-    "\\E{}": "vowelDummy"
+    "\\E{}": "vowelDummy",
+    "\\DeclareSourcemap{}": "ignore",
+    "\\BeforeBeginEnvironment{}{}": "ignore",
+    "\\AfterEndEnvironment{}{}": "ignore",
+    "\\hyphenation{}": "ignore"
   },
   "ltex.latex.environments": {
     "algorithmic": "ignore"

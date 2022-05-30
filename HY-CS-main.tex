@@ -75,6 +75,7 @@
 
 %\usepackage[utf8]{inputenc}  % For UTF8 support, in some systems. Use UTF8 when saving your file.
 
+\usepackage[final]{microtype} % For better typesetting
 
 \usepackage{lmodern}         % Font package, again in some systems.
 \usepackage{textcomp}        % Package for special symbols
@@ -255,6 +256,7 @@
 %\cleardoublepage                          %fixes the position of bibliography in bookmarks
 %\phantomsection
 \addcontentsline{toc}{chapter}{\bibname}  % This lines adds the bibliography to the ToC
+\emergencystretch=1em
 \printbibliography
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

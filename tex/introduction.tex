@@ -91,16 +91,16 @@ In supply chain optimization, in addition to the economic objective, environment
 The main contribution of this work is the \algname{} algorithm, a MaxSAT-based bi-objective optimization approach.
 \algname{} follows the lexicographic method~\autocite{survey}, which works by sequentially minimizing both objectives separately under the additional constraint that the other objective cannot get worse.
 It terminates once no more solutions can be found, at which point all Pareto-optimal solutions have been enumerated.
-Note the difference between this lexicographic \emph{method} compared to lexicographic \emph{optimization}~\autocite{DBLP:conf/ijcai/ArgelichLS09,DBLP:journals/amai/Marques-SilvaAGL11} to which SAT-based approaches have been proposed earlier.
+Note the difference between this lexicographic \emph{method} compared to lexicographic \emph{optimization} to which SAT-based approaches have been proposed earlier~\autocite{DBLP:conf/ijcai/ArgelichLS09,DBLP:journals/amai/Marques-SilvaAGL11}.
 Lexicographic optimization only considers the first Pareto point, found by the lexicographic method, optimal.
 
 % Variants
 \algname{} builds on advances in MaxSAT solving, allowing for variants based on different so-called solution-improving~\autocites{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} and core-guided~\autocites{DBLP:journals/corr/abs-0712-1097,DBLP:conf/sat/AnsoteguiBL09,DBLP:conf/cp/MorgadoDM14,DBLP:journals/jsat/IgnatievMM19} algorithms.
 Our algorithm allows for solving all three tasks for bi-objective optimization:
 finding a single Pareto-optimal solution, one representative solution for each Pareto point or enumerating all Pareto-optimal solutions.
-We propose five different variants of \algname{} that differ in how the minimization of the increasing objective is done.
+We propose five different variants of \algname{} that differ in how the minimization of the ``increasing'' objective is handled.
 The first four building on the SAT-UNSAT~\autocite{DBLP:journals/jsat/BerreP10}, UNSAT-SAT~\autocite{DBLP:conf/sat/FuM06}, MSU3~\autocite{DBLP:journals/corr/abs-0712-1097} and OLL~\autocite{DBLP:conf/cp/MorgadoDM14} MaxSAT algorithms, modifying them mainly in the fact that a bound on the decreasing objective needs be enforced during optimization.
-The fifth variant is a hybrid switching from MSU3 to the SAT-UNSAT-based variant during the search, aiming to combine the advantages of the two approaches.
+The fifth variant is a hybrid, switching from MSU3 to the SAT-UNSAT-based variant during the search, aiming to combine the advantages of the two approaches.
 In addition to the five variants of \algname{}, we also propose multiple refinements for improving its performance:
 lazily building the cardinality constraints for both objectives to reduce the number of clauses in the solver, blocking dominated solutions to prune the search space, more efficient domain-specific blocking clauses, bound hardening to enable the solver to learn more information and other refinements known from core-guided MaxSAT solving.
 
