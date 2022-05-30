@@ -76,7 +76,7 @@ Details of different instantiations of the \Min{} subroutine are discussed in \c
 Next, the algorithm employs \emph{solution-improving search}~\autocites{handbook2-maxsat,DBLP:journals/jsat/BerreP10,DBLP:journals/jsat/EenS06} to minimize the decreasing objective, i.e., to compute the smallest $b_\dec$ for which there is a solution $\sol^o$ with $\Obj_\inc(\sol^o) = b_\inc$ and $\Obj_\dec(\sol^o) = b_\dec$ (\cref{l:minim2}).
 The totalizer $\tot(\Obj_\dec, \Obj_\dec(\sol))$ is built the first time this subroutine is invoked.
 Building the totalizer at this point allows for only building it up to bound $\Obj_\dec(\sol)$, since all Pareto-optimal solutions are known to have at most that value for $\Obj_\dec$.
-Solution-improving search works by---starting from the known upper bound $b=\Obj_\dec(\sol)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{b}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $b$ until the solver reports \unsat{}.
+Solution-improving search works by---starting from the known upper bound $b=\Obj_\dec(\sol)$---iteratively invoking the SAT solver under the assumptions $\{\ov{\Obj_\dec}{b}, \ove{\Obj_\inc}{b_\inc}\}$ for decreasing values of $b$ until the solver returns \unsat{}.
 As soon as unsatisfiability is reached, $\Simpr$ returns $b_\dec=b+1$ and the last solution $\sol$ for which $\Obj_\inc(\sol) = b_\inc$ and $\Obj_\dec(\sol) = b_\dec$.
 At this point, we know that there is no solution of $\formula$ that dominates $\sol$, so $\sol$ is returned as Pareto-optimal on \cref{ln:stage3}.
 If one wants to enumerate all solutions $\sol^o$ that correspond to the Pareto point $(b_\inc,b_\dec)$, the \E{} procedure repeatedly invokes the SAT solver with the assumptions $\{\ove{\Obj_\dec}{b_\dec}, \ove{\Obj_\inc}{b_\inc}\}$ blocks every found solution by adding a clause that prevents the solver from finding that same solution again.
@@ -118,7 +118,7 @@ If one wants to enumerate all solutions $\sol^o$ that correspond to the Pareto p
   The result is unsatisfiable, so the procedure returns the Pareto-optimal $\sol^o_1$ and $b_\dec = \Obj_\dec(\sol^o_1) = 3$.
   Now optionally, the procedure \E{} can be used to enumerate all other solutions corresponding to the Pareto point $(\Obj_\inc(\sol^o_1),\Obj_\dec(\sol^o_1))$.
   At the end of the iteration, the SAT solver is queried with the assumption $\{ \ov{\Obj_\dec}{3} \}$.
-  As the result is \sat{} and the solver returns, e.g., the solution $\sol^c_4 = \solcfour$,
+  As the result is satisfiable and the solver returns, e.g., the solution $\sol^c_4 = \solcfour$,
   the algorithm starts a new iteration.
 
   The next iteration of \algname{} proceeds similarly to the first.
@@ -168,7 +168,7 @@ Since the last call is made on \cref{l:endL} with the assumption $\ov{\Obj_\dec}
 \satunsat{} is outlined as~\cref{alg:sat-unsat}.
 The procedure maintains the totalizer $\tot(\Obj_\inc)$ and begins on \cref{ln:su-tot} by checking if the current upper bound on $\tot(\Obj_\inc)$ is at least $b$, extending the totalizer if not. 
 Then the SAT solver is iteratively invoked with the assumptions $\{\ov{\Obj_\dec}{b_\dec}, \ov{\Obj_\inc}{b}\}$ for decreasing values of $b$ (\cref{ln:su-query}).
-The procedure terminates when the result is \unsat{}, after which (on \cref{ln:su-ret}) the value of $b$ and the solution obtained during the final satisfiable call are returned as $b_\inc$ and $\sol$.  
+The procedure terminates when the result is unsatisfiable, after which (on \cref{ln:su-ret}) the value of $b$ and the solution obtained during the final satisfiable call are returned as $b_\inc$ and $\sol$.  
 
 % Example: SAT-UNSAT
 \begin{example}\label{ex:satunsat}
@@ -190,7 +190,7 @@ The procedure terminates when the result is \unsat{}, after which (on \cref{ln:s
   The result is satisfiable.
   Assume that the solver returns the solution $\sol^o_2 = \solotwo$.
   \satunsat{} invokes the SAT solver again with the assumptions $\{ \ov{\Obj_\dec}{3}, \ov{\Obj_\inc}{2} \}$.
-  The result is \unsat{}, so the procedure returns $b_\inc = 2$ and $\sol^o_2$.
+  The result is unsatisfiable, so the procedure returns $b_\inc = 2$ and $\sol^o_2$.
   \looseness=-1
 
   In the third (and last) iteration of \algname{}, \satunsat{} is invoked with $b_\dec = 2$ and $b=\Obj_\inc(\sol^o_3) = 3$.
@@ -240,7 +240,7 @@ This way, the SAT solver is always queried over a minimum number of clauses.
   Here we detail the invocation of \Min{} instantiated as \unsatsat{}.
   In the first iteration, \unsatsat{} is invoked with $b_\dec = \infty$ and $b_\inc=-1$.
   At this point, the totalizer over $\Obj_\inc$ has not been built, so the procedure starts by initializing $\tot(\Obj_\inc, 0)$ and invokes the SAT solver with the assumptions $\{\ove{\Obj_\inc}{0}\}$.
-  The result is \unsat{}, so the totalizer is extended to $\tot(\Obj_\inc, 1)$ and the SAT solver invoked with the assumptions $\{ \ove{\Obj_\inc}{1}\}$.
+  The result is unsatisfiable, so the totalizer is extended to $\tot(\Obj_\inc, 1)$ and the SAT solver invoked with the assumptions $\{ \ove{\Obj_\inc}{1}\}$.
   The result is satisfiable.
   Assume that the returned solution is $\sol^c_3 = \solcthree$.
   Hence, \unsatsat{} returns $b_\inc = 1$ and $\sol^c_3$.

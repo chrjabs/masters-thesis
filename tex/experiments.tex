@@ -108,7 +108,6 @@ We independently at random sampled subsets of $\nsamp\in\{50,100,1000,5000,10000
 The datasets were discretized as in~\autocite{DBLP:conf/cp/MaliotovM18}:
 categorical features are one-hot encoded, continuous features discretized by comparing to a collection of thresholds.
 All experiments on these datasets were run with the encoding configured to learn CNF decision rules consisting of two clauses ($\nclauses = 2$).
-\looseness=-1
 
 % Domain-specific blocking
 When enumerating multiple solutions corresponding to the same Pareto point, the blocking clauses for \algname{} (as well as $P$-minimal compared to in the experiments) can be strengthened to find solutions mapping to distinct rules:
